@@ -9,8 +9,7 @@ import { QRCodeCanvas } from "qrcode.react";
 export default function CreateEvent() {
 
     const router = useRouter();
-    const [showQrCode, setShowQrCode] = useState(true);
-    const [link, setLink] = useState(true);
+    const [showQrCode, setShowQrCode] = useState(false);
 
     const handleSubmit = (formData) => {
         alert('Event Created!');
@@ -70,11 +69,9 @@ export default function CreateEvent() {
                 <div className="fixed  bg-black/60 backdrop:blur-lg bottom-0 h-screen left-0 w-screen  flex justify-center items-center">
                     <div className="bg-white p-10 rounded-lg">  {/* QR Code */}
                         <h1 className="text-2xl font-bold mb-4">QR Code for Event</h1>
-                        {link && (
-                            <div className="mt-4">
-                                <QRCodeCanvas value={"https://med-event-nine.vercel.app/user/entryForm"} size={200} />
-                            </div>
-                        )}
+                        <div className="mt-4">
+                            <QRCodeCanvas value={"https://med-event-nine.vercel.app/user/entryForm"} size={200} />
+                        </div>
                     </div>
                 </div>
             }

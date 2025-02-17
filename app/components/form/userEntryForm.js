@@ -54,7 +54,7 @@ const RegistrationForm = () => {
                                         <input
                                             type="text"
                                             name="firstName"
-                                            placeholder="Ex. Calvin"
+                                            placeholder="Ex: John"
                                             value={formData.firstName}
                                             onChange={handleInputChange}
                                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -65,7 +65,7 @@ const RegistrationForm = () => {
                                         <input
                                             type="text"
                                             name="lastName"
-                                            placeholder="Ex. Klein"
+                                            placeholder="ex. Doe"
                                             value={formData.lastName}
                                             onChange={handleInputChange}
                                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
