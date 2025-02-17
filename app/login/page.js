@@ -1,14 +1,34 @@
 'use client'
 import Image from "next/image";
-import { Eye } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Login() {
-
     const router = useRouter();
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
+    const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleInputChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.id]: e.target.value
+        });
+        setError(''); // Clear error when user starts typing
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        router.push("/dashboard");
+
+        if (formData.email === 'zala@zala.com' && formData.password === '123test') {
+            router.push("/dashboard");
+        } else {
+            setError('Invalid email or password');
+        }
     }
 
     return (
@@ -31,23 +51,31 @@ export default function Login() {
                     />
                 </div>
                 <div className="absolute bottom-0 translate-y-1/2 -rotate-12 bg-gray-200 w-screen h-1/2 -z-10">
-
                 </div>
             </section>
 
             {/* Form Section */}
             <section className="bg-white lg:flex-grow lg:h-screen lg:min-w-[350px] flex justify-center items-center p-4">
                 <div className="w-full max-w-[380px]">
-                    <h1 className="text-2xl font-semibold text-left mb-1 ">Welcome to Dashboard! 👋</h1>
+                    <h1 className="text-2xl font-semibold text-left mb-1">Welcome to Dashboard! 👋</h1>
                     <p className="text-sm text-gray-600 text-left mb-4">
                         Please sign-in to your account and start the adventure
                     </p>
+
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-50 text-red-500 text-sm rounded-lg">
+                            {error}
+                        </div>
+                    )}
+
                     <form onSubmit={handleSubmit} className="rounded-2xl p-6 pl-0 pt-0 w-full">
                         {/* Email or Username */}
                         <div className="relative mb-4">
                             <input
                                 type="text"
                                 id="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
                                 placeholder=" "
                                 className="peer w-full px-4 pt-4 pb-2 bg-white text-sm border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary placeholder-transparent"
                             />
@@ -62,8 +90,10 @@ export default function Login() {
                         {/* Password */}
                         <div className="relative mb-4">
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 id="password"
+                                value={formData.password}
+                                onChange={handleInputChange}
                                 placeholder=" "
                                 className="peer w-full px-4 pt-4 pb-2 text-sm border-2 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary placeholder-transparent"
                             />
@@ -75,9 +105,10 @@ export default function Login() {
                             </label>
                             <button
                                 type="button"
+                                onClick={() => setShowPassword(!showPassword)}
                                 className="absolute inset-y-0 right-3 flex items-center text-gray-500"
                             >
-                                <Eye size={20} />
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                             </button>
                         </div>
 

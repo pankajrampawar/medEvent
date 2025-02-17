@@ -10,6 +10,7 @@ export default function Sidebar() {
     const [selectedOption, setSelectedOption] = useState("Ongoing");
 
     const toggleDropdown = () => {
+        router.push('/dashboard/events/ongoing')
         setIsDropdownOpen(!isDropdownOpen);
     };
 
