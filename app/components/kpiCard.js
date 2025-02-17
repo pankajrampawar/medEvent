@@ -1,6 +1,6 @@
 export default function KpiCard({ title, number, percentage, Icon, subtext }) {
     return (
-        <div className="flex justify-between p-4 px-8 shadow-sm bg-white rounded-lg min-w-[320px]">
+        <div className="flex justify-between p-4 px-8 shadow-sm bg-white rounded-lg min-w-[320px] hover:scale-105 hover:shadow-lg transition-all duration-300 ease-in-out">
             <div className="flex flex-col gap-2 test-sm">
                 <p>{title}</p>
                 <h3 className="flex gap-2 text-2xl font-medium items-baseline">{number} <span className="text-sm text-green-600">({percentage})</span></h3>

@@ -54,13 +54,14 @@ export default function EventsListing() {
                     <div className="flex space-x-4">
                         <input
                             type="text"
-                            placeholder="Search User"
+                            placeholder="Search Events"
                             className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                         />
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors"
+                            onClick={() => { router.push('/dashboard/events/createEvent') }}
                         >
                             Add New Event
                         </motion.button>
