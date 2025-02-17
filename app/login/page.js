@@ -81,7 +81,7 @@ export default function Login() {
                             />
                             <label
                                 htmlFor="email"
-                                className="absolute left-4 top-1/2 -translate-y-1/2 text-sm transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-0 bg-white peer-focus:px-2 peer-focus:text-sm peer-focus:left-2 peer-focus:text-primary"
+                                className={`absolute text-sm transition-all bg-white ${formData.email ? 'top-0 left-2 px-2 text-primary text-sm' : 'left-4 top-1/2 -translate-y-1/2 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base'} peer-focus:top-0 peer-focus:left-2 peer-focus:px-2 peer-focus:text-sm peer-focus:text-primary`}
                             >
                                 Email or Username
                             </label>
@@ -99,7 +99,7 @@ export default function Login() {
                             />
                             <label
                                 htmlFor="password"
-                                className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-500 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:px-2 peer-focus:left-2 bg-white peer-focus:text-sm peer-focus:text-primary"
+                                className={`absolute text-sm transition-all bg-white ${formData.password ? 'top-0 left-2 px-2 text-primary text-sm' : 'left-4 top-1/2 -translate-y-1/2 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base'} peer-focus:top-0 peer-focus:left-2 peer-focus:px-2 peer-focus:text-sm peer-focus:text-primary`}
                             >
                                 Password
                             </label>
