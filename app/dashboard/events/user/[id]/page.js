@@ -11,10 +11,15 @@ const PatientForm = ({ isEditable = false }) => {
 
 
     if (loading) return (
-        <div>
-            Loading...
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <div className="flex items-center space-x-4">
+                <div className="w-8 h-8 border-4 border-gray-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="text-2xl font-semibold text-gray-700">
+                    Loading event details...
+                </div>
+            </div>
         </div>
-    )
+    );
 
 
     return (
