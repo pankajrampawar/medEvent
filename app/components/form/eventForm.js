@@ -5,6 +5,7 @@ import { Trash } from 'lucide-react';
 
 const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
     const [formData, setFormData] = useState({
+        title: 'New Event',
         startDate: '',
         endDate: '',
         note: '',
@@ -59,7 +60,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
     };
 
     // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Validate that startDate is not greater than endDate
@@ -68,7 +69,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
             return; // Prevent form submission
         }
 
-        submitFunction();
+        await submitFunction(formData);
         console.log('Form Data Submitted:', formData);
         setError(''); // Clear any previous errors
         // You can add your form submission logic here, such as an API call

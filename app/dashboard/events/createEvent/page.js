@@ -5,34 +5,46 @@ import { motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { QRCodeCanvas } from "qrcode.react";
+import { createEvent } from "@/lib/api";
 
 export default function CreateEvent() {
 
     const router = useRouter();
+    const [newEventId, setNewEventId] = useState('');
     const [showQrCode, setShowQrCode] = useState(false);
 
-    const handleSubmit = (formData) => {
-        alert('Event Created!');
-        setShowQrCode(true);
-    }
+    const handleSubmit = async (formData) => {
+        try {
+            const result = await createEvent(formData);
+            alert("Event Created Successfully");
+            setNewEventId(result.event._id)
+            setShowQrCode(true);
+            console.log(result)
+        } catch (error) {
+            alert(error.message);
+            console.log(error);
+        }
+    };
 
     const [formData, setFormData] = useState({
+        title: "New Event",
         startDate: '',
         endDate: '',
-        note: '',
+        //note: '',
         description: '',
-        doctors: [{ name: '', email: '' }], // Array to store multiple doctors
-        option: '',
+        // doctors: [{ name: '', email: '' }], // Array to store multiple doctors
+        // option: '',
     });
 
     const resetForm = () => {
         setFormData({
+            title: "New Event",
             startDate: '',
             endDate: '',
-            note: '',
+            //  note: '',
             description: '',
-            doctors: [{ name: '', email: '' }], // Array to store multiple doctors
-            option: '',
+            // doctors: [{ name: '', email: '' }], // Array to store multiple doctors
+            // option: '',
         })
     }
 
@@ -70,7 +82,7 @@ export default function CreateEvent() {
                     <div className="bg-white p-10 rounded-lg">  {/* QR Code */}
                         <h1 className="text-2xl font-bold mb-4">QR Code for Event</h1>
                         <div className="mt-4">
-                            <QRCodeCanvas value={"https://med-event-nine.vercel.app/user/entryForm"} size={200} />
+                            <QRCodeCanvas value={`https://med-event-nine.vercel.app/user/${newEventId}`} size={200} />
                         </div>
                     </div>
                 </div>

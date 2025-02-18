@@ -17,18 +17,20 @@ const eventSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    location: {
-        type: String,
-        rquired: true
-    },
-    doctors: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Doctor'
-        },
-    ],
+
+    // location: {
+    //     type: String,
+    //     rquired: true
+    // },
+
+    // doctors: [
+    //     {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: 'Doctor'
+    //     },
+    // ],
 });
 
-const Event = mongoose.model.Event || mongoose.model("Event", eventSchema)
+const Event = mongoose.models.Event || mongoose.model("Event", eventSchema)
 
 export default Event;
