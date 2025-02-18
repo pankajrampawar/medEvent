@@ -1,12 +1,21 @@
 'use client'
 // components/PatientForm.js
-import React from 'react';
+import React, { useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const PatientForm = ({ isEditable = false }) => {
 
     const router = useRouter();
+    const [loading, setLoading] = useState(true);
+
+
+    if (loading) return (
+        <div>
+            Loading...
+        </div>
+    )
+
 
     return (
         <div className="m-10">

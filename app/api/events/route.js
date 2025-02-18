@@ -1,12 +1,24 @@
 import connectToDatabse from "@/lib/mongodb";
 import Event from "@/models/Event";
 
-export async function GET() {
+export async function GET(req) {
     await connectToDatabse();
 
     try {
-        const events = await Event.find({});
-        return Response.json({ events })
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
+
+        if (!id) {
+            return Response.json({ error: "Id not found" }, { status: 404 })
+        }
+
+        const event = await Event.findById(id);
+
+        if (!event) {
+            return Response.json({ error: "Event not found" }, { status: 404 });
+        }
+
+        return Response.json({ event })
     } catch (error) {
         return Response.json({ error: error.message }, { status: 500 });
     }

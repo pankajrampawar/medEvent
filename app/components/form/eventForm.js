@@ -5,7 +5,7 @@ import { Trash } from 'lucide-react';
 
 const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
     const [formData, setFormData] = useState({
-        title: 'New Event',
+        title: '',
         startDate: '',
         endDate: '',
         note: '',
@@ -92,6 +92,21 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
 
             <form onSubmit={handleSubmit}>
                 {/* Start Date and End Date */}
+                <div className='mb-6'>
+                    <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+                        Event Name
+                    </label>
+                    <input
+                        type='text'
+                        id='title'
+                        name='title'
+                        value={formData.title}
+                        onChange={handleChange}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                        disabled={!isEditable}
+                        required={true}
+                    />
+                </div>
                 <div className="mb-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
