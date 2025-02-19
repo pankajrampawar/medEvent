@@ -1,13 +1,29 @@
 'use client'
 // components/PatientForm.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { getEventDetails } from '@/lib/api';
 
-const PatientForm = ({ isEditable = false }) => {
+const PatientForm = ({ isEditable = false, params }) => {
+
+    const { id } = React.use(params);
 
     const router = useRouter();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [event, setEvent] = useState({})
+
+
+    useEffect(() => {
+        const getEventById = async () => {
+            try {
+
+            } catch (error) {
+                throw new Error("Unable to load data, please try again later.")
+            }
+            const result = await getEventDetails(id)
+        }
+    }, [])
 
 
     if (loading) return (
