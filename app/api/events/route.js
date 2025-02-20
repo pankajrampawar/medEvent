@@ -7,7 +7,6 @@ export async function GET(req) {
     try {
         const { searchParams } = new URL(req.url);
         const id = searchParams.get('id');
-
         if (!id) {
             return Response.json({ error: "Id not found" }, { status: 404 })
         }

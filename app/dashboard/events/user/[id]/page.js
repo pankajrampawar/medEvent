@@ -4,11 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getEventDetails } from '@/lib/api';
+import { useSearchParams } from 'next/navigation';
 
 const PatientForm = ({ isEditable = false, params }) => {
+    const searchParams = useSearchParams();
 
     const { id } = React.use(params);
-
+    const userData = JSON.parse(searchParams.get('data'));
+    console.log(userData)
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [event, setEvent] = useState({})
@@ -57,6 +60,7 @@ const PatientForm = ({ isEditable = false, params }) => {
                                 <input
                                     type="text"
                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    value={userData.firstName}
                                     disabled={!isEditable}
                                 />
                             </div>
@@ -65,6 +69,7 @@ const PatientForm = ({ isEditable = false, params }) => {
                                 <input
                                     type="text"
                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    value={userData.lastName}
                                     disabled={!isEditable}
                                 />
                             </div>
@@ -73,6 +78,7 @@ const PatientForm = ({ isEditable = false, params }) => {
                                 <input
                                     type="date"
                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    value={userData.dateOfBirth ? new Date(userData.dateOfBirth).toISOString().split('T')[0] : ''}
                                     disabled={!isEditable}
                                 />
                             </div>
@@ -81,6 +87,7 @@ const PatientForm = ({ isEditable = false, params }) => {
                                 <input
                                     type="text"
                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    value={userData.contactNumber}
                                     disabled={!isEditable}
                                 />
                             </div>
@@ -95,6 +102,7 @@ const PatientForm = ({ isEditable = false, params }) => {
                         <input
                             type="text"
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            value={userData.chiefComplaint}
                             disabled={!isEditable}
                         />
                     </div>
@@ -104,6 +112,7 @@ const PatientForm = ({ isEditable = false, params }) => {
                         <input
                             type="text"
                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            value={userData.allergic}
                             disabled={!isEditable}
                         />
                     </div>

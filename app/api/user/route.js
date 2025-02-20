@@ -1,15 +1,16 @@
 import connectToDatabse from "@/lib/mongodb";
 import User from "@/models/User";
 
-export async function Get(req) {
+export async function GET(req) {
     await connectToDatabse();
 
     try {
         const { searchParams } = new URL(req.url);
         const eventId = searchParams.get('id')
-
+        console.log(eventId)
         if (!eventId) {
-            return Response.json({ erro: "Id not foudn" }, { status: 404 });
+            console.log("id not found")
+            return Response.json({ error: "Id not found" }, { status: 404 });
         }
 
         const users = await User.find({ eventId });

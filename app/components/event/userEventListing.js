@@ -1,17 +1,19 @@
 'use client'
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Trash, Eye } from "lucide-react";
+import { Trash, Eye, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function UserListing({ eventId }) {
+export default function UserListing({ usersList }) {
 
     const router = useRouter();
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 10;
+    const [users, setUsers] = useState(usersList)
+    console.log("fetched users: ", usersList)
 
     // Sample user data
-    const users = [
+    const randomUsers = [
         { id: 1, name: "Zsazsa McCleverty", username: "@zmcclevertye", dob: "25 Feb 2014", contact: "965284125", status: "completed", case: "Emergency" },
         { id: 2, name: "Yoko Potte", username: "@ypotitec", dob: "20 Feb 1952", contact: "965284125", status: "completed", case: "Emergency" },
         { id: 3, name: "Wesley Burland", username: "@wburland", dob: "12 Jan 1945", contact: "965284125", status: "completed", case: "Emergency" },
@@ -21,9 +23,9 @@ export default function UserListing({ eventId }) {
     // Pagination logic
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
-    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+    const currentUsers = randomUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-    const totalPages = Math.ceil(users.length / usersPerPage);
+    const totalPages = Math.ceil(randomUsers.length / usersPerPage);
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -75,7 +77,7 @@ export default function UserListing({ eventId }) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                            {currentUsers.map((user) => (
+                            {!users && currentUsers.map((user) => (
                                 <motion.tr
                                     key={user.id}
                                     initial={{ opacity: 0, y: 10 }}
@@ -96,6 +98,27 @@ export default function UserListing({ eventId }) {
                                     </td>
                                 </motion.tr>
                             ))}
+                            {users && users.map((user) => (
+                                <motion.tr
+                                    key={user._id}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-col">
+                                            <span className="font-medium">{user.firstName}</span>
+                                            <span className="text-sm text-gray-500">{user.lastName}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">{user.dateOfBirth}</td>
+                                    <td className="px-6 py-4">{user.contactNumber}</td>
+                                    <td className="px-6 py-4"><span className="bg-green-200 text-green-950 text-sm p-1 rounded-sm">pending</span></td>
+                                    <td className="px-6 py-4 flex itmes-end">
+                                        <button onClick={() => router.push(`/dashboard/events/user/${user._id}?data=${encodeURIComponent(JSON.stringify(user))}`)} className="text-slate-400 hover:text-purple-700"><Eye /></button>
+                                    </td>
+                                </motion.tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>
@@ -103,7 +126,7 @@ export default function UserListing({ eventId }) {
             {/* Pagination */}
             <div className="flex justify-between items-center mt-6">
                 <span className="text-sm text-gray-700">
-                    Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, users.length)} of {users.length} entries
+                    Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, randomUsers.length)} of {randomUsers.length} entries
                 </span>
                 <div className="flex space-x-2">
                     <motion.button
