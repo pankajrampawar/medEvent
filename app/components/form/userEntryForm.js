@@ -1,21 +1,33 @@
 'use client'
+import { addNewUser } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
-const RegistrationForm = () => {
+const RegistrationForm = ({ eventId }) => {
     const [formData, setFormData] = useState({
+        eventId: eventId,
         firstName: '',
         lastName: '',
         dateOfBirth: '',
         contactNumber: '',
-        chiefComplaints: '',
+        chiefComplaint: '',
         hasAllergy: false,
         allergyInfo: ''
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission here
+
+        try {
+            console.log("event id in form: ", formData.eventId);
+            console.log("actual event id", eventId);
+            const result = addNewUser(formData);
+            alert('form submitted successfully');
+            console.log(result)
+        } catch (error) {
+            alert(error.message)
+            console.log(error)
+        }
         console.log('Form submitted:', formData);
     };
 
@@ -99,9 +111,9 @@ const RegistrationForm = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Chief Complaints</label>
                                     <textarea
-                                        name="chiefComplaints"
+                                        name="chiefComplaint"
                                         placeholder="Describe the primary health concern"
-                                        value={formData.chiefComplaints}
+                                        value={formData.chiefComplaint}
                                         onChange={handleInputChange}
                                         rows={3}
                                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"

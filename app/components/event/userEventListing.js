@@ -70,9 +70,6 @@ export default function UserListing({ eventId }) {
                                     STATUS
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    CASE
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     ACTIONS
                                 </th>
                             </tr>
@@ -94,7 +91,6 @@ export default function UserListing({ eventId }) {
                                     <td className="px-6 py-4">{user.dob}</td>
                                     <td className="px-6 py-4">{user.contact}</td>
                                     <td className="px-6 py-4"><span className="bg-green-200 text-green-950 text-sm p-1 rounded-sm">{user.status}</span></td>
-                                    <td className="text-sm"><span className="bg-red-200 text-red-900 p-1 rounded-md">{user.case}</span></td>
                                     <td className="px-6 py-4 flex itmes-end">
                                         <button onClick={() => router.push(`/dashboard/events/user/${123}`)} className="text-slate-400 hover:text-purple-700"><Eye /></button>
                                     </td>

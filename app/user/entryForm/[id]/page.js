@@ -39,9 +39,8 @@ export default function EntryForm({ params }) {
 
     return (
         <div>
-            <h1>Entry Form</h1>
             <div>
-                <RegistrationForm />
+                <RegistrationForm eventId={id} />
             </div>
         </div>
     )
