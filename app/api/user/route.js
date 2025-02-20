@@ -42,3 +42,43 @@ export async function POST(req) {
         return Response.json({ error: error.message }, { status: 500 });
     }
 }
+
+export async function PUT(req) {
+    await connectToDatabse();
+    console.log("Updating user in the database");
+
+    try {
+        const {
+            userId,
+            primaryDiagnosis,
+            conditionCategory,
+            charmChart,
+            otcSupplies,
+            note
+        } = await req.json();
+
+        // Find the user by ID and update the fields
+        const updatedUser = await User.findByIdAndUpdate(
+            userId, // Assuming `userId` is the unique identifier for the user
+            {
+                $set: {
+                    primaryDiagnosis,
+                    conditionCategory,
+                    charmChart,
+                    otcSupplies,
+                    note
+                }
+            },
+            { new: true } // This returns the updated document
+        );
+
+        if (!updatedUser) {
+            return Response.json({ error: "User not found" }, { status: 404 });
+        }
+
+        return Response.json({ message: "User updated successfully", user: updatedUser }, { status: 200 });
+    } catch (error) {
+        console.error(error.message);
+        return Response.json({ error: error.message }, { status: 500 });
+    }
+}
