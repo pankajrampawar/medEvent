@@ -81,7 +81,7 @@ export default function Sidebar() {
                         )}
                     </li>
                     <li className="mb-2">
-                        <Link href="/calendar" className="flex items-start gap-2 p-2 hover:bg-gray-200 rounded">
+                        <Link href="/dashboard/calendar" className="flex items-start gap-2 p-2 hover:bg-gray-200 rounded">
                             <Calendar width={20} height={20} /> Calendar
                         </Link>
                     </li>

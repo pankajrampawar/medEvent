@@ -79,7 +79,7 @@ export default function UpcomingEvent() {
     return (
         <div className="flex flex-col w-full gap-4 p-[5%]">
             <section>
-                <EventKpi />
+                <EventKpi ongoing={ongoingEvents.length} upcoming={upcomingEvents.length} completed={completedEvents.length} />
             </section>
 
             <section className="min-w-full">
