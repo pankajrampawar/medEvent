@@ -82,7 +82,7 @@ export default function CreateEvent() {
                     <div className="bg-white p-10 rounded-lg">  {/* QR Code */}
                         <h1 className="text-2xl font-bold mb-4">QR Code for Event</h1>
                         <div className="mt-4">
-                            <QRCodeCanvas value={`https://med-event-nine.vercel.app/user/${newEventId}`} size={200} />
+                            <QRCodeCanvas value={`https://med-event-nine.vercel.app/user/entryForm/${newEventId}`} size={200} />
                         </div>
                     </div>
                 </div>
