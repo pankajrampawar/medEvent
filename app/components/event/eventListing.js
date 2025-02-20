@@ -4,28 +4,21 @@ import { useState } from "react";
 import { Trash, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function EventsListing() {
+// Helper function to format the date
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
+};
 
+export default function EventsListing({ events }) {
     const router = useRouter();
 
     const [currentPage, setCurrentPage] = useState(1);
     const eventsPerPage = 7;
-
-    // Sample data
-    const events = [
-        { id: 1, name: "Event 1", location: "shebb street 34, ily", startDate: "5/2/2025", endDate: "5/2/2025" },
-        { id: 2, name: "Event 2", location: "shebb street 34, ily", startDate: "6/2/2025", endDate: "6/2/2025" },
-        { id: 3, name: "Event 3", location: "shebb street 34, ily", startDate: "7/2/2025", endDate: "7/2/2025" },
-        { id: 4, name: "Event 4", location: "shebb street 34, ily", startDate: "7/2/2025", endDate: "7/2/2025" },
-        { id: 5, name: "Event 5", location: "shebb street 34, ily", startDate: "7/2/2025", endDate: "7/2/2025" },
-        { id: 6, name: "Event 6", location: "shebb street 34, ily", startDate: "7/2/2025", endDate: "7/2/2025" },
-        { id: 7, name: "Event 7", location: "shebb street 34, ily", startDate: "5/2/2025", endDate: "5/2/2025" },
-        { id: 8, name: "Event 8", location: "shebb street 34, ily", startDate: "6/2/2025", endDate: "6/2/2025" },
-        { id: 9, name: "Event 9", location: "shebb street 34, ily", startDate: "7/2/2025", endDate: "7/2/2025" },
-        { id: 10, name: "Event 10", location: "shebb street 34, ily", startDate: "7/2/2025", endDate: "7/2/2025" },
-        { id: 11, name: "Event 11", location: "shebb street 34, ily", startDate: "7/2/2025", endDate: "7/2/2025" },
-        { id: 12, name: "Event 12", location: "shebb street 34, ily", startDate: "7/2/2025", endDate: "7/2/2025" },
-    ];
 
     // Pagination logic
     const indexOfLastEvent = currentPage * eventsPerPage;
@@ -93,18 +86,18 @@ export default function EventsListing() {
                         <tbody className="divide-y divide-gray-200">
                             {currentEvents.map((event) => (
                                 <motion.tr
-                                    key={event.id}
+                                    key={event._id}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    <td className="px-6 py-4">{event.name}</td>
+                                    <td className="px-6 py-4">{event.title}</td>
                                     <td className="px-6 py-4">{event.location}</td>
-                                    <td className="px-6 py-4">{event.startDate}</td>
-                                    <td className="px-6 py-4">{event.endDate}</td>
+                                    <td className="px-6 py-4">{formatDate(event.startDate)}</td>
+                                    <td className="px-6 py-4">{formatDate(event.endDate)}</td>
                                     <td className="px-2 py-4 flex gap-3 justify-start">
                                         <button className="ml-4 text-gray-400 hover:text-red-700"><Trash /></button>
-                                        <button className="text-gray-400 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/${123}`)}><Eye /></button>
+                                        <button className="text-gray-400 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/${event._id}`)}><Eye /></button>
                                     </td>
                                 </motion.tr>
                             ))}
