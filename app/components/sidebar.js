@@ -64,7 +64,7 @@ export default function Sidebar() {
                                 <li>
                                     <button
                                         onClick={() => handleOptionClick("Upcoming")}
-                                        className={`w-full text-left p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/events/completed" ? "bg-gray-200" : ""
+                                        className={`w-full text-left p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/events/upcoming" ? "bg-gray-200" : ""
                                             }`}
                                     >
                                         Upcoming
