@@ -36,44 +36,26 @@ export default function OngoingEvent() {
         setUpcomingEvents(upcoming);
     };
 
-    const updateEvents = async () => {
+    const fetchEvents = async () => {
         try {
+            setLoading(true);
             const result = await getEventDetails();
             const fetchedEvents = result.events || [];
-            const storedEvents = JSON.parse(localStorage.getItem("events")) || [];
 
-            // Merge new events, removing duplicates based on ID
-            const eventIds = new Set(storedEvents.map((event) => event.id));
-            const updatedEvents = [
-                ...fetchedEvents.filter((event) => !eventIds.has(event.id)),
-                ...storedEvents,
-            ];
-
-            localStorage.setItem("events", JSON.stringify(updatedEvents));
-            setEvents(updatedEvents);
-            categorizeEvents(updatedEvents);
+            setEvents(fetchedEvents);
+            categorizeEvents(fetchedEvents);
         } catch (error) {
-            console.error("Failed to update events:", error);
+            console.error("Failed to fetch events:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        const initializeEvents = async () => {
-            const storedEvents = JSON.parse(localStorage.getItem("events"));
-            if (storedEvents) {
-                setEvents(storedEvents);
-                categorizeEvents(storedEvents);
-                setLoading(false);
-            } else {
-                await updateEvents();
-                setLoading(false);
-            }
-        };
-
-        initializeEvents();
+        fetchEvents();
 
         // Set up interval to fetch updates every 2 minutes
-        const intervalId = setInterval(updateEvents, 2 * 60 * 1000);
+        const intervalId = setInterval(fetchEvents, 2 * 60 * 1000);
         return () => clearInterval(intervalId);
     }, []);
 
@@ -81,7 +63,7 @@ export default function OngoingEvent() {
         <div className="flex justify-center items-center">
             Loading...
         </div>
-    )
+    );
 
     return (
         <div className="flex flex-col w-full gap-4 p-[5%]">
@@ -94,8 +76,8 @@ export default function OngoingEvent() {
             </section>
 
             <section className="fixed">
-
+                {/* Add content for the fixed section */}
             </section>
         </div>
-    )
+    );
 }
