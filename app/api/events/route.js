@@ -32,8 +32,8 @@ export async function POST(req) {
     await connectToDatabse();
     console.log('running request')
     try {
-        const { title, description, startDate, endDate, doctors, option, note } = await req.json();
-        console.log(title, description, startDate, endDate)
+        const { title, description, startDate, endDate, location, doctors, option, note } = await req.json();
+        console.log(title, description, startDate, endDate, location)
         // validate start and end date
         if (new Date(startDate) > new Date(endDate)) {
             return Response.json({ error: "End Date must be greater than or equal to start date." }, { status: 400 });
