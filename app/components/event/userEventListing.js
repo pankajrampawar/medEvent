@@ -29,6 +29,12 @@ export default function UserListing({ usersList }) {
         }
     };
 
+    // Function to format date
+    const formatDate = (dateString) => {
+        const options = { year: "numeric", month: "long", day: "numeric" };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
     return (
         <div className="p-6 bg-white min-h-[70vh] flex flex-col justify-between">
             {/* Header */}
@@ -80,7 +86,7 @@ export default function UserListing({ usersList }) {
                                             <span className="text-sm text-gray-500">{user.lastName}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4">{user.dateOfBirth}</td>
+                                    <td className="px-6 py-4">{formatDate(user.dateOfBirth)}</td>
                                     <td className="px-6 py-4">{user.contactNumber}</td>
                                     <td className="px-6 py-4">
                                         {user.charmChartFilledOut ? (
