@@ -2,8 +2,12 @@
 import { addNewUser } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Router } from 'lucide-react';
 
 const RegistrationForm = ({ eventId }) => {
+    const router = useRouter();
+
     const [formData, setFormData] = useState({
         eventId: eventId,
         firstName: '',
@@ -24,6 +28,7 @@ const RegistrationForm = ({ eventId }) => {
             const result = addNewUser(formData);
             alert('form submitted successfully');
             console.log(result)
+            router.push('/user/success')
         } catch (error) {
             alert(error.message)
             console.log(error)
