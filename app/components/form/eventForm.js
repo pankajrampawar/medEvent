@@ -190,7 +190,6 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                         rows="3"
                         disabled={!isEditable}
-                        required={true}
                     ></textarea>
                 </div>
 
@@ -269,3 +268,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
 };
 
 export default EventForm;
+
+
+// but pop up addition 
+// add cross button at top
