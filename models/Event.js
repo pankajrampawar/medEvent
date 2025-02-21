@@ -18,10 +18,10 @@ const eventSchema = new mongoose.Schema({
         required: true
     },
 
-    // location: {
-    //     type: String,
-    //     rquired: true
-    // },
+    location: {
+        type: String,
+        rquired: true
+    },
 
     // doctors: [
     //     {

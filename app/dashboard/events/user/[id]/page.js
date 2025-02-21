@@ -26,6 +26,7 @@ const PatientForm = ({ isEditable = true, params }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        formData.charmChartFilledOut = true;
         try {
             const result = await updateUser(id, formData)
             alert('Changes updated successfully!');
@@ -172,17 +173,6 @@ const PatientForm = ({ isEditable = true, params }) => {
                                     name="conditionCategory"
                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                     value={formData.conditionCategory || ''}
-                                    onChange={handleInputChange}
-                                    disabled={!isEditing}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Charm Chart Filled Out</label>
-                                <input
-                                    type="text"
-                                    name="charmChart"
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                    value={formData.charmChart || ''}
                                     onChange={handleInputChange}
                                     disabled={!isEditing}
                                 />

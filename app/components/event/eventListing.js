@@ -1,7 +1,7 @@
 'use client'
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Trash, Eye } from "lucide-react";
+import { Info, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 // Helper function to format the date
@@ -95,8 +95,7 @@ export default function EventsListing({ events }) {
                                     <td className="px-6 py-4">{event.location}</td>
                                     <td className="px-6 py-4">{formatDate(event.startDate)}</td>
                                     <td className="px-6 py-4">{formatDate(event.endDate)}</td>
-                                    <td className="px-2 py-4 flex gap-3 justify-start">
-                                        <button className="ml-4 text-gray-400 hover:text-red-700"><Trash /></button>
+                                    <td className="px-2 py-4 flex gap-3 justify-center">
                                         <button className="text-gray-400 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/${event._id}`)}><Eye /></button>
                                     </td>
                                 </motion.tr>

@@ -10,7 +10,8 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
         endDate: '',
         note: '',
         description: '',
-        doctors: [{ name: '', email: '' }], // Array to store multiple doctors
+        location: '',
+        doctors: [{ name: '', email: '' }],
         option: '',
     });
 
@@ -94,7 +95,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                 {/* Start Date and End Date */}
                 <div className='mb-6'>
                     <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
-                        Event Name
+                        Event Name <span className='text-red-700 text-xl'>*</span>
                     </label>
                     <input
                         type='text'
@@ -111,7 +112,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
-                                Start Date
+                                Start Date <span className='text-red-700 text-xl'>*</span>
                             </label>
                             <input
                                 type="date"
@@ -142,6 +143,40 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                     </div>
                 </div>
 
+
+                <div className="mb-6">
+                    <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+                        location <span className='text-red-700 text-xl'>*</span>
+                    </label>
+                    <textarea
+                        id="location"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                        rows="4"
+                        disabled={!isEditable}
+                        required={true}
+                    ></textarea>
+                </div>
+
+                {/* Description */}
+                <div className="mb-6">
+                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                        Description <span className='text-red-700 text-xl'>*</span>
+                    </label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                        rows="4"
+                        disabled={!isEditable}
+                        required={true}
+                    ></textarea>
+                </div>
+
                 {/* Note */}
                 <div className="mb-6">
                     <label htmlFor="note" className="block text-sm font-medium text-gray-700">
@@ -154,23 +189,6 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                         onChange={handleChange}
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                         rows="3"
-                        disabled={!isEditable}
-                        required={true}
-                    ></textarea>
-                </div>
-
-                {/* Description */}
-                <div className="mb-6">
-                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                        Description
-                    </label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                        rows="4"
                         disabled={!isEditable}
                         required={true}
                     ></textarea>

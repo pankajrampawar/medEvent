@@ -5,7 +5,8 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
-import { X } from 'lucide-react';
+import { Calendar, Info, X } from 'lucide-react';
+import { getEventDetails } from '@/lib/api';
 
 const CalendarComponent = () => {
     const [show, setShow] = useState(false);
@@ -21,31 +22,47 @@ const CalendarComponent = () => {
     };
 
     function formatEventsForCalendar(events) {
+        const now = new Date();
+
         return events.map((event) => {
-            const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Generate random light color
-            let formattedStart;
+            let formattedStart, formattedEnd;
 
             try {
                 if (!event.startDate) {
                     throw new Error("Invalid start date: undefined");
                 }
 
-                const date = new Date(event.startDate);
-                if (isNaN(date.getTime())) {
-                    throw new Error(`Invalid start date: ${event.start}`);
+                const startDate = new Date(event.startDate);
+                const endDate = new Date(event.endDate);
+
+                if (isNaN(startDate.getTime()) || (event.endDate && isNaN(endDate.getTime()))) {
+                    throw new Error(`Invalid start or end date: ${event.startDate}`);
                 }
 
-                formattedStart = date.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+                formattedStart = startDate.toISOString().split("T")[0];
+                formattedEnd = endDate ? endDate.toISOString().split("T")[0] : null;
+
+                // Determine color based on event status
+                let color;
+                if (endDate && endDate < now) {
+                    color = "#bbf7d0"; // Light green for completed
+                } else if (startDate > now) {
+                    color = "#fecaca"; // Light red for upcoming
+                } else {
+                    color = "#fef9c3"; // Light yellow for ongoing
+                }
+
+                return {
+                    ...event,
+                    start: formattedStart,
+                    end: formattedEnd,
+                    color,
+                    textColor: "black"
+                };
             } catch (error) {
                 console.error(`Error formatting event: ${error.message}`);
                 return null; // Skip this event
             }
-
-            return {
-                ...event,
-                start: formattedStart,
-                color: randomColor,
-            };
         }).filter(Boolean); // Remove null entries
     }
 
@@ -73,7 +90,7 @@ const CalendarComponent = () => {
 
     const updateEvents = async () => {
         try {
-            const result = await getEventDetails(); // Replace with your API call
+            const result = await getEventDetails();
             const fetchedEvents = result.events || [];
             const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
 
@@ -126,7 +143,7 @@ const CalendarComponent = () => {
         <div className="flex h-screen">
             {/* Main Content */}
             <div className="flex-grow p-4 bg-gray-100">
-                <div className="p-4 bg-white rounded-lg shadow-md">
+                <div className="p-4 bg-white rounded-lg shadow-md text-black text-sm">
                     <FullCalendar
                         plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
                         initialView="dayGridMonth"
@@ -144,28 +161,51 @@ const CalendarComponent = () => {
 
             {/* Event Details Modal */}
             {show && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-                        <div className="flex justify-between items-center border-b pb-2 mb-4">
-                            <h3 className="text-lg font-bold text-gray-800">
-                                {selectedEvent?.title}
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+                    <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md transform transition-all pb-10">
+                        {/* Header */}
+                        <div className="flex justify-between items-center pb-4 border-b">
+                            <h3 className="text-xl font-semibold text-gray-900">
+                                {selectedEvent?.title || "Event Details"}
                             </h3>
                             <button
-                                className="text-gray-500 hover:text-gray-800"
+                                className="text-gray-500 hover:text-red-600 transition"
                                 onClick={handleClose}
                             >
-                                <X />
+                                <X size={20} />
                             </button>
                         </div>
-                        <p className="mb-2">
-                            <strong>📅 Start Date:</strong> {new Date(selectedEvent?.start).toLocaleDateString()}
-                        </p>
-                        <p className="mb-2">
-                            <strong>📅 End Date:</strong> {new Date(selectedEvent?.end).toLocaleDateString()}
-                        </p>
-                        <p>
-                            <strong>📝 Details:</strong> {selectedEvent?.extendedProps?.description || 'No details provided'}
-                        </p>
+
+                        {/* Content */}
+                        <div className="mt-4 space-y-4">
+                            <div className="flex items-center gap-3">
+                                <Calendar className="text-blue-600" size={18} />
+                                <span className="text-gray-700 font-medium">Start Date:</span>
+                                <span className="text-gray-800">
+                                    {selectedEvent?.start
+                                        ? new Date(selectedEvent.start).toLocaleDateString()
+                                        : "N/A"}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <Calendar className="text-blue-600" size={18} />
+                                <span className="text-gray-700 font-medium">End Date:</span>
+                                <span className="text-gray-800">
+                                    {selectedEvent?.end
+                                        ? new Date(selectedEvent.end).toLocaleDateString()
+                                        : "N/A"}
+                                </span>
+                            </div>
+                            <div className="flex items-start gap-3">
+                                <Info className="text-blue-600" size={18} />
+                                <div>
+                                    <span className="text-gray-700 font-medium">Details:</span>
+                                    <p className="text-gray-700 mt-1">
+                                        {selectedEvent?.extendedProps?.description || "No details provided."}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

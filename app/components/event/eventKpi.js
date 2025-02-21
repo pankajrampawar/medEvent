@@ -1,14 +1,15 @@
 import KpiCard from "../kpiCard";
-import { UserCheck } from "lucide-react";
+import { Calendar, CheckCircle, Loader, CalendarPlus } from 'lucide-react';
 
 export default function EventKpi({ ongoing, completed, upcoming }) {
 
     return (
         <section>
             <div className="flex justify-start gap-4">
-                <KpiCard Icon={UserCheck} title="Ongoing Events" subtext="Total Users" percentage="+25%" number={ongoing} />
-                <KpiCard Icon={UserCheck} title="Completed" subtext="Total Users" percentage="+25%" number={completed} />
-                <KpiCard Icon={UserCheck} title="Upcoming" subtext="Total Users" percentage="+25%" number={upcoming} />
+                <KpiCard Icon={Loader} title="Total Events" percentage="+25%" number={ongoing + completed + upcoming} />
+                <KpiCard Icon={Loader} title="Ongoing Events" percentage="+25%" number={ongoing} />
+                <KpiCard Icon={CheckCircle} title="Completed Events" percentage="+25%" number={completed} />
+                <KpiCard Icon={CalendarPlus} title="Upcoming Events" percentage="+25%" number={upcoming} />
             </div>
         </section>
     )

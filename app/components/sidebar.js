@@ -1,12 +1,14 @@
 'use client'
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Home, User, Calendar, HeartPulse } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
     const router = useRouter();
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const pathname = usePathname();
+    const [isDropdownOpen, setIsDropdownOpen] = useState(true);
     const [selectedOption, setSelectedOption] = useState("Ongoing");
 
     const toggleDropdown = () => {
@@ -53,7 +55,7 @@ export default function Sidebar() {
                                 <li>
                                     <button
                                         onClick={() => handleOptionClick("Ongoing")}
-                                        className={`w-full text-left p-2 hover:bg-gray-200 rounded ${selectedOption === "Ongoing" ? "bg-gray-200" : ""
+                                        className={`w-full text-left p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/events/ongoing" ? "bg-gray-200" : ""
                                             }`}
                                     >
                                         Ongoing
@@ -62,7 +64,7 @@ export default function Sidebar() {
                                 <li>
                                     <button
                                         onClick={() => handleOptionClick("Upcoming")}
-                                        className={`w-full text-left p-2 hover:bg-gray-200 rounded ${selectedOption === "Upcoming" ? "bg-gray-200" : ""
+                                        className={`w-full text-left p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/events/completed" ? "bg-gray-200" : ""
                                             }`}
                                     >
                                         Upcoming
@@ -71,7 +73,7 @@ export default function Sidebar() {
                                 <li>
                                     <button
                                         onClick={() => handleOptionClick("Completed")}
-                                        className={`w-full text-left p-2 hover:bg-gray-200 rounded ${selectedOption === "Completed" ? "bg-gray-200" : ""
+                                        className={`w-full text-left p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/events/completed" ? "bg-gray-200" : ""
                                             }`}
                                     >
                                         Completed
@@ -81,7 +83,7 @@ export default function Sidebar() {
                         )}
                     </li>
                     <li className="mb-2">
-                        <Link href="/dashboard/calendar" className="flex items-start gap-2 p-2 hover:bg-gray-200 rounded">
+                        <Link href="/dashboard/calendar" className={`flex items-start gap-2 p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/calendar" ? "bg-gray-200" : ""}`}>
                             <Calendar width={20} height={20} /> Calendar
                         </Link>
                     </li>

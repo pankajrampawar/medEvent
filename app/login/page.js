@@ -1,11 +1,13 @@
-'use client'
+'use client';
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/context/authContext";
 
 export default function Login() {
     const router = useRouter();
+    const { login } = useAuth(); // Use the login function from AuthContext
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -21,15 +23,16 @@ export default function Login() {
         setError(''); // Clear error when user starts typing
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (formData.email === 'zala@zala.com' && formData.password === '123test') {
-            router.push("/dashboard");
-        } else {
-            setError('Invalid email or password');
+        try {
+            await login(formData.email, formData.password); // Use the login function from AuthContext
+            router.push("/dashboard"); // Redirect to dashboard on successful login
+        } catch (error) {
+            setError(error.message); // Display error message if login fails
         }
-    }
+    };
 
     return (
         <div className="flex flex-col lg:flex-row w-screen min-h-screen max-h-screen overflow-clip">
