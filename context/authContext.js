@@ -8,23 +8,28 @@ const AuthContext = createContext();
 // AuthProvider component
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true); // Add a loading state
+    const [loading, setLoading] = useState(true); // Loading state
     const router = useRouter();
     const pathname = usePathname();
 
-    // Check if the user is logged in on initial load
+    // Check if the user is logged in on initial load or when pathname changes
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         const storedExpiration = localStorage.getItem('expiration');
 
-        // Enforce login only on `/user` pages
-        if (pathname.startsWith('/dashboard')) {
+        // Login enforcement logic
+        if (
+            pathname.startsWith('/dashboard') || // Pages under /dashboard
+            pathname === '/' // Home page
+        ) {
             if (storedUser && storedExpiration && new Date().getTime() < storedExpiration) {
                 setUser(JSON.parse(storedUser));
             } else {
-                logout(); // Redirects to login if not authenticated
+                logout(); // Redirect to login if not authenticated
             }
         }
+
+        // No login required for pages under /user
         setLoading(false); // Set loading to false after checking auth status
     }, [pathname]);
 
@@ -48,8 +53,10 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         localStorage.removeItem('user');
         localStorage.removeItem('expiration');
-        if (pathname.startsWith('/user')) {
-            router.push('/login'); // Redirect to login page after logout
+
+        // Redirect to login if on protected pages
+        if (pathname.startsWith('/dashboard') || pathname === '/') {
+            router.push('/login');
         }
     };
 
@@ -60,7 +67,10 @@ export const AuthProvider = ({ children }) => {
 
     // Redirect to login if not authenticated
     const redirectToLogin = () => {
-        if (!isAuthenticated() && pathname.startsWith('/user')) {
+        if (
+            !isAuthenticated() &&
+            (pathname.startsWith('/dashboard') || pathname === '/')
+        ) {
             router.push('/login');
         }
     };
