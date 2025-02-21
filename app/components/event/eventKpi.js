@@ -8,7 +8,7 @@ export default function EventKpi({ ongoing, completed, upcoming }) {
     return (
         <section>
             <div className="flex justify-start gap-4">
-                <button onClick={() => { router.push('/dashboard/events/') }}>
+                <button onClick={() => { router.push('/dashboard/events/ongoing') }}>
                     <KpiCard Icon={Loader} title="Total Events" percentage="+25%" number={ongoing + completed + upcoming} />
                 </button>
                 <button onClick={() => { router.push('/dashboard/events/ongoing') }}>
