@@ -88,7 +88,7 @@ export default function Sidebar() {
                         </Link>
                     </li>
                     <li className="mb-2">
-                        <Link href="/user-management" className="flex items-start gap-1 p-2 hover:bg-gray-200 rounded">
+                        <Link href="/dashboard/user-management" className="flex items-start gap-1 p-2 hover:bg-gray-200 rounded">
                             <User width={20} height={20} /> User Management
                         </Link>
                     </li>

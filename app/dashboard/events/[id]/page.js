@@ -39,12 +39,12 @@ export default function Event({ params }) {
     );
 
     return (
-        <div className="flex flex-col gap-6 mx-[5%] my-[5%]">
+        <div className="flex flex-col gap-6 mx-[5%] mb-[5%] mt-4">
             <h1 className="p-2 text-2xl flex items-center gap-2">
                 <button className="hover:bg-gray-200 p-2 rounded-full" onClick={() => router.back()}>
                     <ChevronLeft />
                 </button>
-                Event Name
+                Event Details
             </h1>
             <section className="">
                 <UserKpi total={users.length} completed={completedUsers.length} pending={pendingUsers.length} />
