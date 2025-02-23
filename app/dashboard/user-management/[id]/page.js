@@ -2,10 +2,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { addNewDoctor } from '@/lib/api';
-import Popup from '../popupCard';
+import Popup from '@/app/components/popupCard';
 import { useRouter } from 'next/navigation';
 
-export default function AddDoctor() {
+export default function EditDoctor() {
 
     const router = useRouter();
 
@@ -78,9 +78,9 @@ export default function AddDoctor() {
 
 
     return (
-        <div className="flex items-center justify-center p-4">
+        <div className="flex items-center justify-center p-4 my-[5%]">
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full">
-                <h2 className="text-2xl font-bold mb-6 text-start">Add Doctor</h2>
+                <h2 className="text-2xl font-bold mb-6 text-start">Edit Doctor</h2>
                 <div className='flex gap-4 w-full'>
                     <div className="mb-4 w-full">
                         <label className="block text-sm font-medium text-gray-700">First Name</label>

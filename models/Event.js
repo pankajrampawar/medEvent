@@ -23,12 +23,12 @@ const eventSchema = new mongoose.Schema({
         rquired: true
     },
 
-    // doctors: [
-    //     {
-    //         type: mongoose.Schema.Types.ObjectId,
-    //         ref: 'Doctor'
-    //     },
-    // ],
+    doctors: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Doctor'
+        },
+    ],
 });
 
 const Event = mongoose.models.Event || mongoose.model("Event", eventSchema)

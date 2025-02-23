@@ -8,14 +8,13 @@ export default function DoctorListing({ usersList }) {
     const router = useRouter();
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 10;
-    const [users] = useState(usersList); // Use usersList as initial data
 
     // Pagination logic
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
-    const currentUsers = users?.slice(indexOfFirstUser, indexOfLastUser); // Proper pagination
+    const currentUsers = usersList?.slice(indexOfFirstUser, indexOfLastUser); // Use usersList directly
 
-    const totalPages = Math.ceil(users?.length / usersPerPage);
+    const totalPages = Math.ceil(usersList?.length / usersPerPage);
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -29,10 +28,16 @@ export default function DoctorListing({ usersList }) {
         }
     };
 
-    // Function to format date
-    const formatDate = (dateString) => {
-        const options = { year: "numeric", month: "long", day: "numeric" };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+    const getRoleDescription = (role) => {
+        const roleDescriptions = {
+            emt: "Emergency Medical Technician",
+            medic: "Medic",
+            nppa: "Nurse Practitioner/Physician Assistant",
+            usP: "US Physicians",
+            interP: "International Physician"
+        };
+
+        return roleDescriptions[role] || "Unknown Role";
     };
 
     return (
@@ -91,20 +96,13 @@ export default function DoctorListing({ usersList }) {
                                             <span className="text-sm text-gray-500">{user.lastName}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4">{formatDate(user.dateOfBirth)}</td>
-                                    <td className="px-6 py-4">{user.contactNumber}</td>
-                                    <td className="px-6 py-4">
-                                        {user.charmChartFilledOut ? (
-                                            <span className="bg-green-200 text-green-950 text-sm p-1 rounded-sm">Checked</span>
-                                        ) : (
-                                            <span className="bg-yellow-200 text-green-950 text-sm p-1 rounded-sm">Pending</span>
-                                        )}
-                                    </td>
+                                    <td className="px-6 py-4">{user.email}</td>
+                                    <td className="px-6 py-4">{getRoleDescription(user.role)}</td>
                                     <td className="px-6 py-4 flex items-end">
                                         <button
                                             onClick={() =>
                                                 router.push(
-                                                    `/dashboard/events/user/${user._id}?data=${encodeURIComponent(
+                                                    `/dashboard/user-management/${user._id}?data=${encodeURIComponent(
                                                         JSON.stringify(user)
                                                     )}`
                                                 )
@@ -124,7 +122,7 @@ export default function DoctorListing({ usersList }) {
             {/* Pagination */}
             <div className="flex justify-between items-center mt-6">
                 <span className="text-sm text-gray-700">
-                    Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, users?.length)} of {users?.length} entries
+                    Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, usersList?.length)} of {usersList?.length} entries
                 </span>
                 <div className="flex space-x-2">
                     <motion.button
