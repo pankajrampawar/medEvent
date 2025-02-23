@@ -95,7 +95,8 @@ export default function EventsListing({ events }) {
                                     <td className="px-6 py-4">{event.location}</td>
                                     <td className="px-6 py-4">{formatDate(event.startDate)}</td>
                                     <td className="px-6 py-4">{formatDate(event.endDate)}</td>
-                                    <td className="px-2 py-4 flex gap-3 justify-center">
+                                    <td className="px-6 py-4 flex items-center">
+                                        <button className="text-gray-400 mr-4 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/edit-event/${event._id}?data=${encodeURIComponent(JSON.stringify(event))}`)}><Info /></button>
                                         <button className="text-gray-400 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/${event._id}`)}><Eye /></button>
                                     </td>
                                 </motion.tr>
