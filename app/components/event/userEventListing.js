@@ -1,19 +1,27 @@
-'use client';
+'use client'
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Eye } from "lucide-react";
+import { Trash, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function UserListing({ usersList }) {
+export default function UserListing({ eventId }) {
+
     const router = useRouter();
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 10;
-    const [users] = useState(usersList); // Use usersList as initial data
+
+    // Sample user data
+    const users = [
+        { id: 1, name: "Zsazsa McCleverty", username: "@zmcclevertye", dob: "25 Feb 2014", contact: "965284125", status: "completed", case: "Emergency" },
+        { id: 2, name: "Yoko Potte", username: "@ypotitec", dob: "20 Feb 1952", contact: "965284125", status: "completed", case: "Emergency" },
+        { id: 3, name: "Wesley Burland", username: "@wburland", dob: "12 Jan 1945", contact: "965284125", status: "completed", case: "Emergency" },
+        // Add more users as needed
+    ];
 
     // Pagination logic
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
-    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser); // Proper pagination
+    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
     const totalPages = Math.ceil(users.length / usersPerPage);
 
@@ -27,12 +35,6 @@ export default function UserListing({ usersList }) {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
         }
-    };
-
-    // Function to format date
-    const formatDate = (dateString) => {
-        const options = { year: "numeric", month: "long", day: "numeric" };
-        return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
     return (
@@ -68,6 +70,9 @@ export default function UserListing({ usersList }) {
                                     STATUS
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    CASE
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     ACTIONS
                                 </th>
                             </tr>
@@ -75,39 +80,23 @@ export default function UserListing({ usersList }) {
                         <tbody className="divide-y divide-gray-200">
                             {currentUsers.map((user) => (
                                 <motion.tr
-                                    key={user._id}
+                                    key={user.id}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.3 }}
                                 >
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
-                                            <span className="font-medium">{user.firstName}</span>
-                                            <span className="text-sm text-gray-500">{user.lastName}</span>
+                                            <span className="font-medium">{user.name}</span>
+                                            <span className="text-sm text-gray-500">{user.username}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4">{formatDate(user.dateOfBirth)}</td>
-                                    <td className="px-6 py-4">{user.contactNumber}</td>
-                                    <td className="px-6 py-4">
-                                        {user.charmChartFilledOut ? (
-                                            <span className="bg-green-200 text-green-950 text-sm p-1 rounded-sm">Checked</span>
-                                        ) : (
-                                            <span className="bg-yellow-200 text-green-950 text-sm p-1 rounded-sm">Pending</span>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4 flex items-end">
-                                        <button
-                                            onClick={() =>
-                                                router.push(
-                                                    `/dashboard/events/user/${user._id}?data=${encodeURIComponent(
-                                                        JSON.stringify(user)
-                                                    )}`
-                                                )
-                                            }
-                                            className="text-slate-400 hover:text-purple-700"
-                                        >
-                                            <Eye />
-                                        </button>
+                                    <td className="px-6 py-4">{user.dob}</td>
+                                    <td className="px-6 py-4">{user.contact}</td>
+                                    <td className="px-6 py-4"><span className="bg-green-200 text-green-950 text-sm p-1 rounded-sm">{user.status}</span></td>
+                                    <td className="text-sm"><span className="bg-red-200 text-red-900 p-1 rounded-md">{user.case}</span></td>
+                                    <td className="px-6 py-4 flex itmes-end">
+                                        <button onClick={() => router.push(`/dashboard/events/user/${123}`)} className="text-slate-400 hover:text-purple-700"><Eye /></button>
                                     </td>
                                 </motion.tr>
                             ))}
@@ -115,7 +104,6 @@ export default function UserListing({ usersList }) {
                     </table>
                 </div>
             </div>
-
             {/* Pagination */}
             <div className="flex justify-between items-center mt-6">
                 <span className="text-sm text-gray-700">
@@ -142,6 +130,6 @@ export default function UserListing({ usersList }) {
                     </motion.button>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

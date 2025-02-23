@@ -17,20 +17,25 @@ const eventSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-
     location: {
         type: String,
-        rquired: true
+        required: true
     },
-
     doctors: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Doctor'
+            name: {
+                type: String,
+                required: true
+            },
+            email: {
+                type: String,
+                required: true,
+                match: [/.+\@.+\..+/, 'Please enter a valid email address'] // Basic email validation
+            }
         },
     ],
 });
 
-const Event = mongoose.models.Event || mongoose.model("Event", eventSchema)
+const Event = mongoose.models.Event || mongoose.model("Event", eventSchema);
 
 export default Event;

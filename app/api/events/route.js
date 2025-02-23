@@ -39,7 +39,7 @@ export async function POST(req) {
             return Response.json({ error: "End Date must be greater than or equal to start date." }, { status: 400 });
         }
 
-        const newEvent = new Event({ title, description, startDate, endDate });
+        const newEvent = new Event({ title, description, startDate, endDate, location, doctors, ...(note && { note }) });
         await newEvent.save();
 
         return Response.json({ message: "Event Created Successfully", event: newEvent }, { status: 200 });
