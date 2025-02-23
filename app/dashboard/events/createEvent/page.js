@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createEvent } from "@/lib/api";
-import { useRouter } from "next/navigation";
 
 export default function CreateEvent() {
 
