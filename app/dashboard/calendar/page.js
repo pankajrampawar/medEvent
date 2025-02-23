@@ -5,7 +5,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
-import { Calendar, Info, X } from 'lucide-react';
+import { Calendar, Info, X, RefreshCw } from 'lucide-react';
 import { getEventDetails } from '@/lib/api';
 
 const CalendarComponent = () => {
@@ -42,14 +42,13 @@ const CalendarComponent = () => {
                 formattedStart = startDate.toISOString().split("T")[0];
                 formattedEnd = endDate ? endDate.toISOString().split("T")[0] : null;
 
-                // Determine color based on event status
                 let color;
                 if (endDate && endDate < now) {
-                    color = "#bbf7d0"; // Light green for completed
+                    color = "#d1f2eb"; // Light teal for completed events
                 } else if (startDate > now) {
-                    color = "#fecaca"; // Light red for upcoming
+                    color = "#fde2e1"; // Light peach for upcoming events
                 } else {
-                    color = "#fef9c3"; // Light yellow for ongoing
+                    color = "#fef4d9"; // Soft yellow for ongoing events
                 }
 
                 return {
@@ -57,15 +56,14 @@ const CalendarComponent = () => {
                     start: formattedStart,
                     end: formattedEnd,
                     color,
-                    textColor: "black"
+                    textColor: "black", // Black text for better contrast
                 };
             } catch (error) {
                 console.error(`Error formatting event: ${error.message}`);
-                return null; // Skip this event
+                return null;
             }
-        }).filter(Boolean); // Remove null entries
+        }).filter(Boolean);
     }
-
     const categorizeEvents = (allEvents) => {
         const now = new Date();
         const ongoing = [];
@@ -94,18 +92,15 @@ const CalendarComponent = () => {
             const fetchedEvents = result.events || [];
             const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
 
-            // Merge new events, removing duplicates based on ID
             const eventIds = new Set(storedEvents.map((event) => event.id));
             const updatedEvents = [
                 ...fetchedEvents.filter((event) => !eventIds.has(event.id)),
                 ...storedEvents,
             ];
 
-            // Update only the raw `events` state
             localStorage.setItem('events', JSON.stringify(updatedEvents));
             setEvents(updatedEvents);
 
-            // Format events for FullCalendar and set to `formattedEvents`
             const calendarEvents = formatEventsForCalendar(updatedEvents);
             setFormattedEvents(calendarEvents);
 
@@ -113,6 +108,11 @@ const CalendarComponent = () => {
         } catch (error) {
             console.error('Failed to update events:', error);
         }
+    };
+
+    const refreshEvents = async () => {
+        localStorage.removeItem('events');
+        await updateEvents();
     };
 
     useEffect(() => {
@@ -131,23 +131,28 @@ const CalendarComponent = () => {
 
         initializeEvents();
 
-        // Set up interval to fetch updates every 2 minutes
         const intervalId = setInterval(updateEvents, 2 * 60 * 1000);
         return () => clearInterval(intervalId);
     }, []);
 
-    console.log(events)
-    console.log(formattedEvents)
-
     return (
         <div className="flex h-screen">
-            {/* Main Content */}
             <div className="flex-grow p-4 bg-gray-100">
                 <div className="p-4 bg-white rounded-lg shadow-md text-black text-sm">
+                    <div className="flex justify-between mb-4">
+                        <h1 className="text-lg font-semibold">Calendar</h1>
+                        <button
+                            onClick={refreshEvents}
+                            className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                        >
+                            <RefreshCw size={18} className="mr-2" />
+                            Refresh Events
+                        </button>
+                    </div>
                     <FullCalendar
                         plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
                         initialView="dayGridMonth"
-                        events={formattedEvents} // Use formatted events
+                        events={formattedEvents} // Use the updated formattedEvents
                         eventClick={handleShow}
                         height="auto"
                         headerToolbar={{
@@ -159,11 +164,9 @@ const CalendarComponent = () => {
                 </div>
             </div>
 
-            {/* Event Details Modal */}
             {show && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
                     <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md transform transition-all pb-10">
-                        {/* Header */}
                         <div className="flex justify-between items-center pb-4 border-b">
                             <h3 className="text-xl font-semibold text-gray-900">
                                 {selectedEvent?.title || "Event Details"}
@@ -175,8 +178,6 @@ const CalendarComponent = () => {
                                 <X size={20} />
                             </button>
                         </div>
-
-                        {/* Content */}
                         <div className="mt-4 space-y-4">
                             <div className="flex items-center gap-3">
                                 <Calendar className="text-blue-600" size={18} />

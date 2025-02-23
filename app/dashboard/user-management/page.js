@@ -31,19 +31,13 @@ export default function UserManagement() {
         emt: doctorList.filter((doctor) => doctor.role === "emt"),
         medic: doctorList.filter((doctor) => doctor.role === "medic"),
         nppa: doctorList.filter((doctor) => doctor.role === "nppa"),
-        usPhysicians: doctorList.filter((doctor) => doctor.role === "usP"),
-        interPhysicians: doctorList.filter((doctor) => doctor.role === "interP"),
+        usP: doctorList.filter((doctor) => doctor.role === "usP"),
+        interP: doctorList.filter((doctor) => doctor.role === "interP"),
     }), [doctorList]);
 
     // Compute the displayed list based on the filter
     const displayedList = useMemo(() => {
         if (!filter) return doctorList;
-        const roleMap = {
-            emt: 'emt',
-            medic: 'medic',
-            usp: 'usP',
-            interP: 'interP',
-        };
         return doctorsByRole[filter] || [];
     }, [filter, doctorList, doctorsByRole]);
 
@@ -55,7 +49,7 @@ export default function UserManagement() {
         );
     }
 
-    console.log("displayed list:  ", displayedList)
+    console.log("displayed list:  ", displayedList + " \nFilter applied: ", filter)
 
     return (
         <div className="flex flex-col gap-8 mr-[5%]">
@@ -72,8 +66,8 @@ export default function UserManagement() {
                     total={doctorList.length}
                     emt={doctorsByRole.emt.length}
                     medic={doctorsByRole.medic.length}
-                    usp={doctorsByRole.usPhysicians.length}
-                    iP={doctorsByRole.interPhysicians.length}
+                    usp={doctorsByRole.usP.length}
+                    iP={doctorsByRole.interP.length}
                     setFilter={setFilter} // Pass the setFilter function to control filtering
                 />
             </div>

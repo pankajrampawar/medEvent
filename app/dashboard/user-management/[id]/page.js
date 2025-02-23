@@ -1,57 +1,40 @@
-'use client'
-import { useState } from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { addNewDoctor } from '@/lib/api';
-import Popup from '@/app/components/popupCard';
+import CustomPopup from '@/app/components/customPopup';
 import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { ChevronLeft } from 'lucide-react';
 
-export default function EditDoctor() {
-
+export default function EditDoctor({ params }) {
+    const searchParams = useSearchParams();
+    const { id } = React.use(params);
+    const userData = JSON.parse(searchParams.get('data'));
     const router = useRouter();
 
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        role: '',
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password,
+        role: userData.role,
     });
 
+    const [originalData, setOriginalData] = useState({ ...formData }); // Store original data
+    const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
+    const [showPopup, setShowPopup] = useState(false); // Toggle custom popup
+    const [popupMessage, setPopupMessage] = useState(''); // Popup message
+    const [popupAction, setPopupAction] = useState(null); // Popup action (callback)
+    const [isFormModified, setIsFormModified] = useState(false); // Track if form is modified
 
-    const [popupData, setPopupData] = useState({
-        message: '',
-        type: '',
-        isVisible: false,
-    });
-
-    const showPopup = (message, type) => {
-        setPopupData({
-            message,
-            type,
-            isVisible: true,
-        });
-    };
-
-    const closePopup = () => {
-        setPopupData((prev) => ({ ...prev, isVisible: false }));
-    };
-
-    const [showSuccess, setShowSuccess] = useState(false);
-
-    const generatePassword = () => {
-        const randomPassword = Math.random().toString(36).slice(-16); // Generates an 8-character random password
-        setFormData({ ...formData, password: randomPassword });
-    };
-
-    function generateStrongPassword() {
-        const length = 12;
-        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
-        let password = "";
-        for (let i = 0; i < length; i++) {
-            password += charset.charAt(Math.floor(Math.random() * charset.length));
-        }
-        return password;
-    }
+    // Check if form data is modified
+    useEffect(() => {
+        const isModified = Object.keys(formData).some(
+            (key) => formData[key] !== originalData[key]
+        );
+        setIsFormModified(isModified);
+    }, [formData, originalData]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -61,26 +44,66 @@ export default function EditDoctor() {
         });
     };
 
+    const handlePasswordChange = (e) => {
+        const { value } = e.target;
+        setFormData({
+            ...formData,
+            password: value,
+        });
+    };
+
+    const generatePassword = () => {
+        const randomPassword = Math.random().toString(36).slice(-16); // Generates a 16-character random password
+        setFormData({ ...formData, password: randomPassword });
+    };
+
+    const confirmAction = (message, action) => {
+        setPopupMessage(message);
+        setPopupAction(() => action);
+        setShowPopup(true);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Simulate API call to add doctor to the database
         try {
             const result = await addNewDoctor(formData);
-            showPopup("Staff Added successfully", 'success')
-            console.log(result);
-            router.back();
+            confirmAction("Staff updated successfully!", () => {
+                router.back();
+            });
         } catch (error) {
-            showPopup(`Error: ${error}`, 'error')
-            console.error('Error:', error);
+            confirmAction(`Error: ${error}`, () => { });
         }
     };
 
+    const handleDiscardChanges = () => {
+        confirmAction("Are you sure you want to discard changes? All changes will be reversed.", () => {
+            setFormData({ ...originalData }); // Restore original data
+        });
+    };
 
     return (
-        <div className="flex items-center justify-center p-4 my-[5%]">
+        <div className="flex flex-col items-center justify-center p-4 mt-[2%]">
+            <div className='flex justify-start w-full p-2'>
+                <button className='hover:bg-slate-300 rounded-full p-2' onClick={() => router.back()}>
+                    <ChevronLeft className='text-black ' />
+                </button>
+            </div>
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full">
-                <h2 className="text-2xl font-bold mb-6 text-start">Edit Doctor</h2>
+                <div className='flex justify-between items-center'>
+                    <h2 className="text-2xl font-bold mb-6 text-start">Edit Doctor</h2>
+
+                    {isFormModified && (
+                        <button
+                            type="button"
+                            onClick={handleDiscardChanges}
+                            className="mb-4 px-4 py-2  text-gray-700 hover:text-black border-black/40 hover:border-black rounded-md border-2"
+                        >
+                            Discard Changes
+                        </button>
+                    )}
+                </div>
+
                 <div className='flex gap-4 w-full'>
                     <div className="mb-4 w-full">
                         <label className="block text-sm font-medium text-gray-700">First Name</label>
@@ -123,16 +146,25 @@ export default function EditDoctor() {
                     <label className="block text-sm font-medium text-gray-700">Password</label>
                     <div className="mt-1 flex items-center">
                         <input
-                            type="text"
+                            type={showPassword ? "text" : "password"}
                             name="password"
                             value={formData.password}
-                            onChange={handleChange}
-                            className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-non e focus:ring-indigo-500 focus:border-indigo-500"
+                            onChange={handlePasswordChange}
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                             placeholder="Enter your password or generate one"
                         />
                         <button
                             type="button"
-                            onClick={generatePassword}
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="ml-2 px-3 py-2 bg-gray-500 text-white text-sm font-medium rounded-md shadow hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                        >
+                            {showPassword ? "Hide" : "Show"}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() =>
+                                confirmAction("Are you sure you want to generate a new password?", generatePassword)
+                            }
                             className="ml-2 px-3 py-2 bg-primary text-white text-sm font-medium rounded-md shadow hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         >
                             Auto-generate
@@ -160,30 +192,21 @@ export default function EditDoctor() {
 
                 <button
                     type="submit"
-                    className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-indigo-600  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    disabled={!isFormModified} // Disable if form is not modified
+                    className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                    Add Doctor
+                    Save Changes
                 </button>
             </form>
 
-            <AnimatePresence>
-                {showSuccess && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -50 }}
-                        className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg"
-                    >
-                        Doctor added successfully!
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {popupData.isVisible && (
-                <Popup
-                    message={popupData.message}
-                    type={popupData.type}
-                    onClose={closePopup}
+            {showPopup && (
+                <CustomPopup
+                    message={popupMessage}
+                    onYes={() => {
+                        popupAction?.();
+                        setShowPopup(false);
+                    }}
+                    onNo={() => setShowPopup(false)}
                 />
             )}
         </div>
