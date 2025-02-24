@@ -3,8 +3,14 @@ import EventKpi from "@/app/components/event/eventKpi";
 import EventListing from "@/app/components/event/eventListing";
 import { getEventDetails } from "@/lib/api";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/context/authContext";
 
 export default function OngoingEvent() {
+
+    const { user, logout } = useAuth();
+
+    const isAdmin = user?.role === 'admin';
+    const isDoctor = user?.role === 'doctor';
 
     const [events, setEvents] = useState([]);
     const [ongoingEvents, setOngoingEvents] = useState([]);
@@ -18,7 +24,7 @@ export default function OngoingEvent() {
         const completed = [];
         const upcoming = [];
 
-        allEvents.forEach((event) => {
+        allEvents?.forEach((event) => {
             const startDate = new Date(event.startDate);
             const endDate = new Date(event.endDate);
 
@@ -41,10 +47,21 @@ export default function OngoingEvent() {
             setLoading(true);
             const result = await getEventDetails();
             const fetchedEvents = result.events || [];
-
-            setEvents(fetchedEvents);
-            localStorage.setItem('events', JSON.stringify(fetchedEvents));
-            categorizeEvents(fetchedEvents);
+            let requiredEvents;
+            if (isAdmin) {
+                requiredEvents = fetchedEvents
+                setEvents(requiredEvents);
+            } else if (isDoctor) {
+                console.log("doctor")
+                // Filter events where the user's email exists in the doctor array
+                requiredEvents = fetchedEvents.filter(event =>
+                    event.doctor?.some(doc => doc.email === user.email)
+                );
+                setEvents(requiredEvents);
+            }
+            console.log(user)
+            localStorage.setItem('events', JSON.stringify(requiredEvents));
+            categorizeEvents(requiredEvents);
         } catch (error) {
             console.error("Failed to fetch events:", error);
         } finally {
@@ -73,7 +90,7 @@ export default function OngoingEvent() {
             </section>
 
             <section className="min-w-full">
-                <EventListing events={ongoingEvents} />
+                <EventListing events={ongoingEvents} isAdmin={isAdmin} />
             </section>
 
             <section className="fixed">

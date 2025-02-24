@@ -2,10 +2,14 @@
 import EventKpi from "@/app/components/event/eventKpi";
 import EventListing from "@/app/components/event/eventListing";
 import { useState, useEffect } from "react";
-
+import { useAuth } from "@/context/authContext";
 
 export default function CompletedEvent() {
 
+    const { user, logout } = useAuth();
+
+    const isAdmin = user?.role === 'admin';
+    const isDoctor = user?.role === 'doctor';
 
     const [events, setEvents] = useState([]);
     const [ongoingEvents, setOngoingEvents] = useState([]);
@@ -86,7 +90,7 @@ export default function CompletedEvent() {
             </section>
 
             <section className="min-w-full">
-                <EventListing events={completedEvents} />
+                <EventListing events={completedEvents} isAdmin={isAdmin} />
             </section>
 
             <section className="fixed">

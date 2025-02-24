@@ -5,7 +5,7 @@ import { Info, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 // Helper function to format the date
-const formatDate = (dateString) => {
+const formatDate = (dateStrings) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
         year: "numeric",
@@ -14,7 +14,7 @@ const formatDate = (dateString) => {
     });
 };
 
-export default function EventsListing({ events }) {
+export default function EventsListing({ events, isAdmin }) {
     const router = useRouter();
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -50,14 +50,14 @@ export default function EventsListing({ events }) {
                             placeholder="Search Events"
                             className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                         />
-                        <motion.button
+                        {isAdmin && < motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors"
                             onClick={() => { router.push('/dashboard/events/createEvent') }}
                         >
-                            Add New Event
-                        </motion.button>
+                            `Add New `Event
+                        </motion.button>}
                     </div>
                 </div>
 
@@ -132,6 +132,6 @@ export default function EventsListing({ events }) {
                     </motion.button>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
