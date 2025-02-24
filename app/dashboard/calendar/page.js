@@ -7,8 +7,15 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import { Calendar, Info, X, RefreshCw } from 'lucide-react';
 import { getEventDetails } from '@/lib/api';
+import { useAuth } from '@/context/authContext';
 
 const CalendarComponent = () => {
+
+    const { user, logout } = useAuth();
+
+    const isAdmin = user?.role === 'admin';
+    const isDoctor = user?.role === 'doctor';
+
     const [show, setShow] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [events, setEvents] = useState([]);
@@ -98,13 +105,20 @@ const CalendarComponent = () => {
                 ...storedEvents,
             ];
 
-            localStorage.setItem('events', JSON.stringify(updatedEvents));
+            let requiredEvents = updatedEvents;
+
+            if (!isAdmin) {
+                requiredEvents = updatedEvents.filter(event =>
+                    event.doctor?.some(doc => doc.email === user.email)
+                );
+            }
+            localStorage.setItem('events', JSON.stringify(requiredEvents));
             setEvents(updatedEvents);
 
-            const calendarEvents = formatEventsForCalendar(updatedEvents);
+            const calendarEvents = formatEventsForCalendar(requiredEvents);
             setFormattedEvents(calendarEvents);
 
-            categorizeEvents(updatedEvents);
+            categorizeEvents(requiredEvents);
         } catch (error) {
             console.error('Failed to update events:', error);
         }
