@@ -43,6 +43,7 @@ export default function OngoingEvent() {
             const fetchedEvents = result.events || [];
 
             setEvents(fetchedEvents);
+            localStorage.setItem('events', JSON.stringify(fetchedEvents));
             categorizeEvents(fetchedEvents);
         } catch (error) {
             console.error("Failed to fetch events:", error);
