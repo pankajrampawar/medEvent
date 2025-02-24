@@ -2,14 +2,41 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Trash } from 'lucide-react';
+import { updateEvent } from '@/lib/api';
+import Popup from '../popupCard';
+import { useRouter } from 'next/navigation';
 
-const EventFormFilled = ({ isEditable = true, submitFunction, eventDetails }) => {
+const EventFormFilled = ({ isEditable = true, eventDetails }) => {
+
+    const router = useRouter();
+
+    const [popup, setPopup] = useState({
+        isVisible: false,
+        message: '',
+        type: '', // 'success', 'error', 'warning', or default
+    });
+
+    const showPopup = (message, type) => {
+        setPopup({
+            isVisible: true,
+            message,
+            type,
+        });
+    };
+
+    const closePopup = () => {
+        setPopup({
+            isVisible: false,
+            message: '',
+            type: '',
+        });
+    };
 
     const formatDate = (isoDate) => {
         if (!isoDate) return '';
         return new Date(isoDate).toISOString().split('T')[0];
     };
-
+    console.log(eventDetails)
     const [formData, setFormData] = useState({
         title: eventDetails.title,
         startDate: formatDate(eventDetails.startDate),
@@ -76,7 +103,17 @@ const EventFormFilled = ({ isEditable = true, submitFunction, eventDetails }) =>
             return; // Prevent form submission
         }
 
-        await submitFunction(formData);
+        const result = await updateEvent(eventDetails._id, formData)
+        if (result) {
+            showPopup('Updated successfully', 'success')
+            router.back();
+            return;
+        }
+        if (!result) {
+            showPopup('Some Error Occured, Pleae try again later', 'error');
+            router.back();
+            return;
+        }
         console.log('Form Data Submitted:', formData);
         setError(''); // Clear any previous errors
         // You can add your form submission logic here, such as an API call
@@ -266,6 +303,15 @@ const EventFormFilled = ({ isEditable = true, submitFunction, eventDetails }) =>
                     </button>
                 </div>
             </form>
+
+            {popup.isVisible && (
+                <Popup
+                    message={popup.message}
+                    type={popup.type}
+                    onClose={closePopup}
+                />
+            )
+            }
         </motion.div>
     );
 };

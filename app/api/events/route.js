@@ -48,3 +48,40 @@ export async function POST(req) {
         return Response.json({ error: error.message }, { status: 500 });
     }
 }
+
+export async function PUT(req) {
+    await connectToDatabse();
+    console.log('running PUT request');
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id'); // Get the event's ID from the query parameters
+
+        if (!id) {
+            return Response.json({ error: "Event ID is required" }, { status: 400 });
+        }
+
+        // Get the updated fields from the request body
+        const { title, description, startDate, endDate, location, doctors, option, note } = await req.json();
+
+        // Validate start and end date
+        if (new Date(startDate) > new Date(endDate)) {
+            return Response.json({ error: "End Date must be greater than or equal to start date." }, { status: 400 });
+        }
+
+        // Find the event by ID and update its details
+        const updatedEvent = await Event.findByIdAndUpdate(
+            id,
+            { title, description, startDate, endDate, location, doctors, ...(note && { note }) },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedEvent) {
+            return Response.json({ error: "Event not found" }, { status: 404 });
+        }
+
+        return Response.json({ message: "Event Updated Successfully", event: updatedEvent }, { status: 200 });
+    } catch (error) {
+        console.log(error.message);
+        return Response.json({ error: error.message }, { status: 500 });
+    }
+}
