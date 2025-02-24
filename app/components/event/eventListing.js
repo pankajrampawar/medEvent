@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 // Helper function to format the date
 const formatDate = (dateStrings) => {
-    const date = new Date(dateString);
+    const date = new Date(dateStrings);
     return date.toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
@@ -56,7 +56,7 @@ export default function EventsListing({ events, isAdmin }) {
                             className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors"
                             onClick={() => { router.push('/dashboard/events/createEvent') }}
                         >
-                            `Add New `Event
+                            Add New Event
                         </motion.button>}
                     </div>
                 </div>

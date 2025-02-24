@@ -7,7 +7,7 @@ import { useAuth } from "@/context/authContext";
 
 export default function OngoingEvent() {
 
-    const { user, logout } = useAuth();
+    const { user, loading: authLoading } = useAuth(); // Use loading state from authContext
 
     const isAdmin = user?.role === 'admin';
     const isDoctor = user?.role === 'doctor';
@@ -48,18 +48,18 @@ export default function OngoingEvent() {
             const result = await getEventDetails();
             const fetchedEvents = result.events || [];
             let requiredEvents;
+
             if (isAdmin) {
-                requiredEvents = fetchedEvents
+                requiredEvents = fetchedEvents;
                 setEvents(requiredEvents);
             } else if (isDoctor) {
-                console.log("doctor")
                 // Filter events where the user's email exists in the doctor array
                 requiredEvents = fetchedEvents.filter(event =>
                     event.doctor?.some(doc => doc.email === user.email)
                 );
                 setEvents(requiredEvents);
             }
-            console.log(user)
+
             localStorage.setItem('events', JSON.stringify(requiredEvents));
             categorizeEvents(requiredEvents);
         } catch (error) {
@@ -70,18 +70,22 @@ export default function OngoingEvent() {
     };
 
     useEffect(() => {
-        fetchEvents();
+        if (!authLoading && user) {
+            fetchEvents();
 
-        // Set up interval to fetch updates every 2 minutes
-        const intervalId = setInterval(fetchEvents, 2 * 60 * 1000);
-        return () => clearInterval(intervalId);
-    }, []);
+            // Set up interval to fetch updates every 2 minutes
+            const intervalId = setInterval(fetchEvents, 2 * 60 * 1000);
+            return () => clearInterval(intervalId);
+        }
+    }, [authLoading, user]);
 
-    if (loading) return (
-        <div className="flex justify-center items-center">
-            Loading...
-        </div>
-    );
+    if (authLoading || loading) {
+        return (
+            <div className="flex justify-center items-center">
+                Loading...
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col w-full gap-4 p-[5%]">
