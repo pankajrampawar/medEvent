@@ -4,12 +4,17 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Home, User, Calendar, HeartPulse } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/authContext";
 
 export default function Sidebar() {
     const router = useRouter();
     const pathname = usePathname();
     const [isDropdownOpen, setIsDropdownOpen] = useState(true);
     const [selectedOption, setSelectedOption] = useState("Ongoing");
+    const { user, loading: authLoading } = useAuth();
+
+    const isAdmin = user?.role === 'admin';
+    const isDoctor = user?.role === 'doctor';
 
     const toggleDropdown = () => {
         router.push('/dashboard/events/ongoing')
@@ -87,11 +92,19 @@ export default function Sidebar() {
                             <Calendar width={20} height={20} /> Calendar
                         </Link>
                     </li>
-                    <li className="mb-2">
-                        <Link href="/dashboard/user-management" className="flex items-start gap-1 p-2 hover:bg-gray-200 rounded">
-                            <User width={20} height={20} /> User Management
-                        </Link>
-                    </li>
+                    {!authLoading &&
+                        isAdmin ?
+                        <li className="mb-2">
+                            <Link href="/dashboard/user-management" className="flex items-start gap-1 p-2 hover:bg-gray-200 rounded">
+                                <User width={20} height={20} /> User Management
+                            </Link>
+                        </li> :
+                        isDoctor ? <li className="mb-2">
+                            <Link href="/dashboard/profile/" className="flex items-start gap-1 p-2 hover:bg-gray-200 rounded">
+                                <User width={20} height={20} /> Your Profile
+                            </Link>
+                        </li> : ""
+                    }
                 </ul>
             </nav>
         </div>

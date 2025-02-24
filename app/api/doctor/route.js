@@ -7,6 +7,7 @@ export async function GET(req) {
     try {
         const { searchParams } = new URL(req.url);
         const id = searchParams.get('id');
+        const email = searchParams.get('email');
 
         if (id) {
             // Fetch a specific doctor by ID
@@ -17,8 +18,17 @@ export async function GET(req) {
             }
 
             return Response.json({ doctor });
+        } else if (email) {
+            // Fetch a specific doctor by email
+            const doctor = await Doctor.findOne({ email });
+
+            if (!doctor) {
+                return Response.json({ error: "Doctor not found" }, { status: 404 });
+            }
+
+            return Response.json({ doctor });
         } else {
-            // Fetch all doctors if no ID is specified
+            // Fetch all doctors if no ID or email is specified
             const doctors = await Doctor.find({});
             return Response.json({ doctors });
         }
