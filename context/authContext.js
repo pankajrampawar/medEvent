@@ -51,12 +51,12 @@ export const AuthProvider = ({ children }) => {
         try {
             const cred = { email, password };
             const userData = await checkCred(cred); // Call the checkCred function
-
+            const doctorData = { email: userData.doctor.email, role: 'doctor' }
             // If credentials are valid, set user data
             const expiration = new Date().getTime() + 5 * 60 * 60 * 1000; // 5 hours
 
-            setUser(userData);
-            localStorage.setItem('user', JSON.stringify(userData));
+            setUser(doctorData);
+            localStorage.setItem('user', JSON.stringify(doctorData));
             localStorage.setItem('expiration', expiration);
 
         } catch (error) {
