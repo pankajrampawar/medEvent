@@ -1,6 +1,7 @@
 'use client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { checkCred } from '@/lib/api';
 
 // Create the context
 const AuthContext = createContext();
@@ -34,17 +35,32 @@ export const AuthProvider = ({ children }) => {
     }, [pathname]);
 
     // Login function
-    const login = (email, password) => {
-        // Replace this with your actual authentication logic
-        if (email === 'user@example.com' && password === 'password') {
-            const userData = { email };
+    const login = async (email, password) => {
+        // Check if the user is an admin
+        if (email === 'admin@example.com' && password === 'adminpassword') {
+            const userData = { email, role: 'admin' };
             const expiration = new Date().getTime() + 5 * 60 * 60 * 1000; // 5 hours
 
             setUser(userData);
             localStorage.setItem('user', JSON.stringify(userData));
             localStorage.setItem('expiration', expiration);
-        } else {
-            throw new Error('Invalid email or password');
+            return; // Exit the function after handling admin login
+        }
+
+        // If not an admin, check credentials for a regular user/doctor
+        try {
+            const cred = { email, password };
+            const userData = await checkCred(cred); // Call the checkCred function
+
+            // If credentials are valid, set user data
+            const expiration = new Date().getTime() + 5 * 60 * 60 * 1000; // 5 hours
+
+            setUser(userData);
+            localStorage.setItem('user', JSON.stringify(userData));
+            localStorage.setItem('expiration', expiration);
+
+        } catch (error) {
+            throw new Error(error.message || 'Invalid email or password');
         }
     };
 

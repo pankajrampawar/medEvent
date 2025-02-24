@@ -22,6 +22,8 @@ const PatientForm = ({ isEditable = true, params }) => {
         }));
     };
 
+    console.log(userData)
+
     // Call the updateUser function in handleSubmit
     const handleSubmit = async (e) => {
         e.preventDefault();

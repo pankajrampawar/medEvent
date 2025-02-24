@@ -38,6 +38,8 @@ export default function Event({ params }) {
         </div>
     );
 
+    console.log(users)
+
     return (
         <div className="flex flex-col gap-6 mx-[5%] mb-[5%] mt-4">
             <h1 className="p-2 text-2xl flex items-center gap-2">

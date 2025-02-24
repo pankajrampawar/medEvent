@@ -1,11 +1,12 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { addNewDoctor } from '@/lib/api';
+import { addNewDoctor, upDateDoctor } from '@/lib/api';
 import CustomPopup from '@/app/components/customPopup';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
+import Popup from '@/app/components/popupCard';
 
 export default function EditDoctor({ params }) {
     const searchParams = useSearchParams();
@@ -67,10 +68,10 @@ export default function EditDoctor({ params }) {
         e.preventDefault();
 
         try {
-            const result = await addNewDoctor(formData);
-            confirmAction("Staff updated successfully!", () => {
-                router.back();
-            });
+            const result = await upDateDoctor(id, formData);
+            if (result) {
+                Popup
+            }
         } catch (error) {
             confirmAction(`Error: ${error}`, () => { });
         }

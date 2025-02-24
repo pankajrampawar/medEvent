@@ -1,7 +1,6 @@
 import connectToDatabse from "@/lib/mongodb";
 import Doctor from "@/models/Doctor";
 
-
 export async function GET(req) {
     await connectToDatabse();
 
@@ -10,16 +9,16 @@ export async function GET(req) {
         const id = searchParams.get('id');
 
         if (id) {
-            // Fetch a specific event by ID
-            const event = await Doctor.findById(id);
+            // Fetch a specific doctor by ID
+            const doctor = await Doctor.findById(id);
 
-            if (!event) {
-                return Response.json({ error: "Event not found" }, { status: 404 });
+            if (!doctor) {
+                return Response.json({ error: "Doctor not found" }, { status: 404 });
             }
 
-            return Response.json({ event });
+            return Response.json({ doctor });
         } else {
-            // Fetch all events if no ID is specified
+            // Fetch all doctors if no ID is specified
             const doctors = await Doctor.find({});
             return Response.json({ doctors });
         }
@@ -30,7 +29,7 @@ export async function GET(req) {
 
 export async function POST(req) {
     await connectToDatabse();
-    console.log('running request')
+    console.log('running request');
     try {
         const { firstName, lastName, email, password, role } = await req.json();
         console.log(firstName, lastName, email, password, role);
@@ -38,9 +37,41 @@ export async function POST(req) {
         const newDoctor = new Doctor({ firstName, lastName, email, password, role });
         await newDoctor.save();
 
-        return Response.json({ message: "Event Created Successfully", doctor: newDoctor }, { status: 200 });
+        return Response.json({ message: "Doctor Created Successfully", doctor: newDoctor }, { status: 200 });
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
+        return Response.json({ error: error.message }, { status: 500 });
+    }
+}
+
+export async function PUT(req) {
+    await connectToDatabse();
+    console.log('running PUT request');
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id'); // Get the doctor's ID from the query parameters
+
+        if (!id) {
+            return Response.json({ error: "Doctor ID is required" }, { status: 400 });
+        }
+
+        // Get the updated fields from the request body
+        const { firstName, lastName, email, password, role } = await req.json();
+
+        // Find the doctor by ID and update their details
+        const updatedDoctor = await Doctor.findByIdAndUpdate(
+            id,
+            { firstName, lastName, email, password, role },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedDoctor) {
+            return Response.json({ error: "Doctor not found" }, { status: 404 });
+        }
+
+        return Response.json({ message: "Doctor Updated Successfully", doctor: updatedDoctor }, { status: 200 });
+    } catch (error) {
+        console.log(error.message);
         return Response.json({ error: error.message }, { status: 500 });
     }
 }
