@@ -54,8 +54,10 @@ export default function OngoingEvent() {
                 setEvents(requiredEvents);
             } else if (isDoctor) {
                 // Filter events where the user's email exists in the doctor array
+                console.log(fetchedEvents)
+                alert('doctor')
                 requiredEvents = fetchedEvents.filter(event =>
-                    event.doctor?.some(doc => doc.email === user.email)
+                    event.doctors?.some(doc => doc.email === user.email)
                 );
                 setEvents(requiredEvents);
             }
