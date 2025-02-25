@@ -89,8 +89,6 @@ const CalendarComponent = () => {
                 ongoing.push(event);
             }
         });
-
-        console.log({ ongoing, completed, upcoming });
     };
 
     const updateEvents = async () => {
@@ -109,7 +107,7 @@ const CalendarComponent = () => {
 
             if (!isAdmin) {
                 requiredEvents = updatedEvents.filter(event =>
-                    event.doctor?.some(doc => doc.email === user.email)
+                    event.doctors?.some(doc => doc.email === user.email)
                 );
             }
             localStorage.setItem('events', JSON.stringify(requiredEvents));
