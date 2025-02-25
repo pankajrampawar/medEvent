@@ -1,11 +1,10 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Trash } from 'lucide-react';
 import { updateEvent } from '@/lib/api';
 import Popup from '../popupCard';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/authContext';
+import { getDoctorsList } from '@/lib/api';
 
 const EventFormFilled = ({ isEditable = true, eventDetails }) => {
 
@@ -14,6 +13,18 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
         message: '',
         type: '', // 'success', 'error', 'warning', or default
     });
+
+    useEffect(() => {
+        const fetchDoctorsList = async () => {
+            alert("hi")
+            const result = await getDoctorsList();
+            if (result) {
+                setDoctors(result.doctors)
+            }
+        }
+
+        fetchDoctorsList();
+    }, [])
 
     const showPopup = (message, type) => {
         setPopup({
@@ -35,6 +46,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
         if (!isoDate) return '';
         return new Date(isoDate).toISOString().split('T')[0];
     };
+
     console.log(eventDetails)
     const [formData, setFormData] = useState({
         title: eventDetails.title,
@@ -48,6 +60,12 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
     });
 
     const [error, setError] = useState('');
+    const [doctors, setDoctors] = useState([]);
+    const [nameSuggestions, setNameSuggestions] = useState([]);
+    const [emailSuggestions, setEmailSuggestions] = useState([]);
+    const [currentField, setCurrentField] = useState(null);
+    const [isFocused, setIsFocused] = useState(false); // Track focus state
+
 
     // Handle changes for all fields except doctors
     const handleChange = (e) => {
@@ -61,6 +79,17 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
         if (name === 'startDate' || name === 'endDate') {
             setError('');
         }
+
+        if (name === "startDate" || name === "endDate") {
+            const startDate = name === "startDate" ? new Date(value) : new Date(formData.startDate);
+            const endDate = name === "endDate" ? new Date(value) : new Date(formData.endDate);
+
+            if (startDate > endDate) {
+                setError("End date cannot be earlier than start date.");
+            } else {
+                setError("");
+            }
+        }
     };
 
     // Handle changes for doctor fields
@@ -73,6 +102,60 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
             ...formData,
             doctors: updatedDoctors,
         });
+    };
+
+    const handleNameInputChange = (index, value) => {
+        setCurrentField(index); // Track the current field
+        const filteredNames = doctors.filter((doctor) =>
+            doctor.firstName.toLowerCase().includes(value.toLowerCase()) ||
+            doctor.lastName.toLowerCase().includes(value.toLowerCase())
+        );
+        setNameSuggestions(filteredNames);
+        handleDoctorChange(index, { target: { name: "name", value } });
+    };
+
+
+    const handleEmailInputFocus = (index, name) => {
+        setIsFocused(true);
+        const filteredEmails = doctors
+            .filter((doctor) => `${doctor.firstName} ${doctor.lastName}` === name)
+            .map((doctor) => doctor.email);
+        setEmailSuggestions(filteredEmails);
+        setCurrentField(index);
+    };
+
+    const handleEmailInputChange = (index, value, name) => {
+        setCurrentField(index);
+        const filteredEmails = doctors
+            .filter((doctor) => `${doctor.firstName} ${doctor.lastName}` === name)
+            .map((doctor) => doctor.email);
+        setEmailSuggestions(filteredEmails);
+        handleDoctorChange(index, { target: { name: "email", value } });
+    };
+
+    const selectSuggestion = (index, suggestion, type) => {
+        if (type === "name") {
+            const fullName = `${suggestion.firstName} ${suggestion.lastName}`;
+            handleDoctorChange(index, { target: { name: "name", value: fullName } });
+            const filteredEmails = doctors
+                .filter((doctor) => `${doctor.firstName} ${doctor.lastName}` === fullName)
+                .map((doctor) => doctor.email);
+            if (filteredEmails.length === 1) {
+                // Auto-fill email if name is unique
+                handleDoctorChange(index, { target: { name: "email", value: filteredEmails[0] } });
+            }
+            setNameSuggestions([]);
+        }
+        if (type === "email") {
+            handleDoctorChange(index, { target: { name: "email", value: suggestion } });
+            setEmailSuggestions([]);
+        }
+    };
+
+    const handleNameInputFocus = (index) => {
+        setIsFocused(true);
+        setNameSuggestions(doctors); // Show all doctors when the input is focused
+        setCurrentField(index);
     };
 
     // Add a new doctor field
@@ -162,6 +245,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                                 name="startDate"
                                 value={formData.startDate}
                                 onChange={handleChange}
+                                min={new Date().toISOString().split('T')[0]}
                                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                                 disabled={!isEditable}
                                 required={true}
@@ -177,6 +261,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                                 name="endDate"
                                 value={formData.endDate}
                                 onChange={handleChange}
+                                min={formData.startDate || new Date().toISOString().split('T')[0]}
                                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                                 disabled={!isEditable}
                                 required={true}
@@ -237,7 +322,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                     <h3 className="text-md font-medium mb-2">Doctors</h3>
                     {formData.doctors.map((doctor, index) => (
                         <div key={index} className="mb-4 space-x-2 flex w-full  items-center">
-                            <div className='flex-grow'>
+                            <div className='flex-grow relative'>
                                 <label
                                     htmlFor={`doctorName-${index}`}
                                     className="block text-sm font-medium text-gray-700"
@@ -249,13 +334,28 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                                     id={`doctorName-${index}`}
                                     name="name"
                                     value={doctor.name}
-                                    onChange={(e) => handleDoctorChange(index, e)}
+                                    onFocus={() => handleNameInputFocus(index, doctor.name)}
+                                    onChange={(e) => handleNameInputChange(index, e.target.value)}
                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                                     disabled={!isEditable}
                                     required={true}
+                                    autoComplete="off"
                                 />
+                                {currentField === index && nameSuggestions.length > 0 && (
+                                    <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto w-full">
+                                        {nameSuggestions.map((suggestion, i) => (
+                                            <div
+                                                key={i}
+                                                className="p-2 hover:bg-gray-100 cursor-pointer"
+                                                onClick={() => selectSuggestion(index, suggestion, "name")}
+                                            >
+                                                {suggestion.firstName} {suggestion.lastName}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
-                            <div className='flex-grow'>
+                            <div className='flex-grow relative'>
                                 <label
                                     htmlFor={`doctorEmail-${index}`}
                                     className="block text-sm font-medium text-gray-700"
@@ -267,11 +367,26 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                                     id={`doctorEmail-${index}`}
                                     name="email"
                                     value={doctor.email}
-                                    onChange={(e) => handleDoctorChange(index, e)}
+                                    onFocus={() => handleEmailInputFocus(index, doctor.name)} // Pass the doctor's name
+                                    onChange={(e) => handleEmailInputChange(index, e.target.value, doctor.name)}
                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                                     disabled={!isEditable}
                                     required={true}
+                                    autoComplete="off"
                                 />
+                                {currentField === index && emailSuggestions.length > 0 && (
+                                    <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto w-full">
+                                        {emailSuggestions.map((email, i) => (
+                                            <div
+                                                key={i}
+                                                className="p-2 hover:bg-gray-100 cursor-pointer"
+                                                onClick={() => selectSuggestion(index, email, "email")}
+                                            >
+                                                {email}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             {isEditable &&

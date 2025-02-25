@@ -33,7 +33,6 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
         fetchDoctorsList();
     }, [])
 
-    console.log(formData);
 
     const handleNameInputChange = (index, value) => {
         setCurrentField(index); // Track the current field
@@ -43,6 +42,15 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
         );
         setNameSuggestions(filteredNames);
         handleDoctorChange(index, { target: { name: "name", value } });
+    };
+
+    const handleEmailInputChange = (index, value, name) => {
+        setCurrentField(index);
+        const filteredEmails = doctors
+            .filter((doctor) => `${doctor.firstName} ${doctor.lastName}` === name)
+            .map((doctor) => doctor.email);
+        setEmailSuggestions(filteredEmails);
+        handleDoctorChange(index, { target: { name: "email", value } });
     };
 
     const selectSuggestion = (index, suggestion, type) => {
@@ -98,9 +106,12 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
         setCurrentField(index);
     };
 
-    const handleEmailInputFocus = (index) => {
+    const handleEmailInputFocus = (index, name) => {
         setIsFocused(true);
-        setEmailSuggestions(doctors); // Show all doctors when the input is focused
+        const filteredEmails = doctors
+            .filter((doctor) => `${doctor.firstName} ${doctor.lastName}` === name)
+            .map((doctor) => doctor.email);
+        setEmailSuggestions(filteredEmails);
         setCurrentField(index);
     };
 
@@ -313,9 +324,8 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                                     id={`doctorEmail-${index}`}
                                     name="email"
                                     value={doctor.email}
-                                    onChange={(e) =>
-                                        handleEmailInputChange(index, e.target.value, doctor.name)
-                                    }
+                                    onFocus={() => handleEmailInputFocus(index, doctor.name)} // Pass the doctor's name
+                                    onChange={(e) => handleEmailInputChange(index, e.target.value, doctor.name)}
                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                                     disabled={!isEditable}
                                     required={true}
