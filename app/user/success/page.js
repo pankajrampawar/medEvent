@@ -11,12 +11,6 @@ const SuccessMessage = ({ onContinue }) => {
                 <p className="text-gray-600 mb-4">
                     Thank you for submitting the form. We have received your details and will process them soon.
                 </p>
-                <button
-                    onClick={onContinue}
-                    className="px-4 py-2 bg-green-500 text-white font-medium rounded-lg shadow hover:bg-green-600 transition duration-200"
-                >
-                    Continue
-                </button>
             </div>
         </div>
     );

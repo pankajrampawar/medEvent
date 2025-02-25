@@ -8,7 +8,6 @@ export default function EntryForm({ params }) {
     const { id } = React.use(params);
     const [loading, setLoading] = useState(true);
     const [eventDetails, setEventDetails] = useState(null);
-    console.log("event: ", eventDetails)
     const [eventStatus, setEventStatus] = useState("");
     const [allowed, setAllowed] = useState();
 
@@ -16,9 +15,8 @@ export default function EntryForm({ params }) {
         const getEventById = async (id) => {
             try {
                 const result = await getEventDetails(id);
-                console.log(result);
-                setEventDetails(result.event); // Store event details in state
-                checkEventStatus(result.event.startDate, result.event.endDate); // Check event status
+                setEventDetails(result.event);
+                checkEventStatus(result.event.startDate, result.event.endDate);
                 setLoading(false);
             } catch (error) {
                 throw new Error("Unable to load data, please try again later.");
@@ -31,20 +29,18 @@ export default function EntryForm({ params }) {
         const currentDate = new Date();
         const eventStartDate = new Date(startDate);
         const eventEndDate = new Date(endDate);
-        console.log(eventStartDate, eventEndDate)
         if (currentDate < eventStartDate) {
             setEventStatus("This event has not started yet.");
-            setAllowed(false)
+            setAllowed(false);
         } else if (currentDate > eventEndDate) {
             setEventStatus("This event has been completed.");
-            setAllowed(false)
+            setAllowed(false);
         } else {
             setEventStatus("This event is ongoing.");
-            setAllowed(true)
+            setAllowed(true);
         }
     };
 
-    // Get icon path based on event status
     const getIconPath = () => {
         if (eventStatus === "This event has not started yet.") {
             return "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z";
@@ -74,13 +70,13 @@ export default function EntryForm({ params }) {
     }
 
     return (
-        <div className="min-h-screen bg-gray-100 p-6">
+        <div className="min-h-screen bg-gray-100 p-2 sm:p-6">
             {eventStatus && !allowed && (
                 <motion.div
                     initial={{ opacity: 0, y: -50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg text-center my-8"
+                    className="max-w-2xl mx-auto bg-white p-6 sm:p-8 rounded-lg shadow-lg text-center my-8"
                 >
                     <p
                         className={`text-2xl font-bold ${eventStatus === "This event has not started yet."
@@ -148,31 +144,8 @@ export default function EntryForm({ params }) {
                     initial={{ opacity: 0, y: -50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg"
+                    className="max-w-2xl mx-auto bg-white p-2 sm:p-8 rounded-lg shadow-lg"
                 >
-                    <motion.div
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: 0.3, duration: 0.5 }}
-                        className="flex items-center space-x-3 mb-6"
-                    >
-                        <svg
-                            className="w-6 h-6 text-green-600"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                            ></path>
-                        </svg>
-                        <h2 className="text-2xl font-bold text-gray-800">Event Registration</h2>
-                    </motion.div>
-
                     <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}

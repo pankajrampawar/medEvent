@@ -3,10 +3,12 @@ import { addNewUser } from '@/lib/api';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Router } from 'lucide-react';
+import { AlertCircle, CheckCircle, Calendar, Phone, Send, User } from 'lucide-react';
 
 const RegistrationForm = ({ eventId }) => {
     const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [formErrors, setFormErrors] = useState({});
 
     const [formData, setFormData] = useState({
         eventId: eventId,
@@ -19,21 +21,42 @@ const RegistrationForm = ({ eventId }) => {
         allergyInfo: ''
     });
 
+    const validateForm = () => {
+        const errors = {};
+        if (!formData.firstName.trim()) errors.firstName = "First name is required";
+        if (!formData.lastName.trim()) errors.lastName = "Last name is required";
+        if (!formData.dateOfBirth) errors.dateOfBirth = "Date of birth is required";
+        if (!formData.contactNumber.trim()) errors.contactNumber = "Contact number is required";
+
+        // Simple phone validation
+        if (formData.contactNumber && !/^\d{10,15}$/.test(formData.contactNumber.replace(/[^\d]/g, ''))) {
+            errors.contactNumber = "Please enter a valid phone number";
+        }
+
+        // Validate allergy info if hasAllergy is true
+        if (formData.hasAllergy && !formData.allergyInfo.trim()) {
+            errors.allergyInfo = "Please provide allergy information";
+        }
+
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!validateForm()) return;
+
+        setIsSubmitting(true);
+
         try {
-            console.log("event id in form: ", formData.eventId);
-            console.log("actual event id", eventId);
-            const result = addNewUser(formData);
-            alert('form submitted successfully');
-            console.log(result)
-            router.push('/user/success')
+            const result = await addNewUser(formData);
+            router.push('/user/success');
         } catch (error) {
-            alert(error.message)
-            console.log(error)
+            setIsSubmitting(false);
+            alert(error.message || 'An error occurred. Please try again.');
+            console.error(error);
         }
-        console.log('Form submitted:', formData);
     };
 
     const handleInputChange = (e) => {
@@ -42,147 +65,262 @@ const RegistrationForm = ({ eventId }) => {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
+
+        // Clear error when field is edited
+        if (formErrors[name]) {
+            setFormErrors(prev => ({ ...prev, [name]: undefined }));
+        }
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
+        <div className="w-full">
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="relative py-3 sm:max-w-xl sm:mx-auto"
+                transition={{ duration: 0.4 }}
+                className="w-full"
             >
-                <div className="relative px-4 py-10 bg-white mx-8 md:mx-0 shadow rounded-3xl sm:p-10">
-                    <div className="max-w-md mx-auto">
-                        <div className="flex items-center space-x-5">
-                            <div className="block pl-2 font-semibold text-xl text-gray-700">
-                                <h2 className="leading-relaxed">Registration Form</h2>
-                                <p className="text-sm text-gray-500 font-normal leading-relaxed">
-                                    Fill in your details to register for the event
-                                </p>
-                            </div>
-                        </div>
+                <div className="bg-white shadow-lg rounded-2xl overflow-hidden">
+                    <div className="bg-gradient-to-r from-indigo-600 to-blue-500 px-6 py-4">
+                        <h2 className="text-xl font-bold text-white flex items-center">
+                            <User className="w-5 h-5 mr-2" />
+                            Registration Form
+                        </h2>
+                        <p className="text-indigo-100 text-sm mt-1">
+                            Please fill in your details to register for the event
+                        </p>
+                    </div>
 
-                        <form className="divide-y divide-gray-200" onSubmit={handleSubmit}>
-                            <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-                                <div className="flex flex-col md:flex-row gap-4">
-                                    <div className="flex-1">
-                                        <label className="block text-sm font-medium text-gray-700">First Name</label>
+                    <form className="p-6" onSubmit={handleSubmit} noValidate aria-label="Registration form">
+                        <div className="space-y-6">
+                            {/* Name Fields */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+                                        First Name<span className="text-red-500">*</span>
+                                    </label>
+                                    <div className="relative">
                                         <input
+                                            id="firstName"
                                             type="text"
                                             name="firstName"
-                                            placeholder="Ex: John"
+                                            placeholder="Enter first name"
                                             value={formData.firstName}
                                             onChange={handleInputChange}
-                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                            required
+                                            aria-required="true"
+                                            aria-invalid={!!formErrors.firstName}
+                                            aria-describedby={formErrors.firstName ? "firstName-error" : undefined}
+                                            className={`w-full px-4 py-2 border ${formErrors.firstName ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-indigo-200'} rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-colors`}
                                         />
-                                    </div>
-                                    <div className="flex-1">
-                                        <label className="block text-sm font-medium text-gray-700">Last Name</label>
-                                        <input
-                                            type="text"
-                                            name="lastName"
-                                            placeholder="ex. Doe"
-                                            value={formData.lastName}
-                                            onChange={handleInputChange}
-                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                        />
+                                        {formErrors.firstName && (
+                                            <div id="firstName-error" className="text-red-500 text-xs mt-1 flex items-center">
+                                                <AlertCircle className="w-3 h-3 mr-1" />
+                                                {formErrors.firstName}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+                                        Last Name<span className="text-red-500">*</span>
+                                    </label>
                                     <input
+                                        id="lastName"
+                                        type="text"
+                                        name="lastName"
+                                        placeholder="Enter last name"
+                                        value={formData.lastName}
+                                        onChange={handleInputChange}
+                                        required
+                                        aria-required="true"
+                                        aria-invalid={!!formErrors.lastName}
+                                        aria-describedby={formErrors.lastName ? "lastName-error" : undefined}
+                                        className={`w-full px-4 py-2 border ${formErrors.lastName ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-indigo-200'} rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-colors`}
+                                    />
+                                    {formErrors.lastName && (
+                                        <div id="lastName-error" className="text-red-500 text-xs mt-1 flex items-center">
+                                            <AlertCircle className="w-3 h-3 mr-1" />
+                                            {formErrors.lastName}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Date of Birth */}
+                            <div>
+                                <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Date of Birth<span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <Calendar className="h-5 w-5 text-gray-400" />
+                                    </div>
+                                    <input
+                                        id="dateOfBirth"
                                         type="date"
                                         name="dateOfBirth"
                                         value={formData.dateOfBirth}
                                         onChange={handleInputChange}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                        required
+                                        aria-required="true"
+                                        aria-invalid={!!formErrors.dateOfBirth}
+                                        aria-describedby={formErrors.dateOfBirth ? "dateOfBirth-error" : undefined}
+                                        className={`w-full pl-10 pr-4 py-2 border ${formErrors.dateOfBirth ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-indigo-200'} rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-colors`}
                                     />
                                 </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Contact Number</label>
-                                    <input
-                                        type="tel"
-                                        name="contactNumber"
-                                        placeholder="Enter Your Mobile Number"
-                                        value={formData.contactNumber}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Chief Complaints</label>
-                                    <textarea
-                                        name="chiefComplaint"
-                                        placeholder="Describe the primary health concern"
-                                        value={formData.chiefComplaint}
-                                        onChange={handleInputChange}
-                                        rows={3}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Do you have any allergy?</label>
-                                    <div className="flex items-center space-x-4">
-                                        <label className="inline-flex items-center">
-                                            <input
-                                                type="radio"
-                                                name="hasAllergy"
-                                                checked={formData.hasAllergy}
-                                                onChange={() => setFormData(prev => ({ ...prev, hasAllergy: true }))}
-                                                className="form-radio text-indigo-600"
-                                            />
-                                            <span className="ml-2">YES</span>
-                                        </label>
-                                        <label className="inline-flex items-center">
-                                            <input
-                                                type="radio"
-                                                name="hasAllergy"
-                                                checked={!formData.hasAllergy}
-                                                onChange={() => setFormData(prev => ({ ...prev, hasAllergy: false }))}
-                                                className="form-radio text-indigo-600"
-                                            />
-                                            <span className="ml-2">NO</span>
-                                        </label>
+                                {formErrors.dateOfBirth && (
+                                    <div id="dateOfBirth-error" className="text-red-500 text-xs mt-1 flex items-center">
+                                        <AlertCircle className="w-3 h-3 mr-1" />
+                                        {formErrors.dateOfBirth}
                                     </div>
-                                </div>
-
-                                {formData.hasAllergy && (
-                                    <motion.div
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: 'auto' }}
-                                        exit={{ opacity: 0, height: 0 }}
-                                        transition={{ duration: 0.3 }}
-                                    >
-                                        <label className="block text-sm font-medium text-gray-700">Allergy Information</label>
-                                        <textarea
-                                            name="allergyInfo"
-                                            placeholder="Describe allergy info here"
-                                            value={formData.allergyInfo}
-                                            onChange={handleInputChange}
-                                            rows={3}
-                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                        />
-                                    </motion.div>
                                 )}
                             </div>
 
-                            <div className="pt-4">
-                                <motion.button
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    type="submit"
-                                    className="w-full px-4 py-3 bg-gray-900 rounded-md text-white text-sm font-medium hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
-                                >
-                                    Submit
-                                </motion.button>
+                            {/* Contact Number */}
+                            <div>
+                                <label htmlFor="contactNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Contact Number<span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <Phone className="h-5 w-5 text-gray-400" />
+                                    </div>
+                                    <input
+                                        id="contactNumber"
+                                        type="tel"
+                                        name="contactNumber"
+                                        placeholder="Enter your mobile number"
+                                        value={formData.contactNumber}
+                                        onChange={handleInputChange}
+                                        required
+                                        aria-required="true"
+                                        aria-invalid={!!formErrors.contactNumber}
+                                        aria-describedby={formErrors.contactNumber ? "contactNumber-error" : undefined}
+                                        className={`w-full pl-10 pr-4 py-2 border ${formErrors.contactNumber ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-indigo-200'} rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-colors`}
+                                    />
+                                </div>
+                                {formErrors.contactNumber && (
+                                    <div id="contactNumber-error" className="text-red-500 text-xs mt-1 flex items-center">
+                                        <AlertCircle className="w-3 h-3 mr-1" />
+                                        {formErrors.contactNumber}
+                                    </div>
+                                )}
                             </div>
-                        </form>
-                    </div>
+
+                            {/* Chief Complaint */}
+                            <div>
+                                <label htmlFor="chiefComplaint" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Chief Complaints
+                                </label>
+                                <textarea
+                                    id="chiefComplaint"
+                                    name="chiefComplaint"
+                                    placeholder="Describe the primary health concern"
+                                    value={formData.chiefComplaint}
+                                    onChange={handleInputChange}
+                                    rows={3}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:ring-opacity-50 focus:border-indigo-300 transition-colors"
+                                />
+                            </div>
+
+                            {/* Allergy Question */}
+                            <fieldset className="border border-gray-200 rounded-lg p-4">
+                                <legend className="text-sm font-medium text-gray-700 px-2">
+                                    Do you have any allergy?
+                                </legend>
+                                <div className="flex items-center gap-6 mt-2">
+                                    <div className="flex items-center">
+                                        <input
+                                            id="allergy-yes"
+                                            type="radio"
+                                            name="hasAllergy"
+                                            checked={formData.hasAllergy}
+                                            onChange={() => setFormData(prev => ({ ...prev, hasAllergy: true }))}
+                                            className="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                                            aria-labelledby="allergy-yes-label"
+                                        />
+                                        <label id="allergy-yes-label" htmlFor="allergy-yes" className="ml-2 text-sm text-gray-700">
+                                            Yes
+                                        </label>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <input
+                                            id="allergy-no"
+                                            type="radio"
+                                            name="hasAllergy"
+                                            checked={!formData.hasAllergy}
+                                            onChange={() => setFormData(prev => ({ ...prev, hasAllergy: false, allergyInfo: '' }))}
+                                            className="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300"
+                                            aria-labelledby="allergy-no-label"
+                                        />
+                                        <label id="allergy-no-label" htmlFor="allergy-no" className="ml-2 text-sm text-gray-700">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            {/* Allergy Information (Conditional) */}
+                            {formData.hasAllergy && (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <label htmlFor="allergyInfo" className="block text-sm font-medium text-gray-700 mb-1">
+                                        Allergy Information<span className="text-red-500">*</span>
+                                    </label>
+                                    <textarea
+                                        id="allergyInfo"
+                                        name="allergyInfo"
+                                        placeholder="Please describe your allergies in detail"
+                                        value={formData.allergyInfo}
+                                        onChange={handleInputChange}
+                                        rows={3}
+                                        required={formData.hasAllergy}
+                                        aria-required={formData.hasAllergy}
+                                        aria-invalid={!!formErrors.allergyInfo}
+                                        aria-describedby={formErrors.allergyInfo ? "allergyInfo-error" : undefined}
+                                        className={`w-full px-4 py-2 border ${formErrors.allergyInfo ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-indigo-200'} rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-colors`}
+                                    />
+                                    {formErrors.allergyInfo && (
+                                        <div id="allergyInfo-error" className="text-red-500 text-xs mt-1 flex items-center">
+                                            <AlertCircle className="w-3 h-3 mr-1" />
+                                            {formErrors.allergyInfo}
+                                        </div>
+                                    )}
+                                </motion.div>
+                            )}
+                        </div>
+
+                        {/* Submit Button */}
+                        <div className="mt-8">
+                            <motion.button
+                                whileHover={{ scale: 1.01 }}
+                                whileTap={{ scale: 0.98 }}
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:bg-indigo-400 disabled:cursor-not-allowed"
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Send className="w-5 h-5 mr-2" />
+                                        Submit Registration
+                                    </>
+                                )}
+                            </motion.button>
+                        </div>
+                    </form>
                 </div>
             </motion.div>
         </div>

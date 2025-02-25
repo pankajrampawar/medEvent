@@ -16,7 +16,6 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
 
     useEffect(() => {
         const fetchDoctorsList = async () => {
-            alert("hi")
             const result = await getDoctorsList();
             if (result) {
                 setDoctors(result.doctors)
