@@ -9,7 +9,7 @@ const SuccessMessage = ({ onContinue }) => {
                     Form Submitted Successfully!
                 </h1>
                 <p className="text-gray-600 mb-4">
-                    Thank you for submitting the form. We have received your details and will process them soon.
+                    Thank you for submitting the form.
                 </p>
             </div>
         </div>

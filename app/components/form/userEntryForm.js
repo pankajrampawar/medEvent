@@ -153,9 +153,6 @@ const RegistrationForm = ({ eventId }) => {
                                     Date of Birth<span className="text-red-500">*</span>
                                 </label>
                                 <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <Calendar className="h-5 w-5 text-gray-400" />
-                                    </div>
                                     <input
                                         id="dateOfBirth"
                                         type="date"
@@ -166,7 +163,8 @@ const RegistrationForm = ({ eventId }) => {
                                         aria-required="true"
                                         aria-invalid={!!formErrors.dateOfBirth}
                                         aria-describedby={formErrors.dateOfBirth ? "dateOfBirth-error" : undefined}
-                                        className={`w-full pl-10 pr-4 py-2 border ${formErrors.dateOfBirth ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-indigo-200'} rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-colors`}
+                                        max={new Date().toISOString().split('T')[0]} // Block future dates
+                                        className={`w-full pl-4 pr-4 py-2 border ${formErrors.dateOfBirth ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-indigo-200'} rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-colors`}
                                     />
                                 </div>
                                 {formErrors.dateOfBirth && (
