@@ -5,10 +5,9 @@ import { Trash } from 'lucide-react';
 import { updateEvent } from '@/lib/api';
 import Popup from '../popupCard';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/authContext';
 
 const EventFormFilled = ({ isEditable = true, eventDetails }) => {
-
-    const router = useRouter();
 
     const [popup, setPopup] = useState({
         isVisible: false,
@@ -275,13 +274,15 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                                 />
                             </div>
 
-                            <button
-                                type="button"
-                                onClick={() => removeDoctor(index)}
-                                className="text-sm text-red-500 hover:text-red-700 pt-4"
-                            >
-                                <Trash />
-                            </button>
+                            {isEditable &&
+                                <button
+                                    type="button"
+                                    onClick={() => removeDoctor(index)}
+                                    className="text-sm text-red-500 hover:text-red-700 pt-4"
+                                >
+                                    <Trash />
+                                </button>
+                            }
                         </div>
                     ))}
                     <button
