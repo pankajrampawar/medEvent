@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Home, User, Calendar, HeartPulse } from "lucide-react";
+import { Home, User, Calendar, HeartPulse, LogOut } from "lucide-react"; // Import LogOut icon
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/authContext";
 
@@ -11,7 +11,7 @@ export default function Sidebar() {
     const pathname = usePathname();
     const [isDropdownOpen, setIsDropdownOpen] = useState(true);
     const [selectedOption, setSelectedOption] = useState("Ongoing");
-    const { user, loading: authLoading } = useAuth();
+    const { user, loading: authLoading, logout } = useAuth();
 
     const isAdmin = user?.role === 'admin';
     const isDoctor = user?.role === 'doctor';
@@ -25,6 +25,15 @@ export default function Sidebar() {
         const smallCaseOption = option.toLowerCase();
         router.push(`/dashboard/events/${smallCaseOption}`)
         setSelectedOption(option);
+    };
+
+    const handleLogout = async () => {
+        try {
+            await logout(); // Ensure logout is completed before redirecting
+            router.push('/login'); // Redirect to login page
+        } catch (error) {
+            console.error("Error during logout:", error);
+        }
     };
 
     return (
@@ -107,6 +116,15 @@ export default function Sidebar() {
                     }
                 </ul>
             </nav>
+            {/* Logout Button */}
+            <div className="p-4 border-t border-gray-200 mb-10">
+                <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2 p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                >
+                    <LogOut width={20} height={20} /> Log Out
+                </button>
+            </div>
         </div>
     );
 }
