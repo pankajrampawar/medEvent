@@ -53,8 +53,20 @@ const userSchema = new mongoose.Schema({
         default: false // Default to false if not provided
     },
     otcSuppliesDispensed: {
-        type: Boolean,
-        default: false // Default to false if not provided
+        type: [
+            {
+                value: {
+                    type: String,
+                    required: true, // Ensure the item is always provided
+                },
+                quantity: {
+                    type: Number,
+                    required: true, // Ensure the quantity is always provided
+                    min: 1, // Ensure the quantity is at least 1
+                },
+            },
+        ],
+        default: [], // Default to an empty array if not provided
     },
     note: {
         type: String,

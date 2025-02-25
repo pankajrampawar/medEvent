@@ -53,7 +53,7 @@ export async function PUT(req) {
             primaryDiagnosis,
             conditionCategory,
             charmChartFilledOut,
-            otcSupplies,
+            otcSuppliesDispensed,
             note
         } = await req.json();
 
@@ -65,7 +65,7 @@ export async function PUT(req) {
                     primaryDiagnosis,
                     conditionCategory,
                     charmChartFilledOut,
-                    otcSupplies,
+                    otcSuppliesDispensed,
                     note
                 }
             },
