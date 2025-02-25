@@ -10,6 +10,7 @@ import SuccessPopup from '@/app/components/popupCard';
 
 export default function EditDoctor() {
 
+    const router = useRouter();
     const { user, loading: authLoading } = useAuth();
     const [loading, setLoading] = useState(true)
     const [doctor, setDoctor] = useState({})
