@@ -166,10 +166,10 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                     />
                 </div>
                 <div className="mb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
+                    <div className="flex flex-col md:flex-row items-center justify-center w-full gap-4">
+                        <div className="flex flex-col w-full ">
                             <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
-                                Start Date <span className='text-red-700 text-xl'>*</span>
+                                Start Date <span className="text-red-700 text-xl">*</span>
                             </label>
                             <input
                                 type="date"
@@ -182,9 +182,9 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                                 required={true}
                             />
                         </div>
-                        <div>
+                        <div className="flex flex-col w-full ">
                             <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
-                                End Date
+                                End Date  <span className="text-red-700 text-xl">*</span>
                             </label>
                             <input
                                 type="date"
