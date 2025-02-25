@@ -52,14 +52,7 @@ export default function UserManagement() {
     console.log("displayed list:  ", displayedList + " \nFilter applied: ", filter)
 
     return (
-        <div className="flex flex-col gap-8 mr-[5%]">
-            <h1 className="p-2 text-2xl flex items-center gap-2 mt-4">
-                <button className="hover:bg-gray-200 p-2 rounded-full" onClick={() => router.back()}>
-                    <ChevronLeft />
-                </button>
-                User Management
-            </h1>
-
+        <div className="flex flex-col gap-8 mr-[5%] mt-10">
             <div>
                 {/* Pass role-based arrays to the KPI component */}
                 <DoctorKpi
