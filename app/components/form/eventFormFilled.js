@@ -123,7 +123,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="p-6 border rounded-lg shadow-sm mx-auto bg-white"
+            className="p-6 border rounded-lg shadow-sm mx-auto bg-white mb-32"
         >
             <h2 className="text-lg font-semibold mb-4">Event Information</h2>
 
@@ -285,24 +285,24 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                             }
                         </div>
                     ))}
-                    <button
+                    {isEditable && <button
                         type="button"
                         onClick={addDoctor}
                         className="text-sm text-blue-500 hover:text-blue-700"
                     >
                         + Add Doctor
-                    </button>
+                    </button>}
                 </div>
 
                 {/* Submit Button */}
-                <div className="flex justify-end">
+                {isEditable && <div className="flex justify-end">
                     <button
                         type="submit"
                         className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                         Submit
                     </button>
-                </div>
+                </div>}
             </form>
 
             {popup.isVisible && (
