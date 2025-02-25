@@ -4,13 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { addNewDoctor, getDoctorByEmail, upDateDoctor } from '@/lib/api';
 import CustomPopup from '@/app/components/customPopup';
 import { useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import Popup from '@/app/components/popupCard';
 
 export default function EditDoctor({ params }) {
-
-    const searchParams = useSearchParams();
     const { email } = React.use(params);
 
     const [formData, setFormData] = useState({
