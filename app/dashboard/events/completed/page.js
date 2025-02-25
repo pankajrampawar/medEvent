@@ -3,6 +3,7 @@ import EventKpi from "@/app/components/event/eventKpi";
 import EventListing from "@/app/components/event/eventListing";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/authContext";
+import { getEventDetails } from "@/lib/api";
 
 export default function CompletedEvent() {
 
