@@ -12,8 +12,8 @@ export default function Event({ params }) {
     const [loading, setLoading] = useState(true);
     const { id } = React.use(params);
     const [users, setUsers] = useState([]);
-    const [showPending, setShowPending] = useState([]);
-    const [showCompleted, setShowCompleted] = useState([]);
+    const [showPending, setShowPending] = useState(false);
+    const [showCompleted, setShowCompleted] = useState(false);
 
     useEffect(() => {
         const getUsers = async (eventId) => {
