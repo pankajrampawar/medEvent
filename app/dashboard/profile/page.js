@@ -5,25 +5,48 @@ import { addNewDoctor, getDoctorByEmail, upDateDoctor } from '@/lib/api';
 import CustomPopup from '@/app/components/customPopup';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
-import Popup from '@/app/components/popupCard';
+import { useAuth } from "@/context/authContext";
 
-export default function EditDoctor({ params }) {
-    const { email } = React.use(params);
+export default function EditDoctor() {
 
-    const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        role: "",
-    });
+    const { user, loading: authLoading } = useAuth();
+    const [loading, setLoading] = useState(true)
+    const [doctor, setDoctor] = useState({})
+    const [formData, setFormData] = useState({});
+
 
     useEffect(() => {
         const getUserdata = async () => {
-            const result = await getDoctorByEmail(email);
-            console.log(result);
+            if (user && user.email) {
+                try {
+                    setLoading(true);
+                    const result = await getDoctorByEmail(user.email);
+                    setDoctor(result.doctor)
+                    const dr = result.doctor
+
+                    const initialFormData = {
+                        firstName: dr.firstName,
+                        lastName: dr.lastName,
+                        email: dr.email,
+                        password: dr.password,
+                        role: dr.role,
+                    };
+                    setFormData(initialFormData);
+                    setOriginalData(initialFormData); // Set original data after loading
+                    setIsFormModified(false);
+                } catch (error) {
+                    console.error("Error fetching doctor data:", error);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        // Only run when authLoading is false (auth process is complete)
+        if (!authLoading) {
+            getUserdata();
         }
-    }, [])
+    }, [authLoading, user]);
 
     const [originalData, setOriginalData] = useState({ ...formData }); // Store original data
     const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
@@ -70,11 +93,9 @@ export default function EditDoctor({ params }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const id = doctor._id;
         try {
             const result = await upDateDoctor(id, formData);
-            if (result) {
-                Popup
-            }
         } catch (error) {
             confirmAction(`Error: ${error}`, () => { });
         }
@@ -85,6 +106,19 @@ export default function EditDoctor({ params }) {
             setFormData({ ...originalData }); // Restore original data
         });
     };
+
+    if (authLoading || loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-100">
+                <div className="flex items-center space-x-4">
+                    <div className="w-8 h-8 border-4 border-gray-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="text-2xl font-semibold text-gray-700">
+                        Authenticating
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="flex flex-col items-center justify-center p-4 mt-[2%]">
