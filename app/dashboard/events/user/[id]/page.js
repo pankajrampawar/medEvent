@@ -6,6 +6,7 @@ import { getEventDetails, updateUser } from '@/lib/api';
 import Select from 'react-select';
 import { options } from '@/app/utils/options';
 import SuccessPopup from '@/app/components/popupCard';
+import { useAuth } from '@/context/authContext';
 
 const PatientForm = ({ isEditable = true, params }) => {
     const searchParams = useSearchParams();
@@ -18,6 +19,7 @@ const PatientForm = ({ isEditable = true, params }) => {
     const [errors, setErrors] = useState({}); // State to manage validation errors
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const { user, loading: authLoading } = useAuth();
 
     const showSuccessMessage = (message) => {
         setSuccessMessage(message);
@@ -25,6 +27,9 @@ const PatientForm = ({ isEditable = true, params }) => {
     };
 
     console.log(userData);
+
+    const isAdmin = user?.role === 'admin';
+    isEditable = !isAdmin
 
     // Handle input changes
     const handleInputChange = (e) => {
@@ -129,6 +134,19 @@ const PatientForm = ({ isEditable = true, params }) => {
             setLoading(false);
         }
     };
+
+    if (authLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-100">
+                <div className="flex items-center space-x-4">
+                    <div className="w-8 h-8 border-4 border-gray-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="text-2xl font-semibold text-gray-700">
+                        Authenticating...
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     if (loading) {
         return (
