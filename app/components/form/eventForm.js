@@ -45,15 +45,6 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
         handleDoctorChange(index, { target: { name: "name", value } });
     };
 
-    const handleEmailInputChange = (index, value, name) => {
-        setCurrentField(index); // Track the current field
-        const filteredEmails = doctors
-            .filter((doctor) => `${doctor.firstName} ${doctor.lastName}` === name)
-            .map((doctor) => doctor.email);
-        setEmailSuggestions(filteredEmails);
-        handleDoctorChange(index, { target: { name: "email", value } });
-    };
-
     const selectSuggestion = (index, suggestion, type) => {
         if (type === "name") {
             const fullName = `${suggestion.firstName} ${suggestion.lastName}`;
@@ -86,6 +77,31 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
         if (name === 'startDate' || name === 'endDate') {
             setError('');
         }
+
+        if (name === "startDate" || name === "endDate") {
+            const startDate = name === "startDate" ? new Date(value) : new Date(formData.startDate);
+            const endDate = name === "endDate" ? new Date(value) : new Date(formData.endDate);
+
+            if (startDate > endDate) {
+                setError("End date cannot be earlier than start date.");
+            } else {
+                setError("");
+            }
+        }
+    };
+
+    const [isFocused, setIsFocused] = useState(false); // Track focus state
+
+    const handleNameInputFocus = (index) => {
+        setIsFocused(true);
+        setNameSuggestions(doctors); // Show all doctors when the input is focused
+        setCurrentField(index);
+    };
+
+    const handleEmailInputFocus = (index) => {
+        setIsFocused(true);
+        setEmailSuggestions(doctors); // Show all doctors when the input is focused
+        setCurrentField(index);
     };
 
     // Handle changes for doctor fields
@@ -177,6 +193,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                                 name="startDate"
                                 value={formData.startDate}
                                 onChange={handleChange}
+                                min={new Date().toISOString().split('T')[0]} // Disable past dates
                                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                                 disabled={!isEditable}
                                 required={true}
@@ -192,8 +209,9 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                                 name="endDate"
                                 value={formData.endDate}
                                 onChange={handleChange}
+                                min={formData.startDate || new Date().toISOString().split('T')[0]} // Ensure endDate is not before startDate or today
                                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                                disabled={!isEditable}
+                                disabled={!isEditable || !formData.startDate} // Disable if startDate is not set
                                 required={true}
                             />
                         </div>
@@ -264,6 +282,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                                     id={`doctorName-${index}`}
                                     name="name"
                                     value={doctor.name}
+                                    onFocus={() => handleNameInputFocus(index, doctor.name)}
                                     onChange={(e) => handleNameInputChange(index, e.target.value)}
                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                                     disabled={!isEditable}
