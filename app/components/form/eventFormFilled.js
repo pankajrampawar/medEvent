@@ -5,14 +5,19 @@ import { Trash } from 'lucide-react';
 import { updateEvent } from '@/lib/api';
 import Popup from '../popupCard';
 import { getDoctorsList } from '@/lib/api';
+import { useRouter } from 'next/navigation';
+import SuccessPopup from '../popupCard';
 
 const EventFormFilled = ({ isEditable = true, eventDetails }) => {
 
-    const [popup, setPopup] = useState({
-        isVisible: false,
-        message: '',
-        type: '', // 'success', 'error', 'warning', or default
-    });
+    const router = useRouter();
+    const [successMessage, setSuccessMessage] = useState('');
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+    const showSuccessMessage = (message) => {
+        setSuccessMessage(message);
+        setIsPopupOpen(true);
+    };
 
     useEffect(() => {
         const fetchDoctorsList = async () => {
@@ -24,22 +29,6 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
 
         fetchDoctorsList();
     }, [])
-
-    const showPopup = (message, type) => {
-        setPopup({
-            isVisible: true,
-            message,
-            type,
-        });
-    };
-
-    const closePopup = () => {
-        setPopup({
-            isVisible: false,
-            message: '',
-            type: '',
-        });
-    };
 
     const formatDate = (isoDate) => {
         if (!isoDate) return '';
@@ -186,12 +175,14 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
 
         const result = await updateEvent(eventDetails._id, formData)
         if (result) {
-            showPopup('Updated successfully', 'success')
-            router.back();
+            showSuccessMessage("Event updated successfully!");
+            setTimeout(() => {
+                router.back();
+            }, 1500); // 1.5 second delay
             return;
         }
         if (!result) {
-            showPopup('Some Error Occured, Pleae try again later', 'error');
+            alert('error')
             router.back();
             return;
         }
@@ -388,8 +379,8 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                                 )}
                             </div>
 
-                            {isEditable &&
-                                <button
+                            {isEditable && formData.doctors.length > 1 &&
+                                < button
                                     type="button"
                                     onClick={() => removeDoctor(index)}
                                     className="text-sm text-red-500 hover:text-red-700 pt-4"
@@ -419,15 +410,13 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                 </div>}
             </form>
 
-            {popup.isVisible && (
-                <Popup
-                    message={popup.message}
-                    type={popup.type}
-                    onClose={closePopup}
-                />
-            )
-            }
-        </motion.div>
+            <SuccessPopup
+                isOpen={isPopupOpen}
+                onClose={() => setIsPopupOpen(false)}
+                message={successMessage}
+                autoCloseTime={1200} // Will auto close after 3 seconds
+            />
+        </motion.div >
     );
 };
 

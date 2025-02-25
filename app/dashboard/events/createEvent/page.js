@@ -22,11 +22,12 @@ export default function CreateEvent() {
         try {
             const result = await createEvent(formData);
             if (result) {
+                showSuccessMessage("Event created successfully!");
 
-                return router.back();
+                setTimeout(() => {
+                    router.back();
+                }, 1500); // 1.5 second delay
             }
-            console.log(result)
-            showSuccessMessage("Event created successfully!");
         } catch (error) {
             alert(error.message);
             console.log(error);
@@ -88,7 +89,7 @@ export default function CreateEvent() {
                 isOpen={isPopupOpen}
                 onClose={() => setIsPopupOpen(false)}
                 message={successMessage}
-                autoCloseTime={3000} // Will auto close after 3 seconds
+                autoCloseTime={1200} // Will auto close after 3 seconds
             />
         </div >
     )
