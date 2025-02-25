@@ -18,14 +18,21 @@ export default function EventsListing({ events, isAdmin }) {
     const router = useRouter();
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchQuery, setSearchQuery] = useState(""); // State for search query
     const eventsPerPage = 7;
 
-    // Pagination logic
+    // Filter events based on search query
+    const filteredEvents = events.filter((event) =>
+        event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        event.location.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // Pagination logic for filtered events
     const indexOfLastEvent = currentPage * eventsPerPage;
     const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-    const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
+    const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
-    const totalPages = Math.ceil(events.length / eventsPerPage);
+    const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -39,6 +46,12 @@ export default function EventsListing({ events, isAdmin }) {
         }
     };
 
+    // Handle search input change
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+        setCurrentPage(1); // Reset to the first page when searching
+    };
+
     return (
         <div className="p-6 bg-white min-w-full min-h-[70vh] flex flex-col justify-between">
             {/* Header */}
@@ -48,16 +61,20 @@ export default function EventsListing({ events, isAdmin }) {
                         <input
                             type="text"
                             placeholder="Search Events"
+                            value={searchQuery} // Bind search query to input
+                            onChange={handleSearchChange} // Handle search input change
                             className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                         />
-                        {isAdmin && < motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors"
-                            onClick={() => { router.push('/dashboard/events/createEvent') }}
-                        >
-                            Add New Event
-                        </motion.button>}
+                        {isAdmin && (
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors"
+                                onClick={() => { router.push('/dashboard/events/createEvent') }}
+                            >
+                                Add New Event
+                            </motion.button>
+                        )}
                     </div>
                 </div>
 
@@ -96,8 +113,12 @@ export default function EventsListing({ events, isAdmin }) {
                                     <td className="px-6 py-4">{formatDate(event.startDate)}</td>
                                     <td className="px-6 py-4">{formatDate(event.endDate)}</td>
                                     <td className="px-6 py-4 flex items-center">
-                                        <button className="text-gray-400 mr-4 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/edit-event/${event._id}?data=${encodeURIComponent(JSON.stringify(event))}`)}><Info /></button>
-                                        <button className="text-gray-400 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/${event._id}`)}><Eye /></button>
+                                        <button className="text-gray-400 mr-4 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/edit-event/${event._id}?data=${encodeURIComponent(JSON.stringify(event))}`)}>
+                                            <Info />
+                                        </button>
+                                        <button className="text-gray-400 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/${event._id}`)}>
+                                            <Eye />
+                                        </button>
                                     </td>
                                 </motion.tr>
                             ))}
@@ -109,7 +130,7 @@ export default function EventsListing({ events, isAdmin }) {
             {/* Pagination */}
             <div className="flex justify-between items-center mt-6">
                 <span className="text-sm text-gray-700">
-                    Showing {indexOfFirstEvent + 1} to {Math.min(indexOfLastEvent, events.length)} of {events.length} entries
+                    Showing {indexOfFirstEvent + 1} to {Math.min(indexOfLastEvent, filteredEvents.length)} of {filteredEvents.length} entries
                 </span>
                 <div className="flex space-x-2">
                     <motion.button
@@ -132,6 +153,6 @@ export default function EventsListing({ events, isAdmin }) {
                     </motion.button>
                 </div>
             </div>
-        </div >
+        </div>
     );
 }

@@ -8,14 +8,22 @@ export default function UserListing({ eventId, usersList }) {
 
     const router = useRouter();
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchQuery, setSearchQuery] = useState(""); // State for search query
     const usersPerPage = 10;
     const users = usersList;
+
+    // Filter events based on search query
+    const filteredUsers = users.filter((user) =>
+        user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.contactNumber.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
 
     // Pagination logic
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
-    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
     const totalPages = Math.ceil(users.length / usersPerPage);
 
     const handleNextPage = () => {
@@ -28,6 +36,11 @@ export default function UserListing({ eventId, usersList }) {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
         }
+    };
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+        setCurrentPage(1); // Reset to the first page when searching
     };
 
     function formatDate(isoDateString) {
@@ -58,6 +71,8 @@ export default function UserListing({ eventId, usersList }) {
                         <input
                             type="text"
                             placeholder="Search User"
+                            value={searchQuery}
+                            onChange={handleSearchChange}
                             className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                         />
                     </div>
