@@ -6,6 +6,7 @@ import CustomPopup from '@/app/components/customPopup';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import { useAuth } from "@/context/authContext";
+import SuccessPopup from '@/app/components/popupCard';
 
 export default function EditDoctor() {
 
@@ -13,7 +14,13 @@ export default function EditDoctor() {
     const [loading, setLoading] = useState(true)
     const [doctor, setDoctor] = useState({})
     const [formData, setFormData] = useState({});
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
+    const showSuccessMessage = (message) => {
+        setSuccessMessage(message);
+        setIsPopupOpen(true);
+    };
 
     useEffect(() => {
         const getUserdata = async () => {
@@ -96,6 +103,12 @@ export default function EditDoctor() {
         const id = doctor._id;
         try {
             const result = await upDateDoctor(id, formData);
+            if (result) {
+                showSuccessMessage("Updated Your Information!");
+                setTimeout(() => {
+                    router.back();
+                }, 1200); // 1.5 second delay
+            }
         } catch (error) {
             confirmAction(`Error: ${error}`, () => { });
         }
@@ -237,16 +250,12 @@ export default function EditDoctor() {
                 </button>
             </form>
 
-            {showPopup && (
-                <CustomPopup
-                    message={popupMessage}
-                    onYes={() => {
-                        popupAction?.();
-                        setShowPopup(false);
-                    }}
-                    onNo={() => setShowPopup(false)}
-                />
-            )}
+            <SuccessPopup
+                isOpen={isPopupOpen}
+                onClose={() => setIsPopupOpen(false)}
+                message={successMessage}
+                autoCloseTime={1200} // Will auto close after 3 seconds
+            />
         </div>
     );
 }
