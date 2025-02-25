@@ -12,6 +12,8 @@ export default function Event({ params }) {
     const [loading, setLoading] = useState(true);
     const { id } = React.use(params);
     const [users, setUsers] = useState([]);
+    const [showPending, setShowPending] = useState([]);
+    const [showCompleted, setShowCompleted] = useState([]);
 
     useEffect(() => {
         const getUsers = async (eventId) => {
@@ -49,10 +51,10 @@ export default function Event({ params }) {
                 Event Details
             </h1>
             <section className="">
-                <UserKpi total={users.length} completed={completedUsers.length} pending={pendingUsers.length} />
+                <UserKpi total={users.length} completed={completedUsers.length} pending={pendingUsers.length} setShowPending={setShowPending} setShowCompleted={setShowCompleted} />
             </section>
             <section className="">
-                <UserListing eventId={id} usersList={users} />
+                <UserListing eventId={id} usersList={showPending ? pendingUsers : showCompleted ? completedUsers : users} />
             </section>
         </div>
     );
