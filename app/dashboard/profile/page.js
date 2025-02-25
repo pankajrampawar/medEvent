@@ -9,8 +9,9 @@ import { ChevronLeft } from 'lucide-react';
 import Popup from '@/app/components/popupCard';
 
 export default function EditDoctor({ params }) {
+
     const searchParams = useSearchParams();
-    const { email } = React.use(params); s
+    const { email } = React.use(params);
 
     const [formData, setFormData] = useState({
         firstName: "",
