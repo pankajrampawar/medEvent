@@ -4,7 +4,7 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const SuccessPopup = ({ isOpen, onClose, message, autoCloseTime = 1000 }) => {
+const SuccessPopup = ({ isOpen, onClose, message, autoCloseTime = 3000 }) => {
     // Auto close after specified time
     useEffect(() => {
         let timer;
