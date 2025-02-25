@@ -8,6 +8,7 @@ export default function EntryForm({ params }) {
     const { id } = React.use(params);
     const [loading, setLoading] = useState(true);
     const [eventDetails, setEventDetails] = useState(null);
+    console.log("event: ", eventDetails)
     const [eventStatus, setEventStatus] = useState("");
     const [allowed, setAllowed] = useState();
 
@@ -16,8 +17,8 @@ export default function EntryForm({ params }) {
             try {
                 const result = await getEventDetails(id);
                 console.log(result);
-                setEventDetails(result); // Store event details in state
-                checkEventStatus(result.startDate, result.event.endDate); // Check event status
+                setEventDetails(result.event); // Store event details in state
+                checkEventStatus(result.event.startDate, result.event.endDate); // Check event status
                 setLoading(false);
             } catch (error) {
                 throw new Error("Unable to load data, please try again later.");
@@ -122,7 +123,7 @@ export default function EntryForm({ params }) {
                             className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200"
                         >
                             <p className="text-gray-700">
-                                Event will start on {new Date(eventDetails.startDate).toLocaleDateString()} at {new Date(eventDetails.startDate).toLocaleTimeString()}
+                                Event will start on {new Date(eventDetails.startDate).toLocaleDateString()}
                             </p>
                         </motion.div>
                     )}
