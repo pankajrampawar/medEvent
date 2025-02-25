@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { getEventDetails, updateUser } from '@/lib/api';
 import Select from 'react-select';
 import { options } from '@/app/utils/options';
+import SuccessPopup from '@/app/components/popupCard';
 
 const PatientForm = ({ isEditable = true, params }) => {
     const searchParams = useSearchParams();
@@ -15,6 +16,13 @@ const PatientForm = ({ isEditable = true, params }) => {
     const [formData, setFormData] = useState(userData); // State to manage form data
     const [isEditing, setIsEditing] = useState(isEditable); // State to toggle edit mode
     const [errors, setErrors] = useState({}); // State to manage validation errors
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+
+    const showSuccessMessage = (message) => {
+        setSuccessMessage(message);
+        setIsPopupOpen(true);
+    };
 
     console.log(userData);
 
@@ -106,7 +114,14 @@ const PatientForm = ({ isEditable = true, params }) => {
 
         try {
             const result = await updateUser(id, formData);
-            alert('Changes updated successfully!');
+            if (result) {
+                showSuccessMessage('Patient Data Updated');
+
+                // Add a delay before navigation to allow time for the success message to be seen
+                setTimeout(() => {
+                    router.back();
+                }, 1500); // 1.5 second delay
+            }
             setIsEditing(false); // Exit edit mode after saving
         } catch (error) {
             alert('Failed to update changes. Please try again.');
@@ -130,7 +145,7 @@ const PatientForm = ({ isEditable = true, params }) => {
 
     return (
         <div className="m-10">
-            <h1 className="p-2 text-2xl flex items-center gap-2">
+            <h1 className="text-2xl flex items-center gap-2 mb-6">
                 <button className="hover:bg-gray-200 p-2 rounded-full" onClick={() => router.back()}>
                     <ChevronLeft />
                 </button>
@@ -333,6 +348,13 @@ const PatientForm = ({ isEditable = true, params }) => {
                     </div>
                 </section>
             </form>
+
+            <SuccessPopup
+                isOpen={isPopupOpen}
+                onClose={() => setIsPopupOpen(false)}
+                message={successMessage}
+                autoCloseTime={1200} // Will auto close after 3 seconds
+            />
         </div>
     );
 };

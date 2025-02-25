@@ -12,7 +12,7 @@ export default function UserKpi({ total, pending, completed }) {
                 <KpiCard Icon={Clock} title="Pending Patients" percentage="+25%" number={pending} />
 
                 {/* Checked Patients */}
-                <KpiCard Icon={CheckCircle} title="Checked Patients" percentage="+25%" number={completed} />
+                <KpiCard Icon={CheckCircle} title="Completed Patients" percentage="+25%" number={completed} />
             </div>
         </section>
     );
