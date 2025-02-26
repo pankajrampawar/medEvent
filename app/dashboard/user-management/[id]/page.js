@@ -6,13 +6,17 @@ import CustomPopup from '@/app/components/customPopup';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
-import Popup from '@/app/components/popupCard';
+import SuccessPopup from '@/app/components/popupCard';
 
 export default function EditDoctor({ params }) {
+    const router = useRouter();
     const searchParams = useSearchParams();
     const { id } = React.use(params);
+
     const userData = JSON.parse(searchParams.get('data'));
-    const router = useRouter();
+
+    const [successMessage, setSuccessMessage] = useState('');
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
 
     const [formData, setFormData] = useState({
         firstName: userData.firstName,
@@ -28,6 +32,12 @@ export default function EditDoctor({ params }) {
     const [popupMessage, setPopupMessage] = useState(''); // Popup message
     const [popupAction, setPopupAction] = useState(null); // Popup action (callback)
     const [isFormModified, setIsFormModified] = useState(false); // Track if form is modified
+
+    // Show Popup
+    const showSuccessMessage = (message) => {
+        setIsPopupOpen(true)
+        setSuccessMessage(message)
+    }
 
     // Check if form data is modified
     useEffect(() => {
@@ -70,7 +80,11 @@ export default function EditDoctor({ params }) {
         try {
             const result = await upDateDoctor(id, formData);
             if (result) {
-                Popup
+                showSuccessMessage('User Updated Successfully');
+                setTimeout(() => {
+                    router.back();
+                }, 1500);
+                return
             }
         } catch (error) {
             confirmAction(`Error: ${error}`, () => { });
@@ -200,16 +214,12 @@ export default function EditDoctor({ params }) {
                 </button>
             </form>
 
-            {showPopup && (
-                <CustomPopup
-                    message={popupMessage}
-                    onYes={() => {
-                        popupAction?.();
-                        setShowPopup(false);
-                    }}
-                    onNo={() => setShowPopup(false)}
-                />
-            )}
+            <SuccessPopup
+                isOpen={isPopupOpen}
+                onClose={() => setIsPopupOpen(false)}
+                message={successMessage}
+                autoCloseTime={1200} // Will auto close after 3 seconds
+            />
         </div>
     );
 }
