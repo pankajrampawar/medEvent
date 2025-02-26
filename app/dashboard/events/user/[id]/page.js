@@ -19,7 +19,9 @@ const PatientForm = ({ isEditable = true, params }) => {
     const [errors, setErrors] = useState({}); // State to manage validation errors
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const { user, loading: authLoading } = useAuth();
 
+    const isAdmin = user?.role === 'admin';
 
     const showSuccessMessage = (message) => {
         setSuccessMessage(message);
@@ -132,6 +134,19 @@ const PatientForm = ({ isEditable = true, params }) => {
         }
     };
 
+    if (authLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-100">
+                <div className="flex items-center space-x-4">
+                    <div className="w-8 h-8 border-4 border-gray-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="text-2xl font-semibold text-gray-700">
+                        Authenticating...
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -155,7 +170,7 @@ const PatientForm = ({ isEditable = true, params }) => {
             </h1>
 
             {/* Update Changes Button */}
-            {isEditing && (
+            {isEditing && !isAdmin && (
                 <div className="flex justify-end mb-6">
                     <button
                         onClick={handleSubmit}
@@ -258,7 +273,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         value={formData.primaryDiagnosis || ''}
                                         onChange={handleInputChange}
-                                        disabled={!isEditing}
+                                        disabled={!isEditing || isAdmin}
                                         required={true}
                                     />
                                     {errors.primaryDiagnosis && (
@@ -273,7 +288,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         value={formData.conditionCategory || ''}
                                         onChange={handleInputChange}
-                                        disabled={!isEditing}
+                                        disabled={!isEditing || isAdmin}
                                         required={true}
                                     />
                                     {errors.conditionCategory && (
@@ -291,6 +306,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                                     onChange={(selectedOption) => handleProductChange(index, selectedOption)}
                                                     className='mt-1'
                                                     placeholder="Select a product"
+                                                    isDisabled={isAdmin}
                                                     required={true}
                                                 />
                                                 {errors[`product-${index}`] && (
@@ -306,6 +322,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                                     onChange={(e) => handleQuantityChange(index, e)}
                                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                                     placeholder="Enter quantity"
+                                                    disabled={isAdmin}
                                                     required={true}
                                                 />
                                                 {errors[`quantity-${index}`] && (
@@ -313,7 +330,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                                 )}
                                             </div>
 
-                                            {items.length > 1 && (
+                                            {items.length > 1 && !isAdmin && (
                                                 <button
                                                     type="button"
                                                     onClick={() => removeItem(index)}
@@ -325,13 +342,15 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         </div>
                                     ))}
 
-                                    <button
-                                        type="button"
-                                        onClick={addItem}
-                                        className="mt-2 p-2 bg-blue-500 text-white rounded-md"
-                                    >
-                                        Add Another Item
-                                    </button>
+                                    {!isAdmin &&
+                                        <button
+                                            type="button"
+                                            onClick={addItem}
+                                            className="mt-2 p-2 bg-blue-500 text-white rounded-md"
+                                        >
+                                            Add Another Item
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -344,7 +363,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                 rows="4"
                                 value={formData.note || ''}
                                 onChange={handleInputChange}
-                                disabled={!isEditing}
+                                disabled={!isEditing || isAdmin}
                             ></textarea>
                         </div>
                     </div>
@@ -357,7 +376,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                 message={successMessage}
                 autoCloseTime={1200} // Will auto close after 3 seconds
             />
-        </div>
+        </div >
     );
 };
 
