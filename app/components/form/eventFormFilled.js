@@ -325,7 +325,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
 
                 {/* Doctors */}
                 <div className="mb-6">
-                    <h3 className="text-md font-medium mb-2">Doctors</h3>
+                    <h3 className="text-md font-medium mb-2">Medical Staff</h3>
                     {formData.doctors.map((doctor, index) => (
                         <div key={index} className="mb-4 space-x-2 flex w-full  items-center">
                             <div className='flex-grow relative'>
@@ -333,7 +333,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                                     htmlFor={`doctorName-${index}`}
                                     className="block text-sm font-medium text-gray-700"
                                 >
-                                    Doctor's Name
+                                    Name
                                 </label>
                                 <input
                                     type="text"
@@ -366,7 +366,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                                     htmlFor={`doctorEmail-${index}`}
                                     className="block text-sm font-medium text-gray-700"
                                 >
-                                    Doctor's Email
+                                    Email
                                 </label>
                                 <input
                                     type="email"
@@ -411,7 +411,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                         onClick={addDoctor}
                         className="text-sm text-blue-500 hover:text-blue-700"
                     >
-                        + Add Doctor
+                        + Add Medical Staff
                     </button>}
                 </div>
 
