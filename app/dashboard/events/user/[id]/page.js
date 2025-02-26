@@ -108,13 +108,11 @@ const PatientForm = ({ isEditable = true, params }) => {
         }
 
         setLoading(true);
-        formData.charmChartFilledOut = true;
+        formData.isPending = false;
         formData.otcSuppliesDispensed = items.map((item) => ({
             value: item.product?.value || null,
             quantity: item.quantity || '',
         }));
-
-        console.log(formData.otcSuppliesDispensed);
 
         try {
             const result = await updateUser(id, formData);
@@ -294,6 +292,19 @@ const PatientForm = ({ isEditable = true, params }) => {
                                     {errors.conditionCategory && (
                                         <p className="text-red-500 text-sm">{errors.conditionCategory}</p>
                                     )}
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Charm Chart Filled</label>
+                                    <select
+                                        name="charmChartFilledOut"
+                                        value={formData.charmChartFilledOut}
+                                        onChange={handleInputChange}
+                                        disabled={!isEditable || isAdmin}
+                                        className="mt-1 block w-full p-3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    >
+                                        <option value="false">No</option>
+                                        <option value="true">Yes</option>
+                                    </select>
                                 </div>
                                 <div>
                                     {items.map((item, index) => (

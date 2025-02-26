@@ -31,8 +31,8 @@ export default function Event({ params }) {
     }, [id]); // Removed dependency on `users` to prevent infinite re-rendering
 
     // Separate users into completed and pending
-    const completedUsers = users.filter(user => user.charmChartFilledOut);
-    const pendingUsers = users.filter(user => !user.charmChartFilledOut);
+    const completedUsers = users.filter(user => !user.isPending);
+    const pendingUsers = users.filter(user => user.isPending);
 
     if (loading) return (
         <div className="flex w-full h-full justify-center items-center">

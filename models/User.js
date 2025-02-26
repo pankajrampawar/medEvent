@@ -8,6 +8,12 @@ const userSchema = new mongoose.Schema({
         ref: 'Event'
     },
 
+    isPending: {
+        type: Boolean,
+        required: true,
+        default: true
+    },
+
     firstName: {
         type: String,
         required: true,

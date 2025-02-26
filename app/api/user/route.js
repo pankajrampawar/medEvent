@@ -50,6 +50,7 @@ export async function PUT(req) {
     try {
         const {
             userId,
+            isPending,
             primaryDiagnosis,
             conditionCategory,
             charmChartFilledOut,
@@ -58,11 +59,14 @@ export async function PUT(req) {
         } = await req.json();
 
         // Find the user by ID and update the fields
+
+        console.log("is pending: ", isPending)
         const updatedUser = await User.findByIdAndUpdate(
             userId, // Assuming `userId` is the unique identifier for the user
             {
                 $set: {
                     primaryDiagnosis,
+                    isPending: isPending,
                     conditionCategory,
                     charmChartFilledOut,
                     otcSuppliesDispensed,
@@ -76,6 +80,7 @@ export async function PUT(req) {
             return Response.json({ error: "User not found" }, { status: 404 });
         }
 
+        console.log(updatedUser)
         return Response.json({ message: "User updated successfully", user: updatedUser }, { status: 200 });
     } catch (error) {
         console.error(error.message);
