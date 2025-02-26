@@ -66,7 +66,7 @@ export default function UserListing({ eventId, usersList }) {
             {/* Header */}
             <div>
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold">Users</h1>
+                    <h1 className="text-2xl font-bold tracking-wide">Patients</h1>
                     <div className="flex space-x-4">
                         <input
                             type="text"
