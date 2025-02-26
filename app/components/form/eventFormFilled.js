@@ -38,6 +38,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
     console.log(eventDetails)
     const [formData, setFormData] = useState({
         title: eventDetails.title,
+        clientName: eventDetails.clientName,
         startDate: formatDate(eventDetails.startDate),
         endDate: formatDate(eventDetails.endDate),
         note: eventDetails.note,
@@ -207,7 +208,6 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
             )}
 
             <form onSubmit={handleSubmit}>
-                {/* Start Date and End Date */}
                 <div className='mb-6'>
                     <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
                         Event Name <span className='text-red-700 text-xl'>*</span>
@@ -223,6 +223,22 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                         required={true}
                     />
                 </div>
+                <div className='mb-6'>
+                    <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+                        Client Name <span className='text-red-700 text-xl'>*</span>
+                    </label>
+                    <input
+                        type='text'
+                        id='clientName'
+                        name='clientName'
+                        value={formData.clientName}
+                        onChange={handleChange}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                        disabled={!isEditable}
+                        required={true}
+                    />
+                </div>
+                {/* Start Date and End Date */}
                 <div className="mb-6">
                     <div className="flex items-center gap-2">
                         <div>
