@@ -7,6 +7,7 @@ import { getDoctorsList } from '@/lib/api';
 const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
     const [formData, setFormData] = useState({
         title: '',
+        clientName: '',
         startDate: '',
         endDate: '',
         note: '',
@@ -186,6 +187,21 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                         id='title'
                         name='title'
                         value={formData.title}
+                        onChange={handleChange}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                        disabled={!isEditable}
+                        required={true}
+                    />
+                </div>
+                <div className='mb-6'>
+                    <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+                        Client Name <span className='text-red-700 text-xl'>*</span>
+                    </label>
+                    <input
+                        type='text'
+                        id='clientName'
+                        name='clientName'
+                        value={formData.clientName}
                         onChange={handleChange}
                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                         disabled={!isEditable}
