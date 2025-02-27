@@ -80,7 +80,7 @@ export default function AddDoctor() {
     return (
         <div className="flex items-center justify-center p-4">
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full">
-                <h2 className="text-2xl font-bold mb-6 text-start">Add Doctor</h2>
+                <h2 className="text-2xl font-bold mb-6 text-start">Add Staff Member</h2>
                 <div className='flex gap-4 w-full'>
                     <div className="mb-4 w-full">
                         <label className="block text-sm font-medium text-gray-700">First Name</label>
@@ -162,7 +162,7 @@ export default function AddDoctor() {
                     type="submit"
                     className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-indigo-600  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
-                    Add Doctor
+                    Add Staff Member
                 </button>
             </form>
 
@@ -174,7 +174,7 @@ export default function AddDoctor() {
                         exit={{ opacity: 0, y: -50 }}
                         className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg"
                     >
-                        Doctor added successfully!
+                        Staff added successfully!
                     </motion.div>
                 )}
             </AnimatePresence>
