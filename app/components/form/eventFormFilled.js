@@ -7,6 +7,7 @@ import Popup from '../popupCard';
 import { getDoctorsList } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import SuccessPopup from '../popupCard';
+import { QRCodeCanvas } from 'qrcode.react';
 
 const EventFormFilled = ({ isEditable = true, eventDetails }) => {
 
@@ -197,7 +198,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="p-6 border rounded-lg shadow-sm mx-auto bg-white mb-32"
+            className="p-6 border rounded-lg shadow-sm bg-white mb-32 mr-[5%] ml-[2%]"
         >
             <h2 className="text-lg font-semibold mb-4">Event Information</h2>
 
@@ -208,90 +209,100 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
             )}
 
             <form onSubmit={handleSubmit}>
-                <div className='mb-6'>
-                    <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
-                        Event Name <span className='text-red-700 text-xl'>*</span>
-                    </label>
-                    <input
-                        type='text'
-                        id='title'
-                        name='title'
-                        value={formData.title}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                        disabled={!isEditable}
-                        required={true}
-                    />
-                </div>
-                <div className='mb-6'>
-                    <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
-                        Client Name <span className='text-red-700 text-xl'>*</span>
-                    </label>
-                    <input
-                        type='text'
-                        id='clientName'
-                        name='clientName'
-                        value={formData.clientName}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                        disabled={!isEditable}
-                        required={true}
-                    />
-                </div>
-                {/* Start Date and End Date */}
-                <div className="mb-6">
-                    <div className="flex items-center gap-2">
+                <div className='mb-6 flex w-full justify-between gap-6'>
+                    <div className='w-full'>
                         <div>
                             <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
-                                Start Date <span className='text-red-700 text-xl'>*</span>
+                                Event Name <span className='text-red-700 text-xl'>*</span>
                             </label>
                             <input
-                                type="date"
-                                id="startDate"
-                                name="startDate"
-                                value={formData.startDate}
+                                type='text'
+                                id='title'
+                                name='title'
+                                value={formData.title}
                                 onChange={handleChange}
-                                min={new Date().toISOString().split('T')[0]}
                                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                                 disabled={!isEditable}
                                 required={true}
                             />
                         </div>
-                        <div>
-                            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
-                                End Date <span className='text-red-700 text-xl'>*</span>
+                        <div className='mb-6'>
+                            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+                                Client Name <span className='text-red-700 text-xl'>*</span>
                             </label>
                             <input
-                                type="date"
-                                id="endDate"
-                                name="endDate"
-                                value={formData.endDate}
+                                type='text'
+                                id='clientName'
+                                name='clientName'
+                                value={formData.clientName}
                                 onChange={handleChange}
-                                min={formData.startDate || new Date().toISOString().split('T')[0]}
                                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                                 disabled={!isEditable}
                                 required={true}
                             />
+                        </div>
+                        {/* Start Date and End Date */}
+                        <div className="mb-6">
+                            <div className="flex items-center gap-2">
+                                <div>
+                                    <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+                                        Start Date <span className='text-red-700 text-xl'>*</span>
+                                    </label>
+                                    <input
+                                        type="date"
+                                        id="startDate"
+                                        name="startDate"
+                                        value={formData.startDate}
+                                        onChange={handleChange}
+                                        min={new Date().toISOString().split('T')[0]}
+                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                        disabled={!isEditable}
+                                        required={true}
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
+                                        End Date <span className='text-red-700 text-xl'>*</span>
+                                    </label>
+                                    <input
+                                        type="date"
+                                        id="endDate"
+                                        name="endDate"
+                                        value={formData.endDate}
+                                        onChange={handleChange}
+                                        min={formData.startDate || new Date().toISOString().split('T')[0]}
+                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                        disabled={!isEditable}
+                                        required={true}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div className="mb-6">
+                            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+                                location <span className='text-red-700 text-xl'>*</span>
+                            </label>
+                            <textarea
+                                id="location"
+                                name="location"
+                                value={formData.location}
+                                onChange={handleChange}
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                disabled={!isEditable}
+                                required={true}
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <div className="flex-0 bg-white flex flex-col justify-center items-center w-fit  rounded-xl">
+                        <label className='w-full block text-sm font-medium text-gray-700'>QR for event</label>
+                        <div className='border p-10 border-gray-300 mt-2'>
+                            <QRCodeCanvas value={`https://med-event-nine.vercel.app/user/entryForm/${eventDetails._id}`} size={300} />
                         </div>
                     </div>
                 </div>
-
-
-                <div className="mb-6">
-                    <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-                        location <span className='text-red-700 text-xl'>*</span>
-                    </label>
-                    <textarea
-                        id="location"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                        disabled={!isEditable}
-                        required={true}
-                    ></textarea>
-                </div>
-
                 {/* Description */}
                 <div className="mb-6">
                     <label htmlFor="description" className="block text-sm font-medium text-gray-700">

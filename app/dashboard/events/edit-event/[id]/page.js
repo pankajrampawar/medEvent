@@ -42,9 +42,6 @@ export default function eventInfo({ params }) {
                 <div className="flex-1">
                     <EventFormFilled eventDetails={eventData} isEditable={isAdmin} />
                 </div>
-                <div className="flex-0 bg-white p-4 h-fit w-fit rounded-xl mr-20">
-                    <QRCodeCanvas value={`https://med-event-nine.vercel.app/user/entryForm/${eventData._id}`} size={300} />
-                </div>
             </section>
         </div>
     )
