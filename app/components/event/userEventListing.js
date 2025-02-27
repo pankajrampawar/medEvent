@@ -1,10 +1,10 @@
 'use client'
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Trash, Eye } from "lucide-react";
+import { Trash, Eye, Package } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function UserListing({ eventId, usersList }) {
+export default function UserListing({ eventId, usersList, setShowInventory }) {
 
     const router = useRouter();
     const [currentPage, setCurrentPage] = useState(1);
@@ -68,6 +68,9 @@ export default function UserListing({ eventId, usersList }) {
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold tracking-wide">Patients</h1>
                     <div className="flex space-x-4">
+                        <button className="hover:bg-gray-300 rounded-full p-2" onClick={() => setShowInventory(true)}>
+                            <Package />
+                        </button>
                         <input
                             type="text"
                             placeholder="Search User"

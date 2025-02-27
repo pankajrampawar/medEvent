@@ -1,9 +1,10 @@
 'use client'
 import EventKpi from "@/app/components/event/eventKpi";
+import Inventory from "@/app/components/event/inventory";
 import UserListing from "@/app/components/event/userEventListing";
 import UserKpi from "@/app/components/event/userKpi";
 import { getUserFromEvent } from "@/lib/api";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Package } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -14,6 +15,7 @@ export default function Event({ params }) {
     const [users, setUsers] = useState([]);
     const [showPending, setShowPending] = useState(false);
     const [showCompleted, setShowCompleted] = useState(false);
+    const [showInventory, setShowInventory] = useState(false);
 
     useEffect(() => {
         const getUsers = async (eventId) => {
@@ -54,8 +56,11 @@ export default function Event({ params }) {
                 <UserKpi total={users.length} completed={completedUsers.length} pending={pendingUsers.length} setShowPending={setShowPending} setShowCompleted={setShowCompleted} />
             </section>
             <section className="">
-                <UserListing eventId={id} usersList={showPending ? pendingUsers : showCompleted ? completedUsers : users} />
+                <UserListing eventId={id} usersList={showPending ? pendingUsers : showCompleted ? completedUsers : users} Package={Package} setShowInventory={setShowInventory} />
             </section>
+            {showInventory && <section>
+                <Inventory users={users} onClose={() => setShowInventory(false)} />
+            </section>}
         </div>
     );
 }
