@@ -52,6 +52,7 @@ export async function PUT(req) {
             userId,
             isPending,
             primaryDiagnosis,
+            reffered,
             conditionCategory,
             charmChartFilledOut,
             otcSuppliesDispensed,
@@ -68,6 +69,7 @@ export async function PUT(req) {
                     primaryDiagnosis,
                     isPending: isPending,
                     conditionCategory,
+                    reffered,
                     charmChartFilledOut,
                     otcSuppliesDispensed,
                     note

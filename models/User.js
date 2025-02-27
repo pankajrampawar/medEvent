@@ -1,3 +1,4 @@
+const { RefreshCwOff } = require('lucide-react');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -26,14 +27,18 @@ const userSchema = new mongoose.Schema({
     },
     dateOfBirth: {
         type: Date,
-        required: true
+        required: true,
+        default: false
     },
     contactNumber: {
         type: String,
         required: true,
         trim: true
     },
-
+    reffered: {
+        type: Boolean,
+        required: true,
+    },
     // Optional fields
     chiefComplaint: {
         type: String,

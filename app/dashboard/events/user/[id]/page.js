@@ -318,9 +318,9 @@ const PatientForm = ({ isEditable = true, params }) => {
 
                     {/* Doctor Filled Details */}
                     <div className="flex-grow shadow-lg bg-white h-fit p-6 rounded-xl">
-                        <div className="mb-6">
+                        <div className="mb-6 ">
                             <h3 className="text-md font-medium mb-2">Diagnosis</h3>
-                            <div className="space-y-2">
+                            <div className="space-y-2 flex flex-col gap-3">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Primary Diagnosis</label>
                                     <input
@@ -366,6 +366,19 @@ const PatientForm = ({ isEditable = true, params }) => {
                                             )}
                                         </ul>
                                     )}
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 pt-2">Reffered</label>
+                                    <select
+                                        name="charmChartFilledOut"
+                                        value={formData.reffered}
+                                        onChange={handleInputChange}
+                                        disabled={!isEditable || isAdmin}
+                                        className="mt-1 block w-full p-3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    >
+                                        <option value="false">No</option>
+                                        <option value="true">Yes</option>
+                                    </select>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 pt-2">Charm Chart Filled</label>
