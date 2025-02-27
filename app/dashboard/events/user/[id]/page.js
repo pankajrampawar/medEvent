@@ -252,7 +252,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         value={formData.firstName || ''}
                                         onChange={handleInputChange}
-                                        disabled={!isEditing}
+                                        disabled={!isEditing || isAdmin}
                                     />
                                 </div>
                                 <div>
@@ -263,7 +263,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         value={formData.lastName || ''}
                                         onChange={handleInputChange}
-                                        disabled={!isEditing}
+                                        disabled={!isEditing || isAdmin}
                                     />
                                 </div>
                                 <div>
@@ -274,7 +274,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         value={formData.dateOfBirth ? new Date(formData.dateOfBirth).toISOString().split('T')[0] : ''}
                                         onChange={handleInputChange}
-                                        disabled={!isEditing}
+                                        disabled={!isEditing || isAdmin}
                                     />
                                 </div>
                                 <div>
@@ -285,7 +285,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         value={formData.contactNumber || ''}
                                         onChange={handleInputChange}
-                                        disabled={!isEditing}
+                                        disabled={!isEditing || isAdmin}
                                     />
                                 </div>
 
@@ -297,7 +297,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         value={formData.chiefComplaint || ''}
                                         onChange={handleInputChange}
-                                        disabled={!isEditing}
+                                        disabled={!isEditing || isAdmin}
                                     />
                                 </div>
 
@@ -309,7 +309,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         value={formData.allergic || ''}
                                         onChange={handleInputChange}
-                                        disabled={!isEditing}
+                                        disabled={!isEditing || isAdmin}
                                     />
                                 </div>
                             </div>
@@ -344,6 +344,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         value={formData.conditionCategory}
                                         onChange={handleInputChange}
                                         onFocus={handleFocus}
+                                        disabled={!isEditable || isAdmin}
                                         onBlur={() => {
                                             handleBlur();
                                             validateInput();
@@ -374,7 +375,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         value={formData.reffered}
                                         onChange={handleInputChange}
                                         disabled={!isEditable || isAdmin}
-                                        className="mt-1 block w-full p-3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                        className="mt-1 block w-full p-3 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     >
                                         <option value="false">No</option>
                                         <option value="true">Yes</option>
@@ -387,17 +388,19 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         value={formData.charmChartFilledOut}
                                         onChange={handleInputChange}
                                         disabled={!isEditable || isAdmin}
-                                        className="mt-1 block w-full p-3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                        className="mt-1 block w-full p-3 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     >
                                         <option value="false">No</option>
                                         <option value="true">Yes</option>
                                     </select>
                                 </div>
                                 <div>
+                                    <label className=''>OTC supplies dispensed</label>
+                                    <div className='min-h-2'></div>
                                     {items.map((item, index) => (
                                         <div key={index} className="flex items-center gap-4 mb-4">
                                             <div className="flex-1 relative">
-                                                <label className="block text-sm font-medium text-gray-700">Product</label>
+                                                <label className="block text-sm font-medium text-gray-700">Item</label>
                                                 <Select
                                                     options={options}
                                                     value={item.product}
