@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, Trash } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getEventDetails, updateUser } from '@/lib/api';
@@ -7,6 +7,7 @@ import Select from 'react-select';
 import { options } from '@/app/utils/options';
 import SuccessPopup from '@/app/components/popupCard';
 import { useAuth } from '@/context/authContext';
+import { categories } from '@/app/utils/categories';
 
 const PatientForm = ({ isEditable = true, params }) => {
     const searchParams = useSearchParams();
@@ -20,8 +21,29 @@ const PatientForm = ({ isEditable = true, params }) => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const { user, loading: authLoading } = useAuth();
+    const [searchTerm, setSearchTerm] = useState(''); // search term for condition category
+    const [categoryFocused, setCategoryFocused] = useState(false);
+    const [categoryError, setCategoryError] = useState(false);
+    const inputRef = useRef(null)
 
     const isAdmin = user?.role === 'admin';
+
+    const filteredCategories = categories.filter((category) =>
+        category.toLowerCase().includes(searchTerm.toLowerCase())
+    ).slice(0, 6);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (inputRef.current && !inputRef.current.contains(e.target)) {
+                setCategoryFocused(false)
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     const showSuccessMessage = (message) => {
         setSuccessMessage(message);
@@ -37,7 +59,39 @@ const PatientForm = ({ isEditable = true, params }) => {
             ...prevData,
             [name]: value,
         }));
+
+        // Update searchTerm when conditionCategory changes
+        if (name === 'conditionCategory') {
+            setSearchTerm(value);
+        }
     };
+
+    const handleFocus = () => {
+        setCategoryFocused(true);
+    };
+
+    const handleBlur = () => {
+        setCategoryFocused(false);
+    };
+
+    const validateInput = () => {
+        if (formData.conditionCategory && !categories.includes(formData.conditionCategory)) {
+            setCategoryError('Invalid category');
+        } else {
+            setCategoryError('');
+        }
+    };
+
+    const handleSelectCategory = (name, category) => {
+        console.log("Category selected:", category); // Debugging
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: category,
+        }));
+        setCategoryFocused(false); // Close dropdown after selection
+        console.log("FormData after update:", formData); // Debugging
+    };
+
 
     const [items, setItems] = useState(
         userData?.otcSuppliesDispensed && userData.otcSuppliesDispensed.length > 0
@@ -103,6 +157,10 @@ const PatientForm = ({ isEditable = true, params }) => {
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent default form submission
 
+        if (categoryError) return;
+        if (!formData.conditionCategory) {
+            setCategoryError('Category is required')
+        }
         if (!validateForm()) {
             return; // Stop if validation fails
         }
@@ -278,23 +336,39 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         <p className="text-red-500 text-sm">{errors.primaryDiagnosis}</p>
                                     )}
                                 </div>
-                                <div>
+                                <div className="relative" ref={inputRef}>
                                     <label className="block text-sm font-medium text-gray-700">Condition Category</label>
                                     <input
                                         type="text"
                                         name="conditionCategory"
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                        value={formData.conditionCategory || ''}
+                                        value={formData.conditionCategory}
                                         onChange={handleInputChange}
-                                        disabled={!isEditing || isAdmin}
-                                        required={true}
+                                        onFocus={handleFocus}
+                                        onBlur={() => {
+                                            handleBlur();
+                                            validateInput();
+                                        }}
+                                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                                     />
-                                    {errors.conditionCategory && (
-                                        <p className="text-red-500 text-sm">{errors.conditionCategory}</p>
+                                    {categoryError && <p className="text-red-500 text-sm mt-1">{categoryError}</p>}
+                                    {categoryFocused && (
+                                        <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-48 overflow-y-auto">
+                                            {(searchTerm ? filteredCategories : categories.slice(0, 19)).map(
+                                                (category, index) => (
+                                                    <li
+                                                        key={index}
+                                                        className="p-2 hover:bg-gray-100 cursor-pointer"
+                                                        onMouseDown={() => handleSelectCategory("conditionCategory", category)} // Use onMouseDown
+                                                    >
+                                                        {category}
+                                                    </li>
+                                                )
+                                            )}
+                                        </ul>
                                     )}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Charm Chart Filled</label>
+                                    <label className="block text-sm font-medium text-gray-700 pt-2">Charm Chart Filled</label>
                                     <select
                                         name="charmChartFilledOut"
                                         value={formData.charmChartFilledOut}
@@ -309,7 +383,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                 <div>
                                     {items.map((item, index) => (
                                         <div key={index} className="flex items-center gap-4 mb-4">
-                                            <div className="flex-1">
+                                            <div className="flex-1 relative">
                                                 <label className="block text-sm font-medium text-gray-700">Product</label>
                                                 <Select
                                                     options={options}
@@ -321,7 +395,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                                     required={true}
                                                 />
                                                 {errors[`product-${index}`] && (
-                                                    <p className="text-red-500 text-sm">{errors[`product-${index}`]}</p>
+                                                    <p className="text-red-500 text-sm absolute">{errors[`product-${index}`]}</p>
                                                 )}
                                             </div>
 
