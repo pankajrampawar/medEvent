@@ -8,6 +8,7 @@ import { useSearchParams } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import SuccessPopup from '@/app/components/popupCard';
 
+
 export default function EditDoctor({ params }) {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -68,12 +69,6 @@ export default function EditDoctor({ params }) {
         setFormData({ ...formData, password: randomPassword });
     };
 
-    const confirmAction = (message, action) => {
-        setPopupMessage(message);
-        setPopupAction(() => action);
-        setShowPopup(true);
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -92,9 +87,7 @@ export default function EditDoctor({ params }) {
     };
 
     const handleDiscardChanges = () => {
-        confirmAction("Are you sure you want to discard changes? All changes will be reversed.", () => {
-            setFormData({ ...originalData }); // Restore original data
-        });
+        setFormData({ ...originalData }); // Restore original data
     };
 
     return (
