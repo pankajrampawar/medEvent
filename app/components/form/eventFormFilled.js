@@ -198,9 +198,9 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="p-6 border rounded-lg shadow-sm bg-white mb-32 mr-[5%] ml-[2%]"
+            className="p-6 border rounded-lg shadow-sm bg-white mr-[5%] ml-[2%]"
         >
-            <h2 className="text-lg font-semibold mb-4">Event Information</h2>
+            <h2 className="text-2xl font-bold mb-4">Event Information</h2>
 
             {error && (
                 <div className="mb-4 p-2 bg-red-100 border border-red-400 text-red-700 rounded-md">

@@ -3,20 +3,40 @@ import EventFormFilled from "@/app/components/form/eventFormFilled";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useAuth } from "@/context/authContext";
+import UserListing from "@/app/components/event/userEventListing";
+import Inventory from "@/app/components/event/inventory";
+import { getUserFromEvent } from "@/lib/api";
 
 export default function eventInfo({ params }) {
 
     const router = useRouter()
     const searchParams = useSearchParams();
     const { id } = React.use(params);
+    const [users, setUsers] = useState([])
+    const [loading, setLoading] = useState(true)
     const eventData = JSON.parse(searchParams.get('data'));
     const { user, loading: authLoading } = useAuth();
 
     const isAdmin = user?.role === 'admin';
     console.log(eventData)
+
+    useEffect(() => {
+        const getUsers = async (eventId) => {
+            try {
+                const result = await getUserFromEvent(eventId);
+                console.log(result);
+                setUsers(result.users);
+                setLoading(false);
+            } catch (error) {
+                throw new Error("Unable to load user data, please try again later.");
+            }
+        };
+
+        getUsers(id);
+    }, [id]); // Removed dependency on `users` to prevent infinite re-rendering
 
     if (authLoading) {
         return (
@@ -38,9 +58,16 @@ export default function eventInfo({ params }) {
                     <ChevronLeft />
                 </button>
             </div>
-            <section className="flex w-full gap-8 pt-6">
+            <section className="flex flex-col w-full gap-8 pt-6">
                 <div className="flex-1">
                     <EventFormFilled eventDetails={eventData} isEditable={isAdmin} />
+                </div>
+                <div>
+                    <Inventory
+                        users={users}
+                        loading={loading}
+                        onClose={() => setShow}
+                    />
                 </div>
             </section>
         </div>
