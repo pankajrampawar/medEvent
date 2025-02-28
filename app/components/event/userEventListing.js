@@ -68,9 +68,6 @@ export default function UserListing({ eventId, usersList, setShowInventory }) {
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold tracking-wide">Patients</h1>
                     <div className="flex space-x-4">
-                        <button className="hover:bg-gray-200 rounded-full p-2" onClick={() => setShowInventory(true)}>
-                            <Package />
-                        </button>
                         <input
                             type="text"
                             placeholder="Search User"
