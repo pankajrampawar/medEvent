@@ -14,11 +14,11 @@ export default function EventKpi({ ongoing, completed, upcoming }) {
                 <button onClick={() => { router.push('/dashboard/events/ongoing') }} className="w-full">
                     <KpiCard Icon={Loader} title="Ongoing Events" percentage="+25%" number={ongoing} />
                 </button>
-                <button onClick={() => { router.push('/dashboard/events/completed') }} className="w-full">
-                    <KpiCard Icon={CheckCircle} title="Completed Events" percentage="+25%" number={completed} />
-                </button>
                 <button onClick={() => { router.push('/dashboard/events/upcoming') }} className="w-full">
                     <KpiCard Icon={CalendarPlus} title="Upcoming Events" percentage="+25%" number={upcoming} />
+                </button>
+                <button onClick={() => { router.push('/dashboard/events/completed') }} className="w-full">
+                    <KpiCard Icon={CheckCircle} title="Completed Events" percentage="+25%" number={completed} />
                 </button>
             </div>
         </section>
