@@ -44,7 +44,7 @@ export default function Sidebar() {
             <nav className="flex-grow p-4">
                 <ul>
                     <li className="mb-2">
-                        <Link href="/dashboard" className="flex items-start p-2 hover:bg-gray-200 rounded gap-1">
+                        <Link href="/dashboard" className={`flex items-start p-2 hover:bg-gray-200 rounded gap-1  ${pathname === "/dashboard" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}}`}>
                             <Home width={20} height={20} /> Home
                         </Link>
                     </li>
@@ -69,8 +69,7 @@ export default function Sidebar() {
                                 <li>
                                     <button
                                         onClick={() => handleOptionClick("Ongoing")}
-                                        className={`w-full text-left p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/events/ongoing" ? "bg-gray-200" : ""
-                                            }`}
+                                        className={`w-full text-left p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/events/ongoing" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}}`}
                                     >
                                         Ongoing
                                     </button>
@@ -78,8 +77,7 @@ export default function Sidebar() {
                                 <li>
                                     <button
                                         onClick={() => handleOptionClick("Upcoming")}
-                                        className={`w-full text-left p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/events/upcoming" ? "bg-gray-200" : ""
-                                            }`}
+                                        className={`w-full text-left p-2  rounded ${pathname === "/dashboard/events/upcoming" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}`}
                                     >
                                         Upcoming
                                     </button>
@@ -87,8 +85,7 @@ export default function Sidebar() {
                                 <li>
                                     <button
                                         onClick={() => handleOptionClick("Completed")}
-                                        className={`w-full text-left p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/events/completed" ? "bg-gray-200" : ""
-                                            }`}
+                                        className={`w-full text-left p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/events/completed" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}`}
                                     >
                                         Completed
                                     </button>
@@ -97,19 +94,19 @@ export default function Sidebar() {
                         )}
                     </li>
                     <li className="mb-2">
-                        <Link href="/dashboard/calendar" className={`flex items-start gap-2 p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/calendar" ? "bg-gray-200" : ""}`}>
+                        <Link href="/dashboard/calendar" className={`flex items-start gap-2 p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/calendar" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}}`}>
                             <Calendar width={20} height={20} /> Calendar
                         </Link>
                     </li>
                     {!authLoading &&
                         isAdmin ?
                         <li className="mb-2">
-                            <Link href="/dashboard/user-management" className="flex items-start gap-1 p-2 hover:bg-gray-200 rounded">
+                            <Link href="/dashboard/user-management" className={`flex items-start gap-1 p-2 hover:bg-gray-200 rounded  ${pathname === "/dashboard/user-management" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}}`}>
                                 <User width={20} height={20} /> User Management
                             </Link>
                         </li> :
                         isDoctor ? <li className="mb-2">
-                            <Link href="/dashboard/profile/" className="flex items-start gap-1 p-2 hover:bg-gray-200 rounded">
+                            <Link href="/dashboard/profile/" className={`flex items-start gap-1 p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/profile" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}}`}>
                                 <User width={20} height={20} /> Your Profile
                             </Link>
                         </li> : ""
