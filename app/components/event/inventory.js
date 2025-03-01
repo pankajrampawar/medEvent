@@ -77,7 +77,7 @@ export default function Inventory({ users, onClose, loading }) {
                                     {Object.entries(inventory).map(([item, quantity], index) => (
                                         <tr key={index} className="hover:bg-gray-50 border-b border-gray-200">
                                             <td className="px-6 py-4 text-lg font-medium text-gray-900">{item}</td>
-                                            <td className="px-6 py-4 text-lg text-black font-medium">{quantity}</td>
+                                            <td className="px-8 py-4 text-lg text-black font-medium">{quantity}</td>
                                         </tr>
                                     ))}
                                 </tbody>

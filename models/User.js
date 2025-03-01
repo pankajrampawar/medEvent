@@ -36,9 +36,8 @@ const userSchema = new mongoose.Schema({
         trim: true
     },
     reffered: {
-        type: Boolean,
-        required: true,
-        default: false
+        type: String,
+        default: "none"
     },
     // Optional fields
     chiefComplaint: {

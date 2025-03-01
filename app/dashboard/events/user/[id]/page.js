@@ -369,16 +369,19 @@ const PatientForm = ({ isEditable = true, params }) => {
                                     )}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 pt-2">Reffered</label>
+                                    <label className="block text-sm font-medium text-gray-700 pt-2">referral</label>
                                     <select
-                                        name="charmChartFilledOut"
+                                        name="reffered"
                                         value={formData.reffered}
                                         onChange={handleInputChange}
-                                        disabled={!isEditable || isAdmin}
+                                        disabled={!isEditable}
                                         className="mt-1 block w-full p-3 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     >
-                                        <option value="false">No</option>
-                                        <option value="true">Yes</option>
+                                        <option value="none">none</option>
+                                        <option value="ER">ER</option>
+                                        <option value="urgentCare">Urgent Care</option>
+                                        <option value="specialist">Specialist</option>
+                                        <option value="diagnostic">Diagnostic</option>
                                     </select>
                                 </div>
                                 <div>
