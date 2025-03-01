@@ -115,18 +115,6 @@ export default function Login() {
                             </button>
                         </div>
 
-                        {/* Remember Me */}
-                        <div className="mb-4 flex items-center pl-1">
-                            <input
-                                type="checkbox"
-                                id="remember"
-                                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
-                            />
-                            <label htmlFor="remember" className="ml-2 text-sm text-gray-700">
-                                Remember Me
-                            </label>
-                        </div>
-
                         {/* Login Button */}
                         <button
                             type="submit"
