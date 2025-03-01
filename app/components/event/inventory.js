@@ -28,6 +28,9 @@ export default function Inventory({ users, onClose, loading }) {
         setTotalQuantity(total); // Set total quantity
     }, [users]);
 
+    // Sort inventory items by quantity in descending order
+    const sortedInventory = Object.entries(inventory).sort((a, b) => b[1] - a[1]);
+
     return (
         <div className="flex items-center justify-center z-50 mr-[5%] ml-[2%]">
             <div className="bg-white rounded-lg shadow-lg mb-32 pb-20 overflow-y-auto p-6 relative w-full">
@@ -74,7 +77,7 @@ export default function Inventory({ users, onClose, loading }) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {Object.entries(inventory).map(([item, quantity], index) => (
+                                    {sortedInventory.map(([item, quantity], index) => (
                                         <tr key={index} className="hover:bg-gray-50 border-b border-gray-200">
                                             <td className="px-6 py-4 text-lg font-medium text-gray-900">{item}</td>
                                             <td className="px-8 py-4 text-lg text-black font-medium">{quantity}</td>
