@@ -424,6 +424,11 @@ const PatientForm = ({ isEditable = true, params }) => {
                                                     type="number"
                                                     value={item.quantity}
                                                     onChange={(e) => handleQuantityChange(index, e)}
+                                                    onInput={(e) => {
+                                                        if (e.target.value < 0) {
+                                                            e.target.value = 0; // Prevent negative values
+                                                        }
+                                                    }}
                                                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                                     placeholder="Enter quantity"
                                                     disabled={isAdmin}
