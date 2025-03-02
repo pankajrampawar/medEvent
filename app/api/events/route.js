@@ -1,3 +1,4 @@
+import { updateEvent } from "@/lib/api";
 import connectToDatabse from "@/lib/mongodb";
 import Event from "@/models/Event";
 
@@ -32,14 +33,14 @@ export async function POST(req) {
     await connectToDatabse();
     console.log('running request')
     try {
-        const { title, clientName, description, startDate, endDate, location, doctors, option, note } = await req.json();
-        console.log(title, clientName, description, startDate, endDate, location)
+        const { title, clientName, attendees, startDate, endDate, location, doctors, option, note } = await req.json();
+        console.log(title, clientName, attendees, startDate, endDate, location)
         // validate start and end date
         if (new Date(startDate) > new Date(endDate)) {
             return Response.json({ error: "End Date must be greater than or equal to start date." }, { status: 400 });
         }
 
-        const newEvent = new Event({ title, clientName, description, startDate, endDate, location, doctors, ...(note && { note }) });
+        const newEvent = new Event({ title, clientName, attendees, startDate, endDate, location, doctors, ...(note && { note }) });
         await newEvent.save();
 
         return Response.json({ message: "Event Created Successfully", event: newEvent }, { status: 200 });
@@ -61,8 +62,8 @@ export async function PUT(req) {
         }
 
         // Get the updated fields from the request body
-        const { title, clientName, description, startDate, endDate, location, doctors, option, note } = await req.json();
-
+        const { title, clientName, attendees, startDate, endDate, location, doctors, option, note } = await req.json();
+        console.log(note)
         // Validate start and end date
         if (new Date(startDate) > new Date(endDate)) {
             return Response.json({ error: "End Date must be greater than or equal to start date." }, { status: 400 });
@@ -71,10 +72,10 @@ export async function PUT(req) {
         // Find the event by ID and update its details
         const updatedEvent = await Event.findByIdAndUpdate(
             id,
-            { title, clientName, description, startDate, endDate, location, doctors, ...(note && { note }) },
+            { title, clientName, attendees, startDate, endDate, location, doctors, ...(note && { note }) },
             { new: true } // Return the updated document
         );
-
+        console.log(updatedEvent);
         if (!updatedEvent) {
             return Response.json({ error: "Event not found" }, { status: 404 });
         }

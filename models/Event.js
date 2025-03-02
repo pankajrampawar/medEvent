@@ -9,8 +9,8 @@ const eventSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    description: {
-        type: String,
+    attendees: {
+        type: Number,
         required: true,
     },
     startDate: {
@@ -24,6 +24,10 @@ const eventSchema = new mongoose.Schema({
     location: {
         type: String,
         required: true
+    },
+    note: {
+        type: String,
+        required: false
     },
     doctors: [
         {
