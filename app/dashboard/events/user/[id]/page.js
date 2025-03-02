@@ -240,7 +240,7 @@ const PatientForm = ({ isEditable = true, params }) => {
             <form onSubmit={handleSubmit}>
                 <section className="flex gap-10">
                     {/* Patient Information */}
-                    <div className="flex-grow shadow-lg bg-white h-fit p-6 rounded-xl">
+                    <div className="flex-grow shadow-lg bg-white h-fit p-6 rounded-xl xl:min-w-[400px]">
                         <div className="mb-6">
                             <h3 className="text-md font-medium mb-2">Patient Information</h3>
                             <div className="space-y-2">
