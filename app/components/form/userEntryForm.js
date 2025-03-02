@@ -159,8 +159,6 @@ const RegistrationForm = ({ eventId }) => {
                                         name="dateOfBirth"
                                         value={formData.dateOfBirth}
                                         onChange={handleInputChange}
-                                        required
-                                        aria-required="true"
                                         aria-invalid={!!formErrors.dateOfBirth}
                                         aria-describedby={formErrors.dateOfBirth ? "dateOfBirth-error" : undefined}
                                         max={new Date().toISOString().split('T')[0]} // Block future dates
