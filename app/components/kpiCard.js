@@ -5,11 +5,11 @@ export default function KpiCard({ title, number, Icon }) {
                 <p>{title}</p>
                 <h3 className="flex gap-2 text-2xl font-medium items-baseline">{number} </h3>
             </div>
-            <div>
+            {Icon && <div>
                 <div className="p-2 bg-green-200 rounded-md ">
                     <Icon className="bg-green-200" />
                 </div>
-            </div>
+            </div>}
         </div>
     )
 }
