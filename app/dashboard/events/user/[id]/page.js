@@ -230,7 +230,7 @@ const PatientForm = ({ isEditable = true, params }) => {
     }
 
     return (
-        <div className="m-10">
+        <div className="m-10 relative">
             <h1 className="text-2xl flex items-center gap-2 mb-6">
                 <button className="hover:bg-gray-200 p-2 rounded-full" onClick={() => router.back()}>
                     <ChevronLeft />
@@ -240,16 +240,40 @@ const PatientForm = ({ isEditable = true, params }) => {
 
             {/* Update Changes Button */}
             {isEditing && !isAdmin && (
-                <div className="flex justify-end mb-6">
+                <div className="flex justify-between items-center mb-6 sticky top-0 bg-background py-4 z-50 border-b border-primary/10 backdrop-blur-sm shadow-sm px-4">
+                    <div className="flex items-center gap-3">
+                        {formData.hasAgreed ? (
+                            <div className="flex items-center gap-2 text-green-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                                <span className="font-medium">User has opted in to receive updates</span>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2 text-red-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                                </svg>
+                                <span className="font-medium">User has declined to receive updates</span>
+                            </div>
+                        )}
+                    </div>
                     <button
                         onClick={handleSubmit}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors duration-200 font-medium shadow-sm flex items-center gap-2"
                     >
-                        Update Changes
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Save Changes
                     </button>
                 </div>
             )}
-
             <form onSubmit={handleSubmit} className='mb-[20%]'>
                 <section className="flex gap-10">
                     {/* Patient Information */}
@@ -498,9 +522,9 @@ const PatientForm = ({ isEditable = true, params }) => {
                             <button
                                 type="button"
                                 onClick={addItem}
-                                className="mt-2 p-2 bg-blue-500 text-white rounded-md"
+                                className="mt-2 p-2 text-primary rounded-md"
                             >
-                                Add Another Item
+                                + Add Another Item
                             </button>
                         }
                     </div>
