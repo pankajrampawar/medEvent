@@ -18,14 +18,14 @@ const RegistrationForm = ({ eventId }) => {
         contactNumber: '',
         chiefComplaint: '',
         hasAllergy: false,
-        allergyInfo: ''
+        allergyInfo: '',
+        hasAgreed: true,
     });
 
     const validateForm = () => {
         const errors = {};
         if (!formData.firstName.trim()) errors.firstName = "First name is required";
         if (!formData.lastName.trim()) errors.lastName = "Last name is required";
-        if (!formData.dateOfBirth) errors.dateOfBirth = "Date of birth is required";
         if (!formData.contactNumber.trim()) errors.contactNumber = "Contact number is required";
 
         // Simple phone validation
@@ -289,6 +289,20 @@ const RegistrationForm = ({ eventId }) => {
                                     )}
                                 </motion.div>
                             )}
+
+
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    name='hasAgreed'
+                                    checked={formData.hasAgreed} // Boolean indicating whether terms are agreed
+                                    onChange={handleInputChange}
+                                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                />
+                                <label htmlFor="terms" className="ml-2 text-sm text-gray-700">
+                                    I consent to IHP contacting me if necessary for further information or updates.
+                                </label>
+                            </div>
                         </div>
 
                         {/* Submit Button */}

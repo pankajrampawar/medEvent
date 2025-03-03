@@ -87,6 +87,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         trim: true,
         default: '' // Default to empty string if not provided
+    },
+    hasAgreed: {
+        type: Boolean,
+        required: true
     }
 });
 

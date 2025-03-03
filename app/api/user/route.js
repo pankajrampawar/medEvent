@@ -30,9 +30,9 @@ export async function POST(req) {
     console.log("Adding user to db")
 
     try {
-        const { eventId, firstName, lastName, dateOfBirth, contactNumber, chiefComplaint, hasAllergy, allergyInfo } = await req.json();
+        const { eventId, firstName, lastName, dateOfBirth, contactNumber, chiefComplaint, hasAllergy, allergyInfo, hasAgreed } = await req.json();
         const newUser = new User({
-            eventId, firstName, lastName, dateOfBirth, contactNumber, chiefComplaint, ...(hasAllergy && { allergic: allergyInfo })
+            eventId, firstName, lastName, hasAgreed, dateOfBirth, contactNumber, chiefComplaint, ...(hasAllergy && { allergic: allergyInfo })
         });
 
         await newUser.save();
