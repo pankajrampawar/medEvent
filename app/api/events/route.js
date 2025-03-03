@@ -33,16 +33,16 @@ export async function POST(req) {
     await connectToDatabse();
     console.log('running request')
     try {
-        const { title, clientName, attendees, startDate, endDate, location, doctors, option, note } = await req.json();
-        console.log(title, clientName, attendees, startDate, endDate, location)
+        const { title, clientName, attendees, startDate, endDate, location, doctors, option, note, medicalKit } = await req.json();
+        console.log(title, clientName, attendees, startDate, endDate, location, medicalKit)
         // validate start and end date
         if (new Date(startDate) > new Date(endDate)) {
             return Response.json({ error: "End Date must be greater than or equal to start date." }, { status: 400 });
         }
 
-        const newEvent = new Event({ title, clientName, attendees, startDate, endDate, location, doctors, ...(note && { note }) });
+        const newEvent = new Event({ title, clientName, attendees, startDate, medicalKit, endDate, location, doctors, ...(note && { note }) });
         await newEvent.save();
-
+        console.log(newEvent);
         return Response.json({ message: "Event Created Successfully", event: newEvent }, { status: 200 });
     } catch (error) {
         console.log(error.message)
