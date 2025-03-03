@@ -184,3 +184,14 @@ export const options = [
     { value: 'Otoscope Specula - Pediatric - Pk of 35', label: 'Otoscope Specula - Pediatric - Pk of 35' },
     { value: 'Pedialyte - Oral Electrolyte - Individual Powder Packets', label: 'Pedialyte - Oral Electrolyte - Individual Powder Packets' },
 ];
+
+export const medicalKitOptions = [
+    "Medical Unit #1", "Medical Unit #2", "Medical Unit #3", "Medical Unit #4", "Medical Unit #5",
+    "Medical Unit #6", "Medical Unit #7", "Medical Unit #8", "Medical Unit #9", "Medical Unit #10",
+    "Medical Unit #11", "Medical Unit #12", "Medical Unit #13", "Medical Unit #14", "Medical Unit #15",
+    "Medical Unit #16", "Medical Unit #17", "Medical Unit #18", "Medical Unit #19", "Medical Unit #20",
+    "BPX #1", "BPX #2", "BPX #3", "BPX #4", "BPX #5", "BPX #6", "BPX #7", "BPX #8", "BPX #9", "BPX #10",
+    "BPX #11", "BPX #12", "BPX #13", "BPX #14", "BPX #15", "BPX #16", "BPX #17", "BPX #18", "BPX #19", "BPX #20",
+    "Peds #1", "Peds #2", "Peds #3", "Peds #4", "Peds #5",
+    "Beach #1", "Beach #2", "Beach #3", "Beach #4", "Beach #5"
+];

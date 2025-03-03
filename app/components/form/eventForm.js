@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Trash } from 'lucide-react';
 import { getDoctorsList } from '@/lib/api';
+import { medicalKitOptions } from '@/app/utils/options';
 
 const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
     const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
         note: '',
         attendees: '',
         location: '',
+        medicalKit: [""],
         doctors: [{ name: '', email: '' }],
         option: '',
     });
@@ -20,9 +22,11 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
     const [error, setError] = useState('');
     const [doctors, setDoctors] = useState([]);
     const [nameSuggestions, setNameSuggestions] = useState([]);
+    const [kitSuggestions, setKitSuggestions] = useState([]);
     const [emailSuggestions, setEmailSuggestions] = useState([]);
     const [currentField, setCurrentField] = useState(null);
-
+    const [kitField, setKitField] = useState(null)
+    const [isKitFocused, setIsKitFocused] = useState(false)
     useEffect(() => {
         const fetchDoctorsList = async () => {
             const result = await getDoctorsList();
@@ -43,6 +47,51 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
         );
         setNameSuggestions(filteredNames);
         handleDoctorChange(index, { target: { name: "name", value } });
+    };
+
+    // Handle changes for medical kit input
+    const handleKitInputChange = (index, value) => {
+        setKitField(index); // Track the current field
+        const filteredKit = medicalKitOptions.filter((kit) =>
+            kit.toLowerCase().includes(value.toLowerCase())
+        );
+        setKitSuggestions(filteredKit);
+
+        // Update the medical kit in the form data
+        const updatedMedicalKit = [...formData.medicalKit];
+        updatedMedicalKit[index] = value;
+        setFormData({
+            ...formData,
+            medicalKit: updatedMedicalKit,
+        });
+    };
+
+    // Handle selection of a medical kit suggestion
+    const selectKitSuggestion = (index, suggestion) => {
+        const updatedMedicalKit = [...formData.medicalKit];
+        updatedMedicalKit[index] = suggestion;
+        setFormData({
+            ...formData,
+            medicalKit: updatedMedicalKit,
+        });
+        setKitSuggestions([]); // Clear suggestions after selection
+    };
+
+    // Add a new medical kit field
+    const addMedicalKit = () => {
+        setFormData({
+            ...formData,
+            medicalKit: [...formData.medicalKit, ""],
+        });
+    };
+
+    // Remove a medical kit field
+    const removeMedicalKit = (index) => {
+        const updatedMedicalKit = formData.medicalKit.filter((_, i) => i !== index);
+        setFormData({
+            ...formData,
+            medicalKit: updatedMedicalKit,
+        });
     };
 
     const handleEmailInputChange = (index, value, name) => {
@@ -107,6 +156,12 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
         setCurrentField(index);
     };
 
+    const handleKitInputFocus = (index) => {
+        setIsKitFocused(true);
+        setKitSuggestions(medicalKitOptions);
+        setKitField(index);
+    }
+
     const handleEmailInputFocus = (index, name) => {
         setIsFocused(true);
         const filteredEmails = doctors
@@ -135,7 +190,6 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
             doctors: [...formData.doctors, { name: '', email: '' }],
         });
     };
-
     // Remove a doctor field
     const removeDoctor = (index) => {
         const updatedDoctors = formData.doctors.filter((_, i) => i !== index);
@@ -293,6 +347,60 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                         rows="3"
                         disabled={!isEditable}
                     ></textarea>
+                </div>
+
+                {/* Medical Kit */}
+                <div className="mb-6">
+                    <h3 className="text-md font-medium mb-2">Medical Staff</h3>
+                    {formData.medicalKit.map((kitName, index) => (
+                        <div key={index} className="mb-4 space-x-2 flex w-full items-center">
+                            <div className="flex-grow relative">
+                                <label htmlFor={`medicalKit-${index}`} className="block text-sm font-medium text-gray-700">
+                                    Kit Name
+                                </label>
+                                <input
+                                    type="text"
+                                    id={`medicalKit-${index}`}
+                                    name="medicalKit"
+                                    value={kitName}
+                                    onFocus={() => handleKitInputFocus(index)}
+                                    onChange={(e) => handleKitInputChange(index, e.target.value)}
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                    disabled={!isEditable}
+                                    required={true}
+                                    autoComplete="off"
+                                />
+                                {kitField === index && kitSuggestions.length > 0 && (
+                                    <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto w-full">
+                                        {kitSuggestions.map((suggestion, i) => (
+                                            <div
+                                                key={i}
+                                                className="p-2 hover:bg-gray-100 cursor-pointer"
+                                                onClick={() => selectKitSuggestion(index, suggestion)}
+                                            >
+                                                {suggestion}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={() => removeMedicalKit(index)}
+                                className={`text-sm text-red-500 hover:text-red-700 pt-4 ${index === 0 ? "hidden" : ""}`}
+                            >
+                                <Trash />
+                            </button>
+                        </div>
+                    ))}
+                    <button
+                        type="button"
+                        onClick={addMedicalKit}
+                        className="text-sm text-blue-500 hover:text-blue-700"
+                    >
+                        + Add Medical Kit
+                    </button>
                 </div>
 
                 {/* Doctors */}

@@ -29,6 +29,9 @@ const eventSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    medicalKit: [
+        String,
+    ],
     doctors: [
         {
             name: {
