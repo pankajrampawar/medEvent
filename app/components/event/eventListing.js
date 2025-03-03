@@ -87,6 +87,9 @@ export default function EventsListing({ events, isAdmin }) {
                                     EVENT
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    CLIENT NAME
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     LOCATION
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -109,6 +112,7 @@ export default function EventsListing({ events, isAdmin }) {
                                     transition={{ duration: 0.3 }}
                                 >
                                     <td className="px-6 py-4">{event.title}</td>
+                                    <td className="px-6 py-4">{event.clientName}</td>
                                     <td className="px-6 py-4">{event.location}</td>
                                     <td className="px-6 py-4">{formatDate(event.startDate)}</td>
                                     <td className="px-6 py-4">{formatDate(event.endDate)}</td>
