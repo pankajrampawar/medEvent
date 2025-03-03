@@ -351,7 +351,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
 
                 {/* Medical Kit */}
                 <div className="mb-6">
-                    <h3 className="text-md font-medium mb-2">Medical Staff</h3>
+                    <h3 className="text-md font-medium mb-2">Medical Kit</h3>
                     {formData.medicalKit.map((kitName, index) => (
                         <div key={index} className="mb-4 space-x-2 flex w-full items-center">
                             <div className="flex-grow relative">

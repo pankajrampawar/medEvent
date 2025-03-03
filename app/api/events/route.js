@@ -62,7 +62,7 @@ export async function PUT(req) {
         }
 
         // Get the updated fields from the request body
-        const { title, clientName, attendees, startDate, endDate, location, doctors, option, note } = await req.json();
+        const { title, clientName, attendees, startDate, endDate, location, doctors, option, note, medicalKit } = await req.json();
         console.log(note)
         // Validate start and end date
         if (new Date(startDate) > new Date(endDate)) {
@@ -72,7 +72,7 @@ export async function PUT(req) {
         // Find the event by ID and update its details
         const updatedEvent = await Event.findByIdAndUpdate(
             id,
-            { title, clientName, attendees, startDate, endDate, location, doctors, ...(note && { note }) },
+            { title, clientName, medicalKit, attendees, startDate, endDate, location, doctors, ...(note && { note }) },
             { new: true } // Return the updated document
         );
         console.log(updatedEvent);
