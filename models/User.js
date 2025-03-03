@@ -66,6 +66,10 @@ const userSchema = new mongoose.Schema({
     otcSuppliesDispensed: {
         type: [
             {
+                medicalKit: {
+                    type: String,
+                    required: true
+                },
                 value: {
                     type: String,
                     required: true, // Ensure the item is always provided

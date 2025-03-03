@@ -16,6 +16,7 @@ export default function Event({ params }) {
     const [showPending, setShowPending] = useState(false);
     const [showCompleted, setShowCompleted] = useState(false);
     const [showInventory, setShowInventory] = useState(false);
+    const [currentEvent, setCurrentEvent] = useState();
 
     useEffect(() => {
         const getUsers = async (eventId) => {
@@ -29,6 +30,16 @@ export default function Event({ params }) {
             }
         };
 
+        const getEvent = async (eventId) => {
+            try {
+                const storedEvents = await JSON.parse(localStorage.getItem("events")) || [];
+                const thisEvent = storedEvents.find(event => event._id === eventId);
+                setCurrentEvent(thisEvent);
+            } catch (error) {
+                throw new Error("Unable to get the events please go back and reaload")
+            }
+        }
+        getEvent(id)
         getUsers(id);
     }, [id]); // Removed dependency on `users` to prevent infinite re-rendering
 
@@ -56,7 +67,7 @@ export default function Event({ params }) {
                 <UserKpi total={users.length} completed={completedUsers.length} pending={pendingUsers.length} setShowPending={setShowPending} setShowCompleted={setShowCompleted} />
             </section>
             <section className="">
-                <UserListing eventId={id} usersList={showPending ? pendingUsers : showCompleted ? completedUsers : users} Package={Package} setShowInventory={setShowInventory} />
+                <UserListing eventId={id} usersList={showPending ? pendingUsers : showCompleted ? completedUsers : users} Package={Package} setShowInventory={setShowInventory} medicalKit={currentEvent?.medicalKit} />
             </section>
             {showInventory && <section>
                 <Inventory users={users} onClose={() => setShowInventory(false)} />

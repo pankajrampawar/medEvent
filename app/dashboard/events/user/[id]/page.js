@@ -25,8 +25,12 @@ const PatientForm = ({ isEditable = true, params }) => {
     const [categoryFocused, setCategoryFocused] = useState(false);
     const [categoryError, setCategoryError] = useState(false);
     const inputRef = useRef(null)
-
     const isAdmin = user?.role === 'admin';
+
+    const medicalKitOptions = userData.medicalKit.map((kit) => ({
+        label: kit,
+        value: kit,
+    }));
 
     const filteredCategories = categories.filter((category) =>
         category.toLowerCase().includes(searchTerm.toLowerCase())
@@ -96,11 +100,13 @@ const PatientForm = ({ isEditable = true, params }) => {
     const [items, setItems] = useState(
         userData?.otcSuppliesDispensed && userData.otcSuppliesDispensed.length > 0
             ? userData.otcSuppliesDispensed.map((item) => ({
+                medicalKit: item.medicalKit ? { value: item.medicalKit, label: item.medicalKit } : null,
                 product: item.value ? { value: item.value, label: item.value } : null, // Create the product object
                 quantity: item.quantity || '', // Use existing quantity
             }))
             : [{ product: null, quantity: '' }] // Default value if no data
     );
+
 
     console.log(items);
 
@@ -124,6 +130,12 @@ const PatientForm = ({ isEditable = true, params }) => {
         updatedItems[index].product = selectedOption;
         setItems(updatedItems);
     };
+
+    const handleMedicalKitChange = (index, selectedOption) => {
+        const updatedItems = [...items];
+        updatedItems[index].medicalKit = selectedOption;
+        setItems(updatedItems);
+    }
 
     console.log(userData);
 
@@ -168,6 +180,7 @@ const PatientForm = ({ isEditable = true, params }) => {
         setLoading(true);
         formData.isPending = false;
         formData.otcSuppliesDispensed = items.map((item) => ({
+            medicalKit: item.medicalKit?.value || null,
             value: item.product?.value || null,
             quantity: item.quantity || '',
         }));
@@ -237,10 +250,10 @@ const PatientForm = ({ isEditable = true, params }) => {
                 </div>
             )}
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className='mb-[20%]'>
                 <section className="flex gap-10">
                     {/* Patient Information */}
-                    <div className="flex-grow shadow-lg bg-white h-fit p-6 rounded-xl xl:min-w-[400px]">
+                    <div className="flex-grow shadow-sm bg-white h-fit p-6 rounded-xl">
                         <div className="mb-6">
                             <h3 className="text-md font-medium mb-2">Patient Information</h3>
                             <div className="space-y-2">
@@ -317,7 +330,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                     </div>
 
                     {/* Doctor Filled Details */}
-                    <div className="flex-grow shadow-lg bg-white h-fit p-6 rounded-xl">
+                    <div className="flex-grow shadow-sm bg-white h-fit p-6 rounded-xl">
                         <div className="mb-6 ">
                             <h3 className="text-md font-medium mb-2">Diagnosis</h3>
                             <div className="space-y-2 flex flex-col gap-3">
@@ -397,70 +410,6 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         <option value="true">Yes</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label className=''>OTC supplies dispensed</label>
-                                    <div className='min-h-2'></div>
-                                    {items.map((item, index) => (
-                                        <div key={index} className="flex items-center gap-4 mb-4">
-                                            <div className="flex-1 relative">
-                                                <label className="block text-sm font-medium text-gray-700">Item</label>
-                                                <Select
-                                                    options={options}
-                                                    value={item.product}
-                                                    onChange={(selectedOption) => handleProductChange(index, selectedOption)}
-                                                    className='mt-1'
-                                                    placeholder="Select a product"
-                                                    isDisabled={isAdmin}
-                                                    required={true}
-                                                />
-                                                {errors[`product-${index}`] && (
-                                                    <p className="text-red-500 text-sm absolute">{errors[`product-${index}`]}</p>
-                                                )}
-                                            </div>
-
-                                            <div className="flex-1 relative">
-                                                <label className="block text-sm font-medium text-gray-700">Quantity</label>
-                                                <input
-                                                    type="number"
-                                                    value={item.quantity}
-                                                    onChange={(e) => handleQuantityChange(index, e)}
-                                                    onInput={(e) => {
-                                                        if (e.target.value < 0) {
-                                                            e.target.value = 0; // Prevent negative values
-                                                        }
-                                                    }}
-                                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                                    placeholder="Enter quantity"
-                                                    disabled={isAdmin}
-                                                    required={true}
-                                                />
-                                                {errors[`quantity-${index}`] && (
-                                                    <p className="text-red-500 text-sm absolute">{errors[`quantity-${index}`]}</p>
-                                                )}
-                                            </div>
-
-                                            {items.length > 1 && !isAdmin && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeItem(index)}
-                                                    className="mt-6 p-2 text-white rounded-md hover:bg-red-50"
-                                                >
-                                                    <Trash className='text-red-500' />
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
-
-                                    {!isAdmin &&
-                                        <button
-                                            type="button"
-                                            onClick={addItem}
-                                            className="mt-2 p-2 bg-blue-500 text-white rounded-md"
-                                        >
-                                            Add Another Item
-                                        </button>
-                                    }
-                                </div>
                             </div>
                         </div>
 
@@ -475,6 +424,85 @@ const PatientForm = ({ isEditable = true, params }) => {
                                 disabled={!isEditing || isAdmin}
                             ></textarea>
                         </div>
+                    </div>
+                </section>
+
+                <section className='bg-white p-10 shaldow-xl rounded-lg mt-20'>
+                    <div>
+                        <label className=''>OTC supplies dispensed</label>
+                        <div className='min-h-2'></div>
+                        {items.map((item, index) => (
+                            <div key={index} className="flex items-center gap-4 mb-4">
+                                <div className='flex-1 relative'>
+                                    <label className='block text-sm font-medium text-gray-700'>Medical Kit</label>
+                                    <Select
+                                        options={medicalKitOptions}
+                                        value={item.medicalKit}
+                                        onChange={(selectedOption) => handleMedicalKitChange(index, selectedOption)}
+                                        className='mt-1'
+                                        placeholder="Select a product"
+                                        isDisabled={isAdmin}
+                                        required={true}
+                                    />
+                                </div>
+                                <div className="flex-1 relative">
+                                    <label className="block text-sm font-medium text-gray-700">Item</label>
+                                    <Select
+                                        options={options}
+                                        value={item.product}
+                                        onChange={(selectedOption) => handleProductChange(index, selectedOption)}
+                                        className='mt-1'
+                                        placeholder="Select a product"
+                                        isDisabled={isAdmin}
+                                        required={true}
+                                    />
+                                    {errors[`product-${index}`] && (
+                                        <p className="text-red-500 text-sm absolute">{errors[`product-${index}`]}</p>
+                                    )}
+                                </div>
+
+                                <div className="flex-1 relative">
+                                    <label className="block text-sm font-medium text-gray-700">Quantity</label>
+                                    <input
+                                        type="number"
+                                        value={item.quantity}
+                                        onChange={(e) => handleQuantityChange(index, e)}
+                                        onInput={(e) => {
+                                            if (e.target.value < 0) {
+                                                e.target.value = 0; // Prevent negative values
+                                            }
+                                        }}
+                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                        placeholder="Enter quantity"
+                                        disabled={isAdmin}
+                                        required={true}
+                                    />
+                                    {errors[`quantity-${index}`] && (
+                                        <p className="text-red-500 text-sm absolute">{errors[`quantity-${index}`]}</p>
+                                    )}
+                                </div>
+
+                                {items.length > 1 && !isAdmin && (
+                                    <button
+                                        type="button"
+                                        onClick={() => removeItem(index)}
+                                        className="mt-6 p-2 text-white rounded-md hover:bg-red-50"
+                                    >
+                                        <Trash className='text-red-500' />
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+
+                        {!isAdmin &&
+                            <button
+                                type="button"
+                                onClick={addItem}
+                                className="mt-2 p-2 bg-blue-500 text-white rounded-md"
+                            >
+                                Add Another Item
+                            </button>
+                        }
                     </div>
                 </section>
             </form>

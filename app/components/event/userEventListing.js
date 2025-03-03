@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Trash, Eye, Package } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function UserListing({ eventId, usersList, setShowInventory }) {
+export default function UserListing({ eventId, usersList, medicalKit }) {
 
     const router = useRouter();
     const [currentPage, setCurrentPage] = useState(1);
@@ -118,7 +118,7 @@ export default function UserListing({ eventId, usersList, setShowInventory }) {
                                     <td className="px-6 py-4">{user.contactNumber}</td>
                                     <td className="px-6 py-4"><span className={` text-sm p-1 rounded-md ${!user.isPending ? "bg-green-200 text-green-950" : "bg-red-200 text-red-950"}`}>{!user.isPending ? "Completed" : "Pending"}</span></td>
                                     <td className="px-6 pt-3">
-                                        <button onClick={() => router.push(`/dashboard/events/user/${user._id}?data=${encodeURIComponent(JSON.stringify(user))}`)} className="text-slate-400 hover:text-purple-700"><Eye /></button>
+                                        <button onClick={() => router.push(`/dashboard/events/user/${user._id}?data=${encodeURIComponent(JSON.stringify({ ...user, medicalKit }))}`)} className="text-slate-400 hover:text-purple-700"><Eye /></button>
                                     </td>
                                 </motion.tr>
                             ))}

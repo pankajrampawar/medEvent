@@ -58,7 +58,7 @@ export async function PUT(req) {
             otcSuppliesDispensed,
             note
         } = await req.json();
-
+        console.log(otcSuppliesDispensed)
         // Find the user by ID and update the fields
 
         console.log("is pending: ", isPending)
