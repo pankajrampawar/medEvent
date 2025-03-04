@@ -3,12 +3,15 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Trash, Eye, Package } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/authContext";
 
 export default function UserListing({ eventId, usersList, medicalKit }) {
 
     const router = useRouter();
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState(""); // State for search query
+    const { user, loading: authLoading, logout } = useAuth();
+    const isAdmin = user?.role === 'admin';
     const usersPerPage = 10;
     const users = usersList;
 
@@ -75,14 +78,14 @@ export default function UserListing({ eventId, usersList, medicalKit }) {
                             onChange={handleSearchChange}
                             className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                         />
-                        <motion.button
+                        {!isAdmin && <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors"
                             onClick={() => { router.push(`/dashboard/events/user/newPatient/${eventId}?data=${encodeURIComponent(JSON.stringify(medicalKit))}`) }}
                         >
                             Add New Patient
-                        </motion.button>
+                        </motion.button>}
                     </div>
                 </div>
 
