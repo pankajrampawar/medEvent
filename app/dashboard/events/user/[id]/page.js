@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, Trash } from 'lucide-react';
+import { ChevronLeft, Trash, Plus, Save } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getEventDetails, updateUser } from '@/lib/api';
 import Select from 'react-select';
@@ -15,16 +15,16 @@ const PatientForm = ({ isEditable = true, params }) => {
     const userData = JSON.parse(searchParams.get('data'));
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState(userData); // State to manage form data
-    const [isEditing, setIsEditing] = useState(isEditable); // State to toggle edit mode
-    const [errors, setErrors] = useState({}); // State to manage validation errors
+    const [formData, setFormData] = useState(userData);
+    const [isEditing, setIsEditing] = useState(isEditable);
+    const [errors, setErrors] = useState({});
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const { user, loading: authLoading } = useAuth();
-    const [searchTerm, setSearchTerm] = useState(''); // search term for condition category
+    const [searchTerm, setSearchTerm] = useState('');
     const [categoryFocused, setCategoryFocused] = useState(false);
     const [categoryError, setCategoryError] = useState(false);
-    const inputRef = useRef(null)
+    const inputRef = useRef(null);
     const isAdmin = user?.role === 'admin';
 
     const medicalKitOptions = userData.medicalKit.map((kit) => ({
@@ -39,7 +39,7 @@ const PatientForm = ({ isEditable = true, params }) => {
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (inputRef.current && !inputRef.current.contains(e.target)) {
-                setCategoryFocused(false)
+                setCategoryFocused(false);
             }
         };
 
@@ -54,9 +54,6 @@ const PatientForm = ({ isEditable = true, params }) => {
         setIsPopupOpen(true);
     };
 
-    console.log(userData);
-
-    // Handle input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -64,7 +61,6 @@ const PatientForm = ({ isEditable = true, params }) => {
             [name]: value,
         }));
 
-        // Update searchTerm when conditionCategory changes
         if (name === 'conditionCategory') {
             setSearchTerm(value);
         }
@@ -87,28 +83,22 @@ const PatientForm = ({ isEditable = true, params }) => {
     };
 
     const handleSelectCategory = (name, category) => {
-        console.log("Category selected:", category); // Debugging
         setFormData((prevData) => ({
             ...prevData,
             [name]: category,
         }));
-        setCategoryFocused(false); // Close dropdown after selection
-        console.log("FormData after update:", formData); // Debugging
+        setCategoryFocused(false);
     };
-
 
     const [items, setItems] = useState(
         userData?.otcSuppliesDispensed && userData.otcSuppliesDispensed.length > 0
             ? userData.otcSuppliesDispensed.map((item) => ({
                 medicalKit: item.medicalKit ? { value: item.medicalKit, label: item.medicalKit } : null,
-                product: item.value ? { value: item.value, label: item.value } : null, // Create the product object
-                quantity: item.quantity || '', // Use existing quantity
+                product: item.value ? { value: item.value, label: item.value } : null,
+                quantity: item.quantity || '',
             }))
-            : [{ product: null, quantity: '' }] // Default value if no data
+            : [{ product: null, quantity: '' }]
     );
-
-
-    console.log(items);
 
     const addItem = () => {
         setItems([...items, { product: null, quantity: '' }]);
@@ -135,15 +125,11 @@ const PatientForm = ({ isEditable = true, params }) => {
         const updatedItems = [...items];
         updatedItems[index].medicalKit = selectedOption;
         setItems(updatedItems);
-    }
+    };
 
-    console.log(userData);
-
-    // Validation function
     const validateForm = () => {
         const newErrors = {};
 
-        // Check required fields
         if (!formData.primaryDiagnosis) {
             newErrors.primaryDiagnosis = 'Primary Diagnosis is required';
         }
@@ -151,7 +137,6 @@ const PatientForm = ({ isEditable = true, params }) => {
             newErrors.conditionCategory = 'Condition Category is required';
         }
 
-        // Check OTC supplies
         items.forEach((item, index) => {
             if (!item.product) {
                 newErrors[`product-${index}`] = 'Product is required';
@@ -162,19 +147,18 @@ const PatientForm = ({ isEditable = true, params }) => {
         });
 
         setErrors(newErrors);
-        return Object.keys(newErrors).length === 0; // Return true if no errors
+        return Object.keys(newErrors).length === 0;
     };
 
-    // Call the updateUser function in handleSubmit
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent default form submission
+        e.preventDefault();
 
         if (categoryError) return;
         if (!formData.conditionCategory) {
-            setCategoryError('Category is required')
+            setCategoryError('Category is required');
         }
         if (!validateForm()) {
-            return; // Stop if validation fails
+            return;
         }
 
         setLoading(true);
@@ -189,13 +173,11 @@ const PatientForm = ({ isEditable = true, params }) => {
             const result = await updateUser(id, formData);
             if (result) {
                 showSuccessMessage('Patient Data Updated');
-
-                // Add a delay before navigation to allow time for the success message to be seen
                 setTimeout(() => {
                     router.back();
-                }, 1500); // 1.5 second delay
+                }, 1500);
             }
-            setIsEditing(false); // Exit edit mode after saving
+            setIsEditing(false);
         } catch (error) {
             alert('Failed to update changes. Please try again.');
         } finally {
@@ -208,12 +190,10 @@ const PatientForm = ({ isEditable = true, params }) => {
             <div className="flex items-center justify-center min-h-screen bg-gray-100">
                 <div className="flex items-center space-x-4">
                     <div className="w-8 h-8 border-4 border-gray-500 border-t-transparent rounded-full animate-spin"></div>
-                    <div className="text-2xl font-semibold text-gray-700">
-                        Authenticating...
-                    </div>
+                    <div className="text-2xl font-semibold text-gray-700">Authenticating...</div>
                 </div>
             </div>
-        )
+        );
     }
 
     if (loading) {
@@ -221,9 +201,7 @@ const PatientForm = ({ isEditable = true, params }) => {
             <div className="flex items-center justify-center min-h-screen bg-gray-100">
                 <div className="flex items-center space-x-4">
                     <div className="w-8 h-8 border-4 border-gray-500 border-t-transparent rounded-full animate-spin"></div>
-                    <div className="text-2xl font-semibold text-gray-700">
-                        Updating user details...
-                    </div>
+                    <div className="text-2xl font-semibold text-gray-700">Updating user details...</div>
                 </div>
             </div>
         );
@@ -238,7 +216,6 @@ const PatientForm = ({ isEditable = true, params }) => {
                 Patient Details
             </h1>
 
-            {/* Update Changes Button */}
             {isEditing && !isAdmin && (
                 <div className="flex justify-between items-center mb-6 sticky top-0 bg-background py-4 z-50 border-b border-primary/10 backdrop-blur-sm shadow-sm px-4">
                     <div className="flex items-center gap-3">
@@ -265,227 +242,215 @@ const PatientForm = ({ isEditable = true, params }) => {
                         onClick={handleSubmit}
                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors duration-200 font-medium shadow-sm flex items-center gap-2"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                            <polyline points="7 3 7 8 15 8"></polyline>
-                        </svg>
+                        <Save size={16} />
                         Save Changes
                     </button>
                 </div>
             )}
-            <form onSubmit={handleSubmit} className='mb-[20%]'>
-                <section className="flex gap-10">
+
+            <form onSubmit={handleSubmit} className="mb-[20%]">
+                <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Patient Information */}
-                    <div className="flex-grow shadow-sm bg-white h-fit p-6 rounded-xl">
-                        <div className="mb-6">
-                            <h3 className="text-md font-medium mb-2">Patient Information</h3>
-                            <div className="space-y-2">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">First Name</label>
-                                    <input
-                                        type="text"
-                                        name="firstName"
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                        value={formData.firstName || ''}
-                                        onChange={handleInputChange}
-                                        disabled={!isEditing || isAdmin}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Last Name</label>
-                                    <input
-                                        type="text"
-                                        name="lastName"
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                        value={formData.lastName || ''}
-                                        onChange={handleInputChange}
-                                        disabled={!isEditing || isAdmin}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Date Of Birth</label>
-                                    <input
-                                        type="date"
-                                        name="dateOfBirth"
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                        value={formData.dateOfBirth ? new Date(formData.dateOfBirth).toISOString().split('T')[0] : ''}
-                                        onChange={handleInputChange}
-                                        disabled={!isEditing || isAdmin}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Contact No</label>
-                                    <input
-                                        type="text"
-                                        name="contactNumber"
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                        value={formData.contactNumber || ''}
-                                        onChange={handleInputChange}
-                                        disabled={!isEditing || isAdmin}
-                                    />
-                                </div>
-
-                                <div className="mb-6">
-                                    <h3 className="text-md font-medium mb-2">Chief Complaint</h3>
-                                    <input
-                                        type="text"
-                                        name="chiefComplaint"
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                        value={formData.chiefComplaint || ''}
-                                        onChange={handleInputChange}
-                                        disabled={!isEditing || isAdmin}
-                                    />
-                                </div>
-
-                                <div className="mb-6">
-                                    <h3 className="text-md font-medium mb-2">Are You Allergic to a Medication?</h3>
-                                    <input
-                                        type="text"
-                                        name="allergic"
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                        value={formData.allergic || ''}
-                                        onChange={handleInputChange}
-                                        disabled={!isEditing || isAdmin}
-                                    />
-                                </div>
+                    <div className="bg-white shadow-sm rounded-lg p-6">
+                        <h3 className="text-lg font-semibold mb-4">Patient Information</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">First Name</label>
+                                <input
+                                    type="text"
+                                    name="firstName"
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    value={formData.firstName || ''}
+                                    onChange={handleInputChange}
+                                    disabled={!isEditing || isAdmin}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Last Name</label>
+                                <input
+                                    type="text"
+                                    name="lastName"
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    value={formData.lastName || ''}
+                                    onChange={handleInputChange}
+                                    disabled={!isEditing || isAdmin}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Date Of Birth</label>
+                                <input
+                                    type="date"
+                                    name="dateOfBirth"
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    value={formData.dateOfBirth ? new Date(formData.dateOfBirth).toISOString().split('T')[0] : ''}
+                                    onChange={handleInputChange}
+                                    disabled={!isEditing || isAdmin}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Contact No</label>
+                                <input
+                                    type="text"
+                                    name="contactNumber"
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    value={formData.contactNumber || ''}
+                                    onChange={handleInputChange}
+                                    disabled={!isEditing || isAdmin}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Chief Complaint</label>
+                                <input
+                                    type="text"
+                                    name="chiefComplaint"
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    value={formData.chiefComplaint || ''}
+                                    onChange={handleInputChange}
+                                    disabled={!isEditing || isAdmin}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Are You Allergic to a Medication?</label>
+                                <input
+                                    type="text"
+                                    name="allergic"
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    value={formData.allergic || ''}
+                                    onChange={handleInputChange}
+                                    disabled={!isEditing || isAdmin}
+                                />
                             </div>
                         </div>
                     </div>
 
                     {/* Doctor Filled Details */}
-                    <div className="flex-grow shadow-sm bg-white h-fit p-6 rounded-xl">
-                        <div className="mb-6 ">
-                            <h3 className="text-md font-medium mb-2">Diagnosis</h3>
-                            <div className="space-y-2 flex flex-col gap-3">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Primary Diagnosis</label>
-                                    <input
-                                        type="text"
-                                        name="primaryDiagnosis"
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                        value={formData.primaryDiagnosis || ''}
-                                        onChange={handleInputChange}
-                                        disabled={!isEditing || isAdmin}
-                                        required={true}
-                                    />
-                                    {errors.primaryDiagnosis && (
-                                        <p className="text-red-500 text-sm">{errors.primaryDiagnosis}</p>
-                                    )}
-                                </div>
-                                <div className="relative" ref={inputRef}>
-                                    <label className="block text-sm font-medium text-gray-700">Condition Category</label>
-                                    <input
-                                        type="text"
-                                        name="conditionCategory"
-                                        value={formData.conditionCategory}
-                                        onChange={handleInputChange}
-                                        onFocus={handleFocus}
-                                        disabled={!isEditable || isAdmin}
-                                        onBlur={() => {
-                                            handleBlur();
-                                            validateInput();
-                                        }}
-                                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                                    />
-                                    {categoryError && <p className="text-red-500 text-sm mt-1">{categoryError}</p>}
-                                    {categoryFocused && (
-                                        <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-48 overflow-y-auto">
-                                            {(searchTerm ? filteredCategories : categories.slice(0, 19)).map(
-                                                (category, index) => (
-                                                    <li
-                                                        key={index}
-                                                        className="p-2 hover:bg-gray-100 cursor-pointer"
-                                                        onMouseDown={() => handleSelectCategory("conditionCategory", category)} // Use onMouseDown
-                                                    >
-                                                        {category}
-                                                    </li>
-                                                )
-                                            )}
-                                        </ul>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 pt-2">referral</label>
-                                    <select
-                                        name="reffered"
-                                        value={formData.reffered}
-                                        onChange={handleInputChange}
-                                        disabled={!isEditable}
-                                        className="mt-1 block w-full p-3 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    >
-                                        <option value="none">none</option>
-                                        <option value="ER">ER</option>
-                                        <option value="urgentCare">Urgent Care</option>
-                                        <option value="specialist">Specialist</option>
-                                        <option value="diagnostic">Diagnostic</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 pt-2">Charm Chart Filled</label>
-                                    <select
-                                        name="charmChartFilledOut"
-                                        value={formData.charmChartFilledOut}
-                                        onChange={handleInputChange}
-                                        disabled={!isEditable || isAdmin}
-                                        className="mt-1 block w-full p-3 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    >
-                                        <option value="false">No</option>
-                                        <option value="true">Yes</option>
-                                    </select>
-                                </div>
+                    <div className="bg-white shadow-sm rounded-lg p-6">
+                        <h3 className="text-lg font-semibold mb-4">Diagnosis</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Primary Diagnosis</label>
+                                <input
+                                    type="text"
+                                    name="primaryDiagnosis"
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    value={formData.primaryDiagnosis || ''}
+                                    onChange={handleInputChange}
+                                    disabled={!isEditing || isAdmin}
+                                    required={true}
+                                />
+                                {errors.primaryDiagnosis && (
+                                    <p className="text-red-500 text-sm">{errors.primaryDiagnosis}</p>
+                                )}
                             </div>
-                        </div>
-
-                        <div className="mb-6">
-                            <h3 className="text-md font-medium mb-2">Note (optional)</h3>
-                            <textarea
-                                name="note"
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                rows="4"
-                                value={formData.note || ''}
-                                onChange={handleInputChange}
-                                disabled={!isEditing || isAdmin}
-                            ></textarea>
+                            <div className="relative" ref={inputRef}>
+                                <label className="block text-sm font-medium text-gray-700">Condition Category</label>
+                                <input
+                                    type="text"
+                                    name="conditionCategory"
+                                    value={formData.conditionCategory}
+                                    onChange={handleInputChange}
+                                    onFocus={handleFocus}
+                                    disabled={!isEditable || isAdmin}
+                                    onBlur={() => {
+                                        handleBlur();
+                                        validateInput();
+                                    }}
+                                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                                />
+                                {categoryError && <p className="text-red-500 text-sm mt-1">{categoryError}</p>}
+                                {categoryFocused && (
+                                    <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-48 overflow-y-auto">
+                                        {(searchTerm ? filteredCategories : categories.slice(0, 19)).map(
+                                            (category, index) => (
+                                                <li
+                                                    key={index}
+                                                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                                                    onMouseDown={() => handleSelectCategory("conditionCategory", category)}
+                                                >
+                                                    {category}
+                                                </li>
+                                            )
+                                        )}
+                                    </ul>
+                                )}
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Referral</label>
+                                <select
+                                    name="reffered"
+                                    value={formData.reffered}
+                                    onChange={handleInputChange}
+                                    disabled={isAdmin}
+                                    className="mt-1 block w-full p-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                >
+                                    <option value="none">None</option>
+                                    <option value="ER">ER</option>
+                                    <option value="urgentCare">Urgent Care</option>
+                                    <option value="specialist">Specialist</option>
+                                    <option value="diagnostic">Diagnostic</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Charm Chart Filled</label>
+                                <select
+                                    name="charmChartFilledOut"
+                                    value={formData.charmChartFilledOut}
+                                    onChange={handleInputChange}
+                                    disabled={!isEditable || isAdmin}
+                                    className="mt-1 block w-full p-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                >
+                                    <option value="false">No</option>
+                                    <option value="true">Yes</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Note (optional)</label>
+                                <textarea
+                                    name="note"
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                    rows="4"
+                                    value={formData.note || ''}
+                                    onChange={handleInputChange}
+                                    disabled={!isEditing || isAdmin}
+                                ></textarea>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                <section className='bg-white p-10 shaldow-xl rounded-lg mt-20'>
-                    <div>
-                        <label className=''>OTC supplies dispensed</label>
-                        <div className='min-h-2'></div>
+                <section className="bg-white shadow-sm rounded-lg p-6 mt-6">
+                    <h3 className="text-lg font-semibold mb-4">OTC Supplies Dispensed</h3>
+                    <div className="space-y-4">
                         {items.map((item, index) => (
-                            <div key={index} className="flex items-center gap-4 mb-4">
-                                <div className='flex-1 relative'>
-                                    <label className='block text-sm font-medium text-gray-700'>Medical Kit</label>
+                            <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Medical Kit</label>
                                     <Select
                                         options={medicalKitOptions}
                                         value={item.medicalKit}
                                         onChange={(selectedOption) => handleMedicalKitChange(index, selectedOption)}
-                                        className='mt-1'
+                                        className="mt-1"
                                         placeholder="Select a product"
                                         isDisabled={isAdmin}
                                         required={true}
                                     />
                                 </div>
-                                <div className="flex-1 relative">
+                                <div>
                                     <label className="block text-sm font-medium text-gray-700">Item</label>
                                     <Select
                                         options={options}
                                         value={item.product}
                                         onChange={(selectedOption) => handleProductChange(index, selectedOption)}
-                                        className='mt-1'
+                                        className="mt-1"
                                         placeholder="Select a product"
                                         isDisabled={isAdmin}
                                         required={true}
                                     />
                                     {errors[`product-${index}`] && (
-                                        <p className="text-red-500 text-sm absolute">{errors[`product-${index}`]}</p>
+                                        <p className="text-red-500 text-sm">{errors[`product-${index}`]}</p>
                                     )}
                                 </div>
-
-                                <div className="flex-1 relative">
+                                <div>
                                     <label className="block text-sm font-medium text-gray-700">Quantity</label>
                                     <input
                                         type="number"
@@ -493,7 +458,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         onChange={(e) => handleQuantityChange(index, e)}
                                         onInput={(e) => {
                                             if (e.target.value < 0) {
-                                                e.target.value = 0; // Prevent negative values
+                                                e.target.value = 0;
                                             }
                                         }}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -502,31 +467,30 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         required={true}
                                     />
                                     {errors[`quantity-${index}`] && (
-                                        <p className="text-red-500 text-sm absolute">{errors[`quantity-${index}`]}</p>
+                                        <p className="text-red-500 text-sm">{errors[`quantity-${index}`]}</p>
                                     )}
                                 </div>
-
                                 {items.length > 1 && !isAdmin && (
                                     <button
                                         type="button"
                                         onClick={() => removeItem(index)}
-                                        className="mt-6 p-2 text-white rounded-md hover:bg-red-50"
+                                        className="p-2 text-red-500 hover:bg-red-50 rounded-md"
                                     >
-                                        <Trash className='text-red-500' />
+                                        <Trash size={20} />
                                     </button>
                                 )}
                             </div>
                         ))}
-
-                        {!isAdmin &&
+                        {!isAdmin && (
                             <button
                                 type="button"
                                 onClick={addItem}
-                                className="mt-2 p-2 text-primary rounded-md"
+                                className="mt-2 p-2 text-primary hover:bg-gray-100 rounded-md flex items-center gap-2"
                             >
-                                + Add Another Item
+                                <Plus size={16} />
+                                Add Another Item
                             </button>
-                        }
+                        )}
                     </div>
                 </section>
             </form>
@@ -535,9 +499,9 @@ const PatientForm = ({ isEditable = true, params }) => {
                 isOpen={isPopupOpen}
                 onClose={() => setIsPopupOpen(false)}
                 message={successMessage}
-                autoCloseTime={1200} // Will auto close after 3 seconds
+                autoCloseTime={1200}
             />
-        </div >
+        </div>
     );
 };
 

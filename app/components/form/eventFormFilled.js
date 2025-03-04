@@ -426,13 +426,13 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                                     )}
                                 </div>
 
-                                <button
+                                {isAdmin && <button
                                     type="button"
                                     onClick={() => removeMedicalKit(index)}
                                     className={`text-sm text-red-500 hover:text-red-700 pt-4 ${index === 0 ? "hidden" : ""}`}
                                 >
                                     <Trash />
-                                </button>
+                                </button>}
                             </div>
                         ))}
                         <button
