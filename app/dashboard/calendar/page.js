@@ -5,9 +5,11 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
-import { Calendar, Info, X, RefreshCw } from 'lucide-react';
 import { getEventDetails } from '@/lib/api';
 import { useAuth } from '@/context/authContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, MapPin, User, Stethoscope, Users, X, RefreshCw, Package } from 'lucide-react';
+
 
 const CalendarComponent = () => {
 
@@ -147,6 +149,21 @@ const CalendarComponent = () => {
         return () => clearInterval(intervalId);
     }, []);
 
+    const popupVariants = {
+        hidden: { opacity: 0, scale: 0.95 },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            transition: { type: 'spring', stiffness: 300, damping: 20 }
+        },
+        exit: { opacity: 0, scale: 0.95 }
+    };
+
+    const backdropVariants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1 }
+    };
+
     return (
         <div className="flex h-screen">
             <div className="flex-grow p-4 bg-gray-100">
@@ -176,52 +193,143 @@ const CalendarComponent = () => {
                 </div>
             </div>
 
-            {show && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
-                    <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md transform transition-all pb-10">
-                        <div className="flex justify-between items-center pb-4 border-b">
-                            <h3 className="text-xl font-semibold text-gray-900">
-                                {selectedEvent?.title || "Event Details"}
-                            </h3>
-                            <button
-                                className="text-gray-500 hover:text-red-600 transition"
-                                onClick={handleClose}
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                        <div className="mt-4 space-y-4">
-                            <div className="flex items-center gap-3">
-                                <Calendar className="text-blue-600" size={18} />
-                                <span className="text-gray-700 font-medium">Start Date:</span>
-                                <span className="text-gray-800">
-                                    {selectedEvent?.start
-                                        ? new Date(selectedEvent.start).toLocaleDateString()
-                                        : "N/A"}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <Calendar className="text-blue-600" size={18} />
-                                <span className="text-gray-700 font-medium">End Date:</span>
-                                <span className="text-gray-800">
-                                    {selectedEvent?.end
-                                        ? new Date(selectedEvent.end).toLocaleDateString()
-                                        : "N/A"}
-                                </span>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <Info className="text-blue-600" size={18} />
-                                <div>
-                                    <span className="text-gray-700 font-medium">Details:</span>
-                                    <p className="text-gray-700 mt-1">
-                                        {selectedEvent?.extendedProps?.description || "No details provided."}
-                                    </p>
+            <AnimatePresence>
+                {show && (
+                    <motion.div
+                        className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50"
+                        variants={backdropVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                    >
+                        <motion.div
+                            className="bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-6 pb-14 w-full max-w-lg mx-4 transform transition-all border border-white/20 relative overflow-hidden"
+                            variants={popupVariants}
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 to-purple-50/30" />
+
+                            <div className="relative z-10">
+                                <div className="flex justify-between items-start mb-6">
+                                    <div>
+                                        <h3 className="text-2xl font-bold text-gray-900">
+                                            {selectedEvent?.title || "Event Details"}
+                                        </h3>
+                                        <p className="text-blue-600 font-medium mt-1 flex items-center gap-2">
+                                            <User size={16} />
+                                            {selectedEvent?.extendedProps?.clientName || "No client name"}
+                                        </p>
+                                    </div>
+                                    <button
+                                        className="p-1 hover:bg-gray-100 rounded-full transition-all"
+                                        onClick={handleClose}
+                                    >
+                                        <X size={24} className="text-gray-600 hover:text-gray-900" />
+                                    </button>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {/* Date & Time Section */}
+                                    <div className="flex gap-4">
+                                        <div className="flex-1 bg-white p-4 rounded-xl border border-gray-100">
+                                            <div className="flex items-center gap-3 text-gray-600 mb-2">
+                                                <Calendar size={18} />
+                                                <span className="font-medium">Start</span>
+                                            </div>
+                                            <p className="text-gray-900 font-semibold">
+                                                {selectedEvent?.start
+                                                    ? new Date(selectedEvent.start).toLocaleDateString('en-US', {
+                                                        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+                                                    })
+                                                    : "N/A"}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex-1 bg-white p-4 rounded-xl border border-gray-100">
+                                            <div className="flex items-center gap-3 text-gray-600 mb-2">
+                                                <Calendar size={18} />
+                                                <span className="font-medium">End</span>
+                                            </div>
+                                            <p className="text-gray-900 font-semibold">
+                                                {selectedEvent?.end
+                                                    ? new Date(selectedEvent.end).toLocaleDateString('en-US', {
+                                                        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+                                                    })
+                                                    : "N/A"}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Location Section */}
+                                    <div className="bg-white p-4 rounded-xl border border-gray-100">
+                                        <div className="flex items-center gap-3 text-gray-600 mb-2">
+                                            <MapPin size={18} />
+                                            <span className="font-medium">Location</span>
+                                        </div>
+                                        <p className="text-gray-900 font-semibold">
+                                            {selectedEvent?.extendedProps?.location || "No location specified"}
+                                        </p>
+                                    </div>
+
+                                    {/* Medical Staff Section */}
+                                    <div className="bg-white p-4 rounded-xl border border-gray-100">
+                                        <div className="flex items-center gap-3 text-gray-600 mb-3">
+                                            <Stethoscope size={18} />
+                                            <span className="font-medium">Medical Staff</span>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {selectedEvent?.extendedProps?.doctors?.map((doctor, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm flex items-center gap-2"
+                                                >
+                                                    <User size={14} />
+                                                    {doctor.name}
+                                                </span>
+                                            ))}
+                                            {!selectedEvent?.extendedProps?.doctors?.length && (
+                                                <p className="text-gray-500 text-sm">No medical staff assigned</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Attendees & Medical Kits */}
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="bg-white p-4 rounded-xl border border-gray-100">
+                                            <div className="flex items-center gap-3 text-gray-600 mb-2">
+                                                <Users size={18} />
+                                                <span className="font-medium">Attendees</span>
+                                            </div>
+                                            <p className="text-gray-900 font-semibold text-2xl">
+                                                {selectedEvent?.extendedProps?.attendees || 0}
+                                            </p>
+                                        </div>
+
+                                        <div className="bg-white p-4 rounded-xl border border-gray-100">
+                                            <div className="flex items-center gap-3 text-gray-600 mb-2">
+                                                <Package size={18} />
+                                                <span className="font-medium">Medical Kits</span>
+                                            </div>
+                                            <div className="flex flex-wrap gap-2 max-h-[140px] overflow-y-scroll">
+                                                {selectedEvent?.extendedProps?.medicalKit?.map((kit, index) => (
+                                                    <span
+                                                        key={index}
+                                                        className="px-2 py-1 bg-purple-50 text-purple-700 rounded-full text-xs"
+                                                    >
+                                                        {kit}
+                                                    </span>
+                                                ))}
+                                                {!selectedEvent?.extendedProps?.medicalKit?.length && (
+                                                    <p className="text-gray-500 text-sm">No kits assigned</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
