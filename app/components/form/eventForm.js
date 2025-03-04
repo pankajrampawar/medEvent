@@ -27,6 +27,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
     const [currentField, setCurrentField] = useState(null);
     const [kitField, setKitField] = useState(null)
     const [isKitFocused, setIsKitFocused] = useState(false)
+    const [medicalKitError, setMedicalKitError] = useState("")
     useEffect(() => {
         const fetchDoctorsList = async () => {
             const result = await getDoctorsList();
@@ -79,6 +80,10 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
 
     // Add a new medical kit field
     const addMedicalKit = () => {
+        if (formData.medicalKit.length > 8) {
+            setMedicalKitError('Maximum 8 kits can be added');
+            return;
+        }
         setFormData({
             ...formData,
             medicalKit: [...formData.medicalKit, ""],
@@ -401,6 +406,10 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                     >
                         + Add Medical Kit
                     </button>
+                    {
+                        medicalKitError &&
+                        <div className="mb-4 p-2  text-red-600 rounded-md">{medicalKitError}</div>
+                    }
                 </div>
 
                 {/* Doctors */}
