@@ -46,7 +46,7 @@ export default function Inventory({ users, onClose, loading }) {
                     <div className="flex w-full gap-4">
                         <KpiCard title="Total Users" number={users.length} Icon={User} />
                         <KpiCard title="Total Items" number={Object.keys(inventory).length} Icon={Package} />
-                        <KpiCard title="Total Items" number={Object.keys(inventory).length} Icon={ClipboardCheck} />
+                        <KpiCard title="Item Quantity" number={totalQuantity} Icon={ClipboardCheck} />
                     </div>
                 </div>
 
