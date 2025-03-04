@@ -75,6 +75,14 @@ export default function UserListing({ eventId, usersList, medicalKit }) {
                             onChange={handleSearchChange}
                             className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                         />
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors"
+                            onClick={() => { router.push(`/dashboard/events/user/newPatient/${eventId}?data=${encodeURIComponent(JSON.stringify(medicalKit))}`) }}
+                        >
+                            Add New Patient
+                        </motion.button>
                     </div>
                 </div>
 
