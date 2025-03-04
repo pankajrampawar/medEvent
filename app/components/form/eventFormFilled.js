@@ -9,12 +9,16 @@ import { useRouter } from 'next/navigation';
 import SuccessPopup from '../popupCard';
 import { QRCodeCanvas } from 'qrcode.react';
 import { medicalKitOptions } from '@/app/utils/options';
+import { useAuth } from "@/context/authContext";
 
 const EventFormFilled = ({ isEditable = true, eventDetails }) => {
 
     const router = useRouter();
     const [successMessage, setSuccessMessage] = useState('');
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const { user, loading: authLoading, logout } = useAuth();
+
+    const isAdmin = user?.role === 'admin';
 
     const showSuccessMessage = (message) => {
         setSuccessMessage(message);
@@ -259,287 +263,289 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
             )}
 
             <form onSubmit={handleSubmit}>
-                <div className='mb-6 flex w-full justify-between gap-6'>
-                    <div className='w-full'>
-                        <div>
-                            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
-                                Event Name <span className='text-red-700 text-xl'>*</span>
-                            </label>
-                            <input
-                                type='text'
-                                id='title'
-                                name='title'
-                                value={formData.title}
-                                onChange={handleChange}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                                disabled={!isEditable}
-                                required={true}
-                            />
+                <fieldset disabled={!isAdmin}>
+                    <div className='mb-6 flex w-full justify-between gap-6'>
+                        <div className='w-full'>
+                            <div>
+                                <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+                                    Event Name <span className='text-red-700 text-xl'>*</span>
+                                </label>
+                                <input
+                                    type='text'
+                                    id='title'
+                                    name='title'
+                                    value={formData.title}
+                                    onChange={handleChange}
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                    disabled={!isEditable}
+                                    required={true}
+                                />
+                            </div>
+                            <div className='mb-6'>
+                                <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+                                    Client Name <span className='text-red-700 text-xl'>*</span>
+                                </label>
+                                <input
+                                    type='text'
+                                    id='clientName'
+                                    name='clientName'
+                                    value={formData.clientName}
+                                    onChange={handleChange}
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                    disabled={!isEditable}
+                                    required={true}
+                                />
+                            </div>
+                            {/* Start Date and End Date */}
+                            <div className="mb-6">
+                                <div className="flex items-center gap-2">
+                                    <div>
+                                        <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+                                            Start Date <span className='text-red-700 text-xl'>*</span>
+                                        </label>
+                                        <input
+                                            type="date"
+                                            id="startDate"
+                                            name="startDate"
+                                            value={formData.startDate}
+                                            onChange={handleChange}
+                                            min={new Date().toISOString().split('T')[0]}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                            disabled={!isEditable}
+                                            required={true}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
+                                            End Date <span className='text-red-700 text-xl'>*</span>
+                                        </label>
+                                        <input
+                                            type="date"
+                                            id="endDate"
+                                            name="endDate"
+                                            value={formData.endDate}
+                                            onChange={handleChange}
+                                            min={formData.startDate || new Date().toISOString().split('T')[0]}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                            disabled={!isEditable}
+                                            required={true}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div className="mb-6">
+                                <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+                                    location <span className='text-red-700 text-xl'>*</span>
+                                </label>
+                                <textarea
+                                    id="location"
+                                    name="location"
+                                    value={formData.location}
+                                    onChange={handleChange}
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                    disabled={!isEditable}
+                                    required={true}
+                                ></textarea>
+                            </div>
                         </div>
-                        <div className='mb-6'>
-                            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
-                                Client Name <span className='text-red-700 text-xl'>*</span>
-                            </label>
-                            <input
-                                type='text'
-                                id='clientName'
-                                name='clientName'
-                                value={formData.clientName}
-                                onChange={handleChange}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                                disabled={!isEditable}
-                                required={true}
-                            />
+
+                        <div className="flex-0 bg-white flex flex-col justify-center items-center w-fit  rounded-xl">
+                            <label className='w-full block text-sm font-medium text-gray-700'>QR for event</label>
+                            <div className='border p-10 border-gray-300 mt-2'>
+                                <QRCodeCanvas value={`https://med-event-nine.vercel.app/user/entryForm/${eventDetails._id}`} size={300} />
+                            </div>
                         </div>
-                        {/* Start Date and End Date */}
-                        <div className="mb-6">
-                            <div className="flex items-center gap-2">
-                                <div>
-                                    <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
-                                        Start Date <span className='text-red-700 text-xl'>*</span>
+                    </div>
+                    {/* Description */}
+                    <div className="mb-6">
+                        <label htmlFor="attendees" className="block text-sm font-medium text-gray-700">
+                            No. of attendees <span className="text-red-700 text-xl">*</span>
+                        </label>
+                        <input
+                            id="attendees"
+                            name="attendees"
+                            type="number"
+                            value={formData.attendees}
+                            onChange={handleChange}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                            disabled={!isEditable}
+                            required={true}
+                        />
+                    </div>
+
+                    {/* Note */}
+                    <div className="mb-6">
+                        <label htmlFor="note" className="block text-sm font-medium text-gray-700">
+                            Note (Optional)
+                        </label>
+                        <textarea
+                            id="note"
+                            name="note"
+                            value={formData.note}
+                            onChange={handleChange}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                            disabled={!isEditable}
+                        ></textarea>
+                    </div>
+
+                    {/* Medical Kits */}
+                    <div className="mb-6">
+                        <h3 className="text-md font-medium mb-2">Medical Kit</h3>
+                        {formData.medicalKit.map((kitName, index) => (
+                            <div key={index} className="mb-4 space-x-2 flex w-full items-center">
+                                <div className="flex-grow relative">
+                                    <label htmlFor={`medicalKit-${index}`} className="block text-sm font-medium text-gray-700">
+                                        Kit Name
                                     </label>
                                     <input
-                                        type="date"
-                                        id="startDate"
-                                        name="startDate"
-                                        value={formData.startDate}
-                                        onChange={handleChange}
-                                        min={new Date().toISOString().split('T')[0]}
+                                        type="text"
+                                        id={`medicalKit-${index}`}
+                                        name="medicalKit"
+                                        value={kitName}
+                                        onFocus={() => handleKitInputFocus(index)}
+                                        onChange={(e) => handleKitInputChange(index, e.target.value)}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                                         disabled={!isEditable}
                                         required={true}
+                                        autoComplete="off"
                                     />
+                                    {kitField === index && kitSuggestions.length > 0 && (
+                                        <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto w-full">
+                                            {kitSuggestions.map((suggestion, i) => (
+                                                <div
+                                                    key={i}
+                                                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                                                    onClick={() => selectKitSuggestion(index, suggestion)}
+                                                >
+                                                    {suggestion}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
-                                <div>
-                                    <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
-                                        End Date <span className='text-red-700 text-xl'>*</span>
-                                    </label>
-                                    <input
-                                        type="date"
-                                        id="endDate"
-                                        name="endDate"
-                                        value={formData.endDate}
-                                        onChange={handleChange}
-                                        min={formData.startDate || new Date().toISOString().split('T')[0]}
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                                        disabled={!isEditable}
-                                        required={true}
-                                    />
-                                </div>
-                            </div>
-                        </div>
 
-
-                        <div className="mb-6">
-                            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-                                location <span className='text-red-700 text-xl'>*</span>
-                            </label>
-                            <textarea
-                                id="location"
-                                name="location"
-                                value={formData.location}
-                                onChange={handleChange}
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                                disabled={!isEditable}
-                                required={true}
-                            ></textarea>
-                        </div>
-                    </div>
-
-                    <div className="flex-0 bg-white flex flex-col justify-center items-center w-fit  rounded-xl">
-                        <label className='w-full block text-sm font-medium text-gray-700'>QR for event</label>
-                        <div className='border p-10 border-gray-300 mt-2'>
-                            <QRCodeCanvas value={`https://med-event-nine.vercel.app/user/entryForm/${eventDetails._id}`} size={300} />
-                        </div>
-                    </div>
-                </div>
-                {/* Description */}
-                <div className="mb-6">
-                    <label htmlFor="attendees" className="block text-sm font-medium text-gray-700">
-                        No. of attendees <span className="text-red-700 text-xl">*</span>
-                    </label>
-                    <input
-                        id="attendees"
-                        name="attendees"
-                        type="number"
-                        value={formData.attendees}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                        disabled={!isEditable}
-                        required={true}
-                    />
-                </div>
-
-                {/* Note */}
-                <div className="mb-6">
-                    <label htmlFor="note" className="block text-sm font-medium text-gray-700">
-                        Note (Optional)
-                    </label>
-                    <textarea
-                        id="note"
-                        name="note"
-                        value={formData.note}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                        disabled={!isEditable}
-                    ></textarea>
-                </div>
-
-                {/* Medical Kits */}
-                <div className="mb-6">
-                    <h3 className="text-md font-medium mb-2">Medical Kit</h3>
-                    {formData.medicalKit.map((kitName, index) => (
-                        <div key={index} className="mb-4 space-x-2 flex w-full items-center">
-                            <div className="flex-grow relative">
-                                <label htmlFor={`medicalKit-${index}`} className="block text-sm font-medium text-gray-700">
-                                    Kit Name
-                                </label>
-                                <input
-                                    type="text"
-                                    id={`medicalKit-${index}`}
-                                    name="medicalKit"
-                                    value={kitName}
-                                    onFocus={() => handleKitInputFocus(index)}
-                                    onChange={(e) => handleKitInputChange(index, e.target.value)}
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                                    disabled={!isEditable}
-                                    required={true}
-                                    autoComplete="off"
-                                />
-                                {kitField === index && kitSuggestions.length > 0 && (
-                                    <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto w-full">
-                                        {kitSuggestions.map((suggestion, i) => (
-                                            <div
-                                                key={i}
-                                                className="p-2 hover:bg-gray-100 cursor-pointer"
-                                                onClick={() => selectKitSuggestion(index, suggestion)}
-                                            >
-                                                {suggestion}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-
-                            <button
-                                type="button"
-                                onClick={() => removeMedicalKit(index)}
-                                className={`text-sm text-red-500 hover:text-red-700 pt-4 ${index === 0 ? "hidden" : ""}`}
-                            >
-                                <Trash />
-                            </button>
-                        </div>
-                    ))}
-                    <button
-                        type="button"
-                        onClick={addMedicalKit}
-                        className="text-sm text-blue-500 hover:text-blue-700"
-                    >
-                        + Add Medical Kit
-                    </button>
-                </div>
-
-                {/* Doctors */}
-                <div className="mb-6">
-                    <h3 className="text-md font-medium mb-2">Medical Staff</h3>
-                    {formData.doctors.map((doctor, index) => (
-                        <div key={index} className="mb-4 space-x-2 flex w-full  items-center">
-                            <div className='flex-grow relative'>
-                                <label
-                                    htmlFor={`doctorName-${index}`}
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    Name
-                                </label>
-                                <input
-                                    type="text"
-                                    id={`doctorName-${index}`}
-                                    name="name"
-                                    value={doctor.name}
-                                    onFocus={() => handleNameInputFocus(index, doctor.name)}
-                                    onChange={(e) => handleNameInputChange(index, e.target.value)}
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                                    disabled={!isEditable}
-                                    required={true}
-                                    autoComplete="off"
-                                />
-                                {currentField === index && nameSuggestions.length > 0 && (
-                                    <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto w-full">
-                                        {nameSuggestions.map((suggestion, i) => (
-                                            <div
-                                                key={i}
-                                                className="p-2 hover:bg-gray-100 cursor-pointer"
-                                                onClick={() => selectSuggestion(index, suggestion, "name")}
-                                            >
-                                                {suggestion.firstName} {suggestion.lastName}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                            <div className='flex-grow relative'>
-                                <label
-                                    htmlFor={`doctorEmail-${index}`}
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    id={`doctorEmail-${index}`}
-                                    name="email"
-                                    value={doctor.email}
-                                    onFocus={() => handleEmailInputFocus(index, doctor.name)} // Pass the doctor's name
-                                    onChange={(e) => handleEmailInputChange(index, e.target.value, doctor.name)}
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                                    disabled={!isEditable}
-                                    required={true}
-                                    autoComplete="off"
-                                />
-                                {currentField === index && emailSuggestions.length > 0 && (
-                                    <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto w-full">
-                                        {emailSuggestions.map((email, i) => (
-                                            <div
-                                                key={i}
-                                                className="p-2 hover:bg-gray-100 cursor-pointer"
-                                                onClick={() => selectSuggestion(index, email, "email")}
-                                            >
-                                                {email}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-
-                            {isEditable && formData.doctors.length > 1 &&
-                                < button
+                                <button
                                     type="button"
-                                    onClick={() => removeDoctor(index)}
-                                    className="text-sm text-red-500 hover:text-red-700 pt-4"
+                                    onClick={() => removeMedicalKit(index)}
+                                    className={`text-sm text-red-500 hover:text-red-700 pt-4 ${index === 0 ? "hidden" : ""}`}
                                 >
                                     <Trash />
                                 </button>
-                            }
-                        </div>
-                    ))}
-                    {isEditable && <button
-                        type="button"
-                        onClick={addDoctor}
-                        className="text-sm text-blue-500 hover:text-blue-700"
-                    >
-                        + Add Medical Staff
-                    </button>}
-                </div>
+                            </div>
+                        ))}
+                        <button
+                            type="button"
+                            onClick={addMedicalKit}
+                            className="text-sm text-blue-500 hover:text-blue-700"
+                        >
+                            + Add Medical Kit
+                        </button>
+                    </div>
 
-                {/* Submit Button */}
-                {isEditable && <div className="flex justify-end">
-                    <button
-                        type="submit"
-                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    >
-                        Submit
-                    </button>
-                </div>}
+                    {/* Doctors */}
+                    <div className="mb-6">
+                        <h3 className="text-md font-medium mb-2">Medical Staff</h3>
+                        {formData.doctors.map((doctor, index) => (
+                            <div key={index} className="mb-4 space-x-2 flex w-full  items-center">
+                                <div className='flex-grow relative'>
+                                    <label
+                                        htmlFor={`doctorName-${index}`}
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id={`doctorName-${index}`}
+                                        name="name"
+                                        value={doctor.name}
+                                        onFocus={() => handleNameInputFocus(index, doctor.name)}
+                                        onChange={(e) => handleNameInputChange(index, e.target.value)}
+                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                        disabled={!isEditable}
+                                        required={true}
+                                        autoComplete="off"
+                                    />
+                                    {currentField === index && nameSuggestions.length > 0 && (
+                                        <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto w-full">
+                                            {nameSuggestions.map((suggestion, i) => (
+                                                <div
+                                                    key={i}
+                                                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                                                    onClick={() => selectSuggestion(index, suggestion, "name")}
+                                                >
+                                                    {suggestion.firstName} {suggestion.lastName}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className='flex-grow relative'>
+                                    <label
+                                        htmlFor={`doctorEmail-${index}`}
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        id={`doctorEmail-${index}`}
+                                        name="email"
+                                        value={doctor.email}
+                                        onFocus={() => handleEmailInputFocus(index, doctor.name)} // Pass the doctor's name
+                                        onChange={(e) => handleEmailInputChange(index, e.target.value, doctor.name)}
+                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                        disabled={!isEditable}
+                                        required={true}
+                                        autoComplete="off"
+                                    />
+                                    {currentField === index && emailSuggestions.length > 0 && (
+                                        <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto w-full">
+                                            {emailSuggestions.map((email, i) => (
+                                                <div
+                                                    key={i}
+                                                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                                                    onClick={() => selectSuggestion(index, email, "email")}
+                                                >
+                                                    {email}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {isEditable && formData.doctors.length > 1 &&
+                                    < button
+                                        type="button"
+                                        onClick={() => removeDoctor(index)}
+                                        className="text-sm text-red-500 hover:text-red-700 pt-4"
+                                    >
+                                        <Trash />
+                                    </button>
+                                }
+                            </div>
+                        ))}
+                        {isEditable && <button
+                            type="button"
+                            onClick={addDoctor}
+                            className="text-sm text-blue-500 hover:text-blue-700"
+                        >
+                            + Add Medical Staff
+                        </button>}
+                    </div>
+
+                    {/* Submit Button */}
+                    {isEditable && <div className="flex justify-end">
+                        <button
+                            type="submit"
+                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        >
+                            Submit
+                        </button>
+                    </div>}
+                </fieldset>
             </form>
 
             <SuccessPopup
