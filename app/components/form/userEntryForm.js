@@ -150,7 +150,7 @@ const RegistrationForm = ({ eventId }) => {
                             {/* Date of Birth */}
                             <div>
                                 <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-1">
-                                    Date of Birth<span className="text-red-500">*</span>
+                                    Date of Birth<span className=""></span>
                                 </label>
                                 <div className="relative">
                                     <input

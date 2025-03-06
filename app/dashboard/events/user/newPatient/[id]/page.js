@@ -6,6 +6,7 @@ import { categories } from '@/app/utils/categories';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { addDirectUser } from '@/lib/api';
+import { useAuth } from "@/context/authContext";
 
 function AddNewPatient({ params }) {
 
@@ -42,8 +43,9 @@ function AddNewPatient({ params }) {
     const [categoryFocused, setCategoryFocused] = useState(false);
     const [categoryError, setCategoryError] = useState('');
     const inputRef = useRef(null);
+    const { user, loading: authLoading, logout } = useAuth();
     const isEditing = true;
-    const isAdmin = false;
+    const isAdmin = user?.role === 'admin';;
 
     const medicalKitOptions = medicalKit.map((kit) => ({
         label: kit,
@@ -365,7 +367,7 @@ function AddNewPatient({ params }) {
             }
 
             <form onSubmit={handleSubmit} className="mb-[20%]">
-                <fieldset disabled={!isAdmin}>
+                <fieldset disabled={isAdmin}>
                     <section className="flex flex-col md:flex-row gap-6">
                         {/* Patient Information */}
                         <div className="flex-grow shadow-md bg-white p-6 rounded-xl">
