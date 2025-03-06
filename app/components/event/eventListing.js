@@ -1,7 +1,7 @@
 'use client'
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Info, Eye } from "lucide-react";
+import { Info, Eye, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 // Helper function to format the date
@@ -117,11 +117,14 @@ export default function EventsListing({ events, isAdmin }) {
                                     <td className="px-6 py-4">{formatDate(event.startDate)}</td>
                                     <td className="px-6 py-4">{formatDate(event.endDate)}</td>
                                     <td className="px-6 py-4 flex items-center">
-                                        <button className="text-gray-400 mr-4 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/edit-event/${event._id}?data=${encodeURIComponent(JSON.stringify(event))}`)}>
+                                        <button className="text-gray-400 mr-2 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/edit-event/${event._id}?data=${encodeURIComponent(JSON.stringify(event))}`)}>
                                             <Info />
                                         </button>
-                                        <button className="text-gray-400 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/${event._id}`)}>
+                                        <button className="text-gray-400 mr-2 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/${event._id}`)}>
                                             <Eye />
+                                        </button>
+                                        <button className="text-gray-400 hover:text-purple-700" onClick={() => router.push(`/report/${event._id}`)}>
+                                            <FileText />
                                         </button>
                                     </td>
                                 </motion.tr>
