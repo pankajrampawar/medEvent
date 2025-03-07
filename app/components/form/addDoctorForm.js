@@ -8,6 +8,8 @@ import { useRouter } from 'next/navigation';
 export default function AddDoctor() {
 
     const router = useRouter();
+    const [passwordError, setPasswordError] = useState("");
+    const [emailError, setEmailError] = useState("");
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -64,9 +66,16 @@ export default function AddDoctor() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Simulate API call to add doctor to the database
+        if (formData.password.length < 7) {
+            setPasswordError("Password must contain atleast 6 characters.");
+            return;
+        }
         try {
             const result = await addNewDoctor(formData);
+            if (result.error) {
+                setEmailError("User with this mail already exists.");
+                return;
+            }
             showPopup("Staff Added successfully", 'success')
             console.log(result);
             router.back();
@@ -117,6 +126,11 @@ export default function AddDoctor() {
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                         required
                     />
+                    {emailError &&
+                        <div className='text-red-500 text-sm mt-1 ml-1'>
+                            {emailError}
+                        </div>
+                    }
                 </div>
 
                 <div className="mb-4">
@@ -138,6 +152,11 @@ export default function AddDoctor() {
                             Auto-generate
                         </button>
                     </div>
+                    {passwordError &&
+                        <div className='text-red-500 text-sm mt-1 ml-1'>
+                            {passwordError}
+                        </div>
+                    }
                 </div>
 
                 <div className="mb-6">
