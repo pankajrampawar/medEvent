@@ -1,7 +1,7 @@
 'use client';
 import { getEventDetails, getUserFromEvent } from '@/lib/api';
 import React, { useEffect, useState } from 'react';
-import { PDFDownloadLink } from '@react-pdf/renderer';
+import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
 import ModernReportPDF from '@/app/components/modernPDF';
 import { generateChartImage } from '@/app/utils/generateChartImages';
 import { Pie, Bar } from 'react-chartjs-2';
@@ -23,6 +23,7 @@ export default function Report({ params }) {
     const [event, setEvent] = useState([]);
     const [loading, setLoading] = useState(true);
     const [users, setUsers] = useState([]);
+    const [showPdfPreview, setShowPdfPreview] = useState(true);
     const [loadingUser, setLoadingUser] = useState(false);
     const [pieChartData, setPieChartData] = useState({ labels: [], datasets: [] });
     const [barChartData, setBarChartData] = useState({ labels: [], datasets: [] });
@@ -56,11 +57,13 @@ export default function Report({ params }) {
             'Advise/Consultation',
         ];
 
+        // Initialize category counts
         const categoryCounts = {};
         categories.forEach((category) => {
             categoryCounts[category] = 0;
         });
 
+        // Count occurrences
         users.forEach((user) => {
             const category = user.conditionCategory;
             if (categoryCounts.hasOwnProperty(category)) {
@@ -68,22 +71,39 @@ export default function Report({ params }) {
             }
         });
 
+        // Sort categories by count (descending)
+        const sortedCategories = Object.entries(categoryCounts)
+            .sort((a, b) => b[1] - a[1])
+            .map(entry => ({ name: entry[0], count: entry[1] }));
+
+        // Take top 3 and calculate the sum of others
+        const top3 = sortedCategories.slice(0, 3);
+        const othersCount = sortedCategories
+            .slice(3)
+            .reduce((sum, category) => sum + category.count, 0);
+
+        // Create final dataset
+        const finalLabels = [...top3.map(item => item.name)];
+        const finalCounts = [...top3.map(item => item.count)];
+        const finalColors = ['#FF6384', '#36A2EB', '#FFCE56'];
+
+        // Add "Others" category if there are values to show
+        if (othersCount > 0) {
+            finalLabels.push('Others');
+            finalCounts.push(othersCount);
+            finalColors.push('#4BC0C0');
+        }
+
         return {
-            labels: categories,
+            labels: finalLabels,
             datasets: [
                 {
-                    data: categories.map((category) => categoryCounts[category]),
-                    backgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-                        '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-                        '#9966FF', '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56',
-                        '#4BC0C0', '#9966FF', '#FF9F40', '#FF6384', '#36A2EB',
-                    ],
+                    data: finalCounts,
+                    backgroundColor: finalColors,
                 },
             ],
         };
     };
-
     useEffect(() => {
         const getResult = async () => {
             const result = await getEventDetails(id);
@@ -104,7 +124,6 @@ export default function Report({ params }) {
                 setBarChartImage(barChartImage);
             }, 5000); // Adjust delay if necessary
         };
-
         getResult();
     }, [id]);
 
@@ -142,7 +161,7 @@ export default function Report({ params }) {
         if (!loadingUser) {
             setLoadingBarData(true);
             geneBarChartData();
-            setLoadingBarData(false);
+            setLoadingBarData(false)
         }
     }, [users, loadingUser]);
 
@@ -161,23 +180,62 @@ export default function Report({ params }) {
     if (loadingPieData) return <div><LoadingSpinner message="Loading pie chart data" /></div>
 
     return (
-        <div>
+        <div className='mx-[10%]'>
             {barChartData.labels.length > 0 && (
                 <div>
-                    <h1>Report</h1>
+                    <h1 className='my-10 text-3xl'>Event Report</h1>
+                    <button
+                        onClick={() => setShowPdfPreview(!showPdfPreview)}
+                        className="px-4 py-2 rounded-md bg-gray-200 text-gray-800 font-medium hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200"
+                    >
+                        {showPdfPreview ? 'Hide PDF Preview' : 'Show PDF Preview'}
+                    </button>
+                    {showPdfPreview && (
+                        <div className="border border-gray-300 rounded-md overflow-hidden" style={{ height: '600px' }}>
+                            <PDFViewer width="100%" height="100%" className="border-0">
+                                <ModernReportPDF
+                                    event={event}
+                                    users={users}
+                                    pieChartImage={pieChartImage}
+                                    barChartImage={barChartImage}
+                                />
+                            </PDFViewer>
+                        </div>
+                    )}
                     <PDFDownloadLink
                         document={<ModernReportPDF event={event} users={users} pieChartImage={pieChartImage} barChartImage={barChartImage} />}
                         fileName="modern_daily_report.pdf"
+                        className="inline-flex items-center px-4 py-2 rounded-md bg-blue-600 text-white font-medium shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
                     >
-                        {({ loading }) => (loading ? 'Generating PDF...' : 'Download PDF')}
+                        {({ loading }) => (
+                            <>
+                                {loading ? (
+                                    <>
+                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Generating PDF...
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg className="w-4 h-4 mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                                        </svg>
+                                        Download PDF
+                                    </>
+                                )}
+                            </>
+                        )}
                     </PDFDownloadLink>
 
                     {/* Hidden charts for image generation */}
-                    <div id="pie-chart" style={{ width: '400px', height: '400px' }}>
-                        <Pie data={pieChartData} />
-                    </div>
-                    <div id="bar-chart" style={{ width: '600px', height: '300px' }}>
-                        <Bar data={barChartData} />
+                    <div className='relative bg-red-200'>
+                        <div id="pie-chart" style={{ width: '300px', height: '300px' }} className=''>
+                            <Pie data={pieChartData} />
+                        </div>
+                        <div className='absolute top-0 left-0 w-full h-full bg-background'>
+                        </div>
                     </div>
                 </div>
             )}

@@ -146,18 +146,6 @@ const ModernReportPDF = ({ event, users, pieChartImage, barChartImage }) => {
                     </View>
                 </View>
 
-                {/* Referrals Today (Bar Chart) */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Referrals Today</Text>
-                    <View style={styles.chartContainer}>
-                        {barChartImage && (
-                            <Image
-                                src={barChartImage}
-                                style={styles.chartImage} // Use the new style
-                            />
-                        )}
-                    </View>
-                </View>
 
                 {/* Footer */}
                 <Text style={styles.footer}>Generated on {new Date().toLocaleDateString()}</Text>
