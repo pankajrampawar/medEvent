@@ -116,9 +116,7 @@ export default function EditDoctor() {
     };
 
     const handleDiscardChanges = () => {
-        confirmAction("Are you sure you want to discard changes? All changes will be reversed.", () => {
-            setFormData({ ...originalData }); // Restore original data
-        });
+        setFormData({ ...originalData });
     };
 
     if (authLoading || loading) {
