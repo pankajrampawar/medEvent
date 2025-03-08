@@ -14,6 +14,14 @@ const formatDate = (dateStrings) => {
     });
 };
 
+const isUpcoming = (isoDate) => {
+    const givenDate = new Date(isoDate);
+    const currentDate = new Date();
+    return (
+        currentDate.toISOString().split('T')[0] < givenDate.toISOString().split('T')[0]
+    );
+};
+
 export default function EventsListing({ events, isAdmin }) {
     const router = useRouter();
 
@@ -123,7 +131,7 @@ export default function EventsListing({ events, isAdmin }) {
                                         <button className="text-gray-400 mr-2 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/${event._id}`)}>
                                             <Eye />
                                         </button>
-                                        <button className="text-gray-400 hover:text-purple-700" onClick={() => router.push(`/report/${event._id}`)}>
+                                        <button className={`text-gray-400 hover:text-purple-700 ${isUpcoming(event.startDate) ? "hidden" : ""}`} onClick={() => router.push(`/report/${event._id}`)}>
                                             <FileText />
                                         </button>
                                     </td>
