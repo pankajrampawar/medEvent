@@ -26,10 +26,11 @@ export default function Report({ params }) {
     const [event, setEvent] = useState([]);
     const [loading, setLoading] = useState(true);
     const [users, setUsers] = useState([]);
-    const [showPdfPreview, setShowPdfPreview] = useState(true);
+    const [showPdfPreview, setShowPdfPreview] = useState(false);
     const [loadingUser, setLoadingUser] = useState(false);
     const [pieChartData, setPieChartData] = useState({ labels: [], datasets: [] });
     const [barChartData, setBarChartData] = useState({ labels: [], datasets: [] });
+    const [loadingPdf, setLoadingPdf] = useState(true)
     const [loadingBardata, setLoadingBarData] = useState(false);
     const [loadingPieData, setLoadingPieData] = useState(false);
     const [pieChartImage, setPieChartImage] = useState('');
@@ -125,7 +126,9 @@ export default function Report({ params }) {
                 const barChartImage = await generateChartImage('bar-chart');
                 setPieChartImage(pieChartImage);
                 setBarChartImage(barChartImage);
-            }, 5000); // Adjust delay if necessary
+                setShowPdfPreview(true)
+                setLoadingPdf(false);
+            }, 6000); // Adjust delay if necessary
         };
         getResult();
     }, [id]);
@@ -228,12 +231,26 @@ export default function Report({ params }) {
         );
     }
 
+    const handleBack = () => {
+        // Attempt to go back, but provide a fallback
+        if (window.history.length > 1) {
+            router.back();
+        } else {
+            router.push('/dashboard'); // Redirect to a fallback route
+        }
+    };
+
     return (
         <div className='mx-[10%]'>
+            {loadingPdf &&
+                <div className=''>
+                    <div><LoadingSpinner message="Generating PDF" /></div>
+                </div>
+            }
             {barChartData.labels.length > 0 && (
                 <div>
                     <h1 className='my-10 text-3xl flex items-center gap-1'>
-                        <button className="hover:bg-gray-200 p-2 rounded-full" onClick={() => router.back()}>
+                        <button className="hover:bg-gray-200 p-2 rounded-full" onClick={handleBack}>
                             <ChevronLeft />
                         </button>
                         Event Report
@@ -244,18 +261,20 @@ export default function Report({ params }) {
                     >
                         {showPdfPreview ? 'Hide PDF Preview' : 'Show PDF Preview'}
                     </button>
-                    {showPdfPreview && (
-                        <div className="border border-gray-300 rounded-md overflow-hidden" style={{ height: '600px' }}>
-                            <PDFViewer width="100%" height="100%" className="border-0">
-                                <ModernReportPDF
-                                    event={event}
-                                    users={users}
-                                    pieChartImage={pieChartImage}
-                                    barChartImage={barChartImage}
-                                />
-                            </PDFViewer>
-                        </div>
-                    )}
+                    {
+                        showPdfPreview && (
+                            <div className="border border-gray-300 rounded-md overflow-hidden" style={{ height: '600px' }}>
+                                <PDFViewer width="100%" height="100%" className="border-0">
+                                    <ModernReportPDF
+                                        event={event}
+                                        users={users}
+                                        pieChartImage={pieChartImage}
+                                        barChartImage={barChartImage}
+                                    />
+                                </PDFViewer>
+                            </div>
+                        )
+                    }
                     <PDFDownloadLink
                         document={<ModernReportPDF event={event} users={users} pieChartImage={pieChartImage} barChartImage={barChartImage} />}
                         fileName="modern_daily_report.pdf"
@@ -291,8 +310,9 @@ export default function Report({ params }) {
                         <div className='absolute top-0 left-0 w-full h-full bg-background'>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                </div >
+            )
+            }
+        </div >
     );
 }
