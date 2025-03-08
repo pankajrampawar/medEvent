@@ -128,7 +128,7 @@ export const options = [
     { value: 'Regular Adult Manual BP Cuff', label: 'Regular Adult Manual BP Cuff' },
     { value: 'Saljet Saline Bullets 0.9%', label: 'Saljet Saline Bullets 0.9%' },
     { value: 'Sam Splint', label: 'Sam Splint' },
-    { value: 'Scalpel #11 Blade', label: 'Scalpel #11 Blade' },
+    { value: 'Scalpel 11 Blade', label: 'Scalpel 11 Blade' },
     { value: 'Scrub Brush - BD EZ Scrub CHG 4% (Schein)', label: 'Scrub Brush - BD EZ Scrub CHG 4% (Schein)' },
     { value: 'Sharps Container - 1 quart (in box with medical unit)', label: 'Sharps Container - 1 quart (in box with medical unit)' },
     { value: 'Shaving Razor', label: 'Shaving Razor' },
@@ -186,12 +186,12 @@ export const options = [
 ];
 
 export const medicalKitOptions = [
-    "Medical Unit #1", "Medical Unit #2", "Medical Unit #3", "Medical Unit #4", "Medical Unit #5",
-    "Medical Unit #6", "Medical Unit #7", "Medical Unit #8", "Medical Unit #9", "Medical Unit #10",
-    "Medical Unit #11", "Medical Unit #12", "Medical Unit #13", "Medical Unit #14", "Medical Unit #15",
-    "Medical Unit #16", "Medical Unit #17", "Medical Unit #18", "Medical Unit #19", "Medical Unit #20",
-    "BPX #1", "BPX #2", "BPX #3", "BPX #4", "BPX #5", "BPX #6", "BPX #7", "BPX #8", "BPX #9", "BPX #10",
-    "BPX #11", "BPX #12", "BPX #13", "BPX #14", "BPX #15", "BPX #16", "BPX #17", "BPX #18", "BPX #19", "BPX #20",
-    "Peds #1", "Peds #2", "Peds #3", "Peds #4", "Peds #5",
-    "Beach #1", "Beach #2", "Beach #3", "Beach #4", "Beach #5"
+    "Medical Unit 1", "Medical Unit 2", "Medical Unit 3", "Medical Unit 4", "Medical Unit 5",
+    "Medical Unit 6", "Medical Unit 7", "Medical Unit 8", "Medical Unit 9", "Medical Unit 10",
+    "Medical Unit 11", "Medical Unit 12", "Medical Unit 13", "Medical Unit 14", "Medical Unit 15",
+    "Medical Unit 16", "Medical Unit 17", "Medical Unit 18", "Medical Unit 19", "Medical Unit 20",
+    "BPX 1", "BPX 2", "BPX 3", "BPX 4", "BPX 5", "BPX 6", "BPX 7", "BPX 8", "BPX 9", "BPX 10",
+    "BPX 11", "BPX 12", "BPX 13", "BPX 14", "BPX 15", "BPX 16", "BPX 17", "BPX 18", "BPX 19", "BPX 20",
+    "Peds 1", "Peds 2", "Peds 3", "Peds 4", "Peds 5",
+    "Beach 1", "Beach 2", "Beach 3", "Beach 4", "Beach 5"
 ];
