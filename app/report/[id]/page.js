@@ -7,6 +7,8 @@ import { generateChartImage } from '@/app/utils/generateChartImages';
 import { Pie, Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
 import LoadingSpinner from '@/app/components/loader';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft, ChevronLeft } from 'lucide-react';
 
 // Register Chart.js components
 ChartJS.register(
@@ -19,6 +21,7 @@ ChartJS.register(
 );
 
 export default function Report({ params }) {
+    const router = useRouter();
     const { id } = React.use(params);
     const [event, setEvent] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -104,7 +107,7 @@ export default function Report({ params }) {
             ],
         };
     };
-    useEffect(() => {
+    useEffect(() => { // to get the user data and event data
         const getResult = async () => {
             const result = await getEventDetails(id);
             if (!result) alert('Error');
@@ -127,7 +130,7 @@ export default function Report({ params }) {
         getResult();
     }, [id]);
 
-    useEffect(() => {
+    useEffect(() => { // to generate the bar chart data
         const geneBarChartData = () => {
             const result = {
                 labels: [],
@@ -166,6 +169,17 @@ export default function Report({ params }) {
     }, [users, loadingUser]);
 
     useEffect(() => {
+        if (users.length < 1) {
+            const timer = setTimeout(() => {
+                router.back();
+            }, 5000);
+
+            return () => clearTimeout(timer); // Cleanup the timer if component unmounts
+        }
+    }, [users, router]);
+
+
+    useEffect(() => {
         if (!loadingUser) {
             setLoadingPieData(true)
             const pieChartData = generatePieChartData(users);
@@ -179,11 +193,51 @@ export default function Report({ params }) {
     if (loadingBardata) return <div><LoadingSpinner message="Loading bar data" /> </div>;
     if (loadingPieData) return <div><LoadingSpinner message="Loading pie chart data" /></div>
 
+    if (users.length < 1) {
+        return (
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100vh',
+                    backgroundColor: '#f8f9fa',
+                    textAlign: 'center',
+                    color: '#333',
+                    padding: '20px',
+                    border: '1px solid #ddd',
+                    borderRadius: '10px',
+                }}
+            >
+                <h1 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#ff4d4d' }}>
+                    No Patient Data Found
+                </h1>
+                <p style={{ fontSize: '1rem', marginBottom: '1.5rem' }}>
+                    Unable to generate the report as there is no patient data available. You will
+                    be redirected to the previous page shortly.
+                </p>
+                <p style={{ fontSize: '0.9rem', color: '#555' }}>
+                    If you are not redirected automatically, please click the back button below.
+                </p>
+
+                <div className='underline underline-offset-4 mt-3'>
+                    <button onClick={() => router.back()} className='flex gap-1 items-center text-primary'><ArrowLeft />Go Back</button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className='mx-[10%]'>
             {barChartData.labels.length > 0 && (
                 <div>
-                    <h1 className='my-10 text-3xl'>Event Report</h1>
+                    <h1 className='my-10 text-3xl flex items-center gap-1'>
+                        <button className="hover:bg-gray-200 p-2 rounded-full" onClick={() => router.back()}>
+                            <ChevronLeft />
+                        </button>
+                        Event Report
+                    </h1>
                     <button
                         onClick={() => setShowPdfPreview(!showPdfPreview)}
                         className="px-4 py-2 rounded-md bg-gray-200 text-gray-800 font-medium hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200"
