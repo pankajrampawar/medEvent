@@ -1,7 +1,7 @@
 'use client'
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Info, Eye, FileText } from "lucide-react";
+import { Info, Eye, FileText, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 // Helper function to format the date
@@ -22,7 +22,7 @@ const isUpcoming = (isoDate) => {
     );
 };
 
-export default function EventsListing({ events, isAdmin }) {
+export default function EventsListing({ events, isAdmin, refreshEvents }) {
     const router = useRouter();
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -64,7 +64,18 @@ export default function EventsListing({ events, isAdmin }) {
         <div className="p-6 bg-white min-w-full min-h-[70vh] flex flex-col justify-between">
             {/* Header */}
             <div>
-                <div className="flex justify-end items-center mb-6 ">
+                <div className="flex justify-between items-center mb-6 ">
+                    <div>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors flex items-center"
+                            onClick={refreshEvents}
+                        >
+                            <RefreshCw size={18} className="mr-2" />
+                            Refresh Events
+                        </motion.button>
+                    </div>
                     <div className="flex space-x-4">
                         <input
                             type="text"

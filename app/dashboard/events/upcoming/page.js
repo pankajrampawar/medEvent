@@ -63,6 +63,34 @@ export default function UpcomingEvent() {
         }
     };
 
+    const fetchEvents = async () => {
+        try {
+            setLoading(true);
+            const result = await getEventDetails();
+            const fetchedEvents = result.events || [];
+            let requiredEvents;
+
+            if (isAdmin) {
+                requiredEvents = fetchedEvents;
+                setEvents(requiredEvents);
+            } else if (isDoctor) {
+                // Filter events where the user's email exists in the doctor array
+                console.log(fetchedEvents)
+                requiredEvents = fetchedEvents.filter(event =>
+                    event.doctors?.some(doc => doc.email === user.email)
+                );
+                setEvents(requiredEvents);
+            }
+
+            localStorage.setItem('events', JSON.stringify(requiredEvents));
+            categorizeEvents(requiredEvents);
+        } catch (error) {
+            console.error("Failed to fetch events:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         const initializeEvents = async () => {
             const storedEvents = JSON.parse(localStorage.getItem("events"));
@@ -90,7 +118,7 @@ export default function UpcomingEvent() {
             </section>
 
             <section className="min-w-full">
-                <EventListing events={upcomingEvents} isAdmin={isAdmin} />
+                <EventListing events={upcomingEvents} isAdmin={isAdmin} refreshEvents={fetchEvents} />
             </section>
 
             <section className="fixed">

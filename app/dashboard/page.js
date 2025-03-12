@@ -100,7 +100,7 @@ export default function OngoingEvent() {
             </section>
 
             <section className="min-w-full">
-                <EventListing events={events} isAdmin={isAdmin} />
+                <EventListing events={events} isAdmin={isAdmin} refreshEvents={fetchEvents} />
             </section>
 
             <section className="fixed">

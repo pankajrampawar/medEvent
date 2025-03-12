@@ -83,6 +83,34 @@ export default function CompletedEvent() {
         return () => clearInterval(intervalId);
     }, []);
 
+    const fetchEvents = async () => {
+        try {
+            setLoading(true);
+            const result = await getEventDetails();
+            const fetchedEvents = result.events || [];
+            let requiredEvents;
+
+            if (isAdmin) {
+                requiredEvents = fetchedEvents;
+                setEvents(requiredEvents);
+            } else if (isDoctor) {
+                // Filter events where the user's email exists in the doctor array
+                console.log(fetchedEvents)
+                requiredEvents = fetchedEvents.filter(event =>
+                    event.doctors?.some(doc => doc.email === user.email)
+                );
+                setEvents(requiredEvents);
+            }
+
+            localStorage.setItem('events', JSON.stringify(requiredEvents));
+            categorizeEvents(requiredEvents);
+        } catch (error) {
+            console.error("Failed to fetch events:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     return (
         <div className="flex flex-col w-full gap-4 p-[5%]">
@@ -91,7 +119,7 @@ export default function CompletedEvent() {
             </section>
 
             <section className="min-w-full">
-                <EventListing events={completedEvents} isAdmin={isAdmin} />
+                <EventListing events={completedEvents} isAdmin={isAdmin} refreshEvents={fetchEvents} />
             </section>
 
             <section className="fixed">
