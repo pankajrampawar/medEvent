@@ -243,7 +243,7 @@ export default function Report({ params }) {
             datalabels: {
                 color: '#fff', // Color of the numbers
                 font: {
-                    size: 12, // Size of the numbers
+                    size: 18, // Size of the numbers
                     weight: 'bold', // Weight of the numbers
                 },
                 formatter: (value, context) => {
