@@ -413,6 +413,7 @@ function AddNewPatient({ params }) {
                                             value={formData.dateOfBirth || ''}
                                             onChange={handleInputChange}
                                             disabled={!isEditing || isAdmin}
+                                            max={new Date().toISOString().split('T')[0]}
                                         />
                                     </div>
                                     <div>
@@ -564,7 +565,7 @@ function AddNewPatient({ params }) {
                             <h3 className="text-lg font-medium mb-4 text-blue-800 border-b pb-2">OTC Supplies Dispensed</h3>
                             <div className="space-y-4">
                                 {items.map((item, index) => (
-                                    <div key={index} className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                                    <div key={index} className="flex flex-col md:flex-row md:items-center gap-4 p-2 pb-6 bg-gray-50 rounded-lg">
                                         <div className="flex-1 relative">
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Medical Kit</label>
                                             <Select
@@ -573,11 +574,11 @@ function AddNewPatient({ params }) {
                                                 onChange={(selectedOption) => handleMedicalKitChange(index, selectedOption)}
                                                 className="mt-1"
                                                 placeholder="Select a medical kit"
-                                                isDisabled={!isAdmin}
+                                                isDisabled={isAdmin}
                                                 required={true}
                                             />
                                             {errors[`medicalKit-${index}`] && (
-                                                <p className="text-red-500 text-sm mt-1">{errors[`medicalKit-${index}`]}</p>
+                                                <p className="text-red-500 text-sm mt-1 absolute">{errors[`medicalKit-${index}`]}</p>
                                             )}
                                         </div>
                                         <div className="flex-1 relative">
@@ -588,11 +589,11 @@ function AddNewPatient({ params }) {
                                                 onChange={(selectedOption) => handleProductChange(index, selectedOption)}
                                                 className="mt-1"
                                                 placeholder="Select a product"
-                                                isDisabled={!isAdmin}
+                                                isDisabled={isAdmin}
                                                 required={true}
                                             />
                                             {errors[`product-${index}`] && (
-                                                <p className="text-red-500 text-sm mt-1">{errors[`product-${index}`]}</p>
+                                                <p className="text-red-500 text-sm mt-1 absolute">{errors[`product-${index}`]}</p>
                                             )}
                                         </div>
 
@@ -609,11 +610,11 @@ function AddNewPatient({ params }) {
                                                 }}
                                                 className="block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                                                 placeholder="Enter quantity"
-                                                disabled={!isAdmin}
+                                                disabled={isAdmin}
                                                 required={true}
                                             />
                                             {errors[`quantity-${index}`] && (
-                                                <p className="text-red-500 text-sm mt-1">{errors[`quantity-${index}`]}</p>
+                                                <p className="text-red-500 text-sm mt-1 absolute">{errors[`quantity-${index}`]}</p>
                                             )}
                                         </div>
 

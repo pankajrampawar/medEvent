@@ -9,6 +9,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearSca
 import LoadingSpinner from '@/app/components/loader';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, ChevronLeft } from 'lucide-react';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 // Register Chart.js components
 ChartJS.register(
@@ -17,7 +18,8 @@ ChartJS.register(
     CategoryScale, // Required for Bar charts
     LinearScale, // Required for Bar charts
     Tooltip,
-    Legend
+    Legend,
+    ChartDataLabels
 );
 
 export default function Report({ params }) {
@@ -240,6 +242,33 @@ export default function Report({ params }) {
         }
     };
 
+    const pieChartOptions = {
+        plugins: {
+            datalabels: {
+                color: '#fff', // Color of the numbers
+                font: {
+                    size: 12, // Size of the numbers
+                    weight: 'bold', // Weight of the numbers
+                },
+                formatter: (value, context) => {
+                    return value; // Display the value (count) on the chart
+                },
+            },
+            legend: {
+                labels: {
+                    font: {
+                        size: 10, // Smaller font size for legend labels
+                    },
+                },
+            },
+            tooltip: {
+                bodyFont: {
+                    size: 10, // Smaller font size for tooltip labels
+                },
+            },
+        },
+    };
+
     return (
         <div className='mx-[10%]'>
             {loadingPdf &&
@@ -305,7 +334,7 @@ export default function Report({ params }) {
                     {/* Hidden charts for image generation */}
                     <div className='relative bg-red-200'>
                         <div id="pie-chart" style={{ width: '300px', height: '300px' }} className=''>
-                            <Pie data={pieChartData} />
+                            <Pie data={pieChartData} options={pieChartOptions} />
                         </div>
                         <div className='absolute top-0 left-0 w-full h-full bg-background'>
                         </div>
