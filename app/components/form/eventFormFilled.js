@@ -397,7 +397,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                             <div key={index} className="mb-4 space-x-2 flex w-full items-center">
                                 <div className="flex-grow relative">
                                     <label htmlFor={`medicalKit-${index}`} className="block text-sm font-medium text-gray-700">
-                                        Kit Name
+                                        Kit Name <span className='text-red-600 text-lg'>*</span>
                                     </label>
                                     <input
                                         type="text"
@@ -454,7 +454,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                                         htmlFor={`doctorName-${index}`}
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Name
+                                        Name <span className='text-red-600 text-lg'>*</span>
                                     </label>
                                     <input
                                         type="text"
@@ -487,7 +487,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                                         htmlFor={`doctorEmail-${index}`}
                                         className="block text-sm font-medium text-gray-700"
                                     >
-                                        Email
+                                        Email <span className='text-red-600 text-lg'>*</span>
                                     </label>
                                     <input
                                         type="email"

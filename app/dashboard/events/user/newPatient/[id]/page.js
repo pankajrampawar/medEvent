@@ -376,7 +376,7 @@ function AddNewPatient({ params }) {
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">First Name <span className='text-red-600 text-lg'>*</span></label>
                                             <input
                                                 type="text"
                                                 name="firstName"
@@ -390,7 +390,7 @@ function AddNewPatient({ params }) {
                                             )}
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Last Name <span className='text-red-600 text-lg'>*</span></label>
                                             <input
                                                 type="text"
                                                 name="lastName"
@@ -417,7 +417,7 @@ function AddNewPatient({ params }) {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Contact No</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Contact No <span className='text-red-600 text-lg'>*</span></label>
                                         <input
                                             type="text"
                                             name="contactNumber"
@@ -432,7 +432,7 @@ function AddNewPatient({ params }) {
                                     </div>
 
                                     <div>
-                                        <h3 className="text-md font-medium mb-1">Chief Complaint</h3>
+                                        <h3 className="text-md font-medium mb-1">Chief Complaint <span className='text-red-600 text-lg'>*</span></h3>
                                         <input
                                             type="text"
                                             name="chiefComplaint"
@@ -467,7 +467,7 @@ function AddNewPatient({ params }) {
                                 <h3 className="text-lg font-medium mb-4 text-blue-800 border-b pb-2">Diagnosis</h3>
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Primary Diagnosis</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Primary Diagnosis <span className='text-red-600 text-lg'>*</span></label>
                                         <input
                                             type="text"
                                             name="primaryDiagnosis"
@@ -482,7 +482,7 @@ function AddNewPatient({ params }) {
                                         )}
                                     </div>
                                     <div className="relative" ref={inputRef}>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Condition Category</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Condition Category <span className='text-red-600 text-lg'>*</span></label>
                                         <input
                                             type="text"
                                             name="conditionCategory"
@@ -567,7 +567,7 @@ function AddNewPatient({ params }) {
                                 {items.map((item, index) => (
                                     <div key={index} className="flex flex-col md:flex-row md:items-center gap-4 p-2 pb-6 bg-gray-50 rounded-lg">
                                         <div className="flex-1 relative">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Medical Kit</label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Medical Kit<span className='text-red-600 text-lg'>*</span></label>
                                             <Select
                                                 options={medicalKitOptions}
                                                 value={item.medicalKit}
@@ -582,7 +582,7 @@ function AddNewPatient({ params }) {
                                             )}
                                         </div>
                                         <div className="flex-1 relative">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Item</label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Item<span className='text-red-600 text-lg'>*</span></label>
                                             <Select
                                                 options={options}
                                                 value={item.product}
@@ -598,7 +598,7 @@ function AddNewPatient({ params }) {
                                         </div>
 
                                         <div className="flex-1 relative">
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Quantity<span className='text-red-600 text-lg'>*</span></label>
                                             <input
                                                 type="number"
                                                 value={item.quantity}

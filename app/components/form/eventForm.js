@@ -361,7 +361,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                         <div key={index} className="mb-4 space-x-2 flex w-full items-center">
                             <div className="flex-grow relative">
                                 <label htmlFor={`medicalKit-${index}`} className="block text-sm font-medium text-gray-700">
-                                    Kit Name
+                                    Kit Name <span className='text-red-600 text-lg'>*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -419,7 +419,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
                         <div key={index} className="mb-4 space-x-2 flex w-full items-center">
                             <div className="flex-grow relative">
                                 <label htmlFor={`doctorName-${index}`} className="block text-sm font-medium text-gray-700">
-                                    Name
+                                    Name <span className='text-red-600 text-lg'>*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -450,7 +450,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
 
                             <div className="flex-grow relative">
                                 <label htmlFor={`doctorEmail-${index}`} className="block text-sm font-medium text-gray-700">
-                                    Email
+                                    Email <span className='text-red-600 text-lg'>*</span>
                                 </label>
                                 <input
                                     type="email"
