@@ -138,6 +138,9 @@ const PatientForm = ({ isEditable = true, params }) => {
         }
 
         items.forEach((item, index) => {
+            if (!item.medicalKit) {
+                newErrors[`medicalKit-${index}`] = 'Medical Kit is required';
+            }
             if (!item.product) {
                 newErrors[`product-${index}`] = 'Product is required';
             }
@@ -422,20 +425,23 @@ const PatientForm = ({ isEditable = true, params }) => {
                     <h3 className="text-lg font-semibold mb-4">OTC Supplies Dispensed</h3>
                     <div className="space-y-4">
                         {items.map((item, index) => (
-                            <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                                <div>
+                            <div key={index} className="flex w-full gap-4 items-end pb-2">
+                                <div className='w-full relative'>
                                     <label className="block text-sm font-medium text-gray-700">Medical Kit</label>
                                     <Select
                                         options={medicalKitOptions}
                                         value={item.medicalKit}
                                         onChange={(selectedOption) => handleMedicalKitChange(index, selectedOption)}
                                         className="mt-1"
-                                        placeholder="Select a product"
+                                        placeholder="Select Medical Kit"
                                         isDisabled={isAdmin}
                                         required={true}
                                     />
+                                    {errors[`medicalKit-${index}`] && (
+                                        <p className="text-red-500 text-sm absolute mt-1">{errors[`medicalKit-${index}`]}</p>
+                                    )}
                                 </div>
-                                <div>
+                                <div className='w-full relative'>
                                     <label className="block text-sm font-medium text-gray-700">Item</label>
                                     <Select
                                         options={options}
@@ -447,10 +453,10 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         required={true}
                                     />
                                     {errors[`product-${index}`] && (
-                                        <p className="text-red-500 text-sm">{errors[`product-${index}`]}</p>
+                                        <p className="text-red-500 text-sm absolute mt-1">{errors[`product-${index}`]}</p>
                                     )}
                                 </div>
-                                <div>
+                                <div className='w-full relative'>
                                     <label className="block text-sm font-medium text-gray-700">Quantity</label>
                                     <input
                                         type="number"
@@ -467,7 +473,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                         required={true}
                                     />
                                     {errors[`quantity-${index}`] && (
-                                        <p className="text-red-500 text-sm">{errors[`quantity-${index}`]}</p>
+                                        <p className="text-red-500 text-sm absolute mt-1">{errors[`quantity-${index}`]}</p>
                                     )}
                                 </div>
                                 {items.length > 1 && !isAdmin && (
@@ -485,7 +491,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                             <button
                                 type="button"
                                 onClick={addItem}
-                                className="mt-2 p-2 text-primary hover:bg-gray-100 rounded-md flex items-center gap-2"
+                                className="mt-10 p-2 text-primary hover:bg-gray-100 rounded-md flex items-center gap-2"
                             >
                                 <Plus size={16} />
                                 Add Another Item

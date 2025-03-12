@@ -57,12 +57,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },
     chartImage: {
-        width: '70%', // Use full width of the container
-        height: 'auto', // Maintain aspect ratio
-        maxWidth: '100%', // Ensure it doesn't overflow
-    },
-    pieChartImage: {
-        width: '50%', // Use full width of the container
+        width: '48%', // Use full width of the container
         height: 'auto', // Maintain aspect ratio
         maxWidth: '100%', // Ensure it doesn't overflow
     },
