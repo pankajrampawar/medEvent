@@ -235,11 +235,7 @@ export default function Report({ params }) {
 
     const handleBack = () => {
         // Attempt to go back, but provide a fallback
-        if (window.history.length > 1) {
-            router.back();
-        } else {
-            router.push('/dashboard'); // Redirect to a fallback route
-        }
+        router.push('/dashboard'); // Redirect to a fallback route
     };
 
     const pieChartOptions = {
