@@ -62,6 +62,7 @@ export default function EditDoctor() {
     const [popupMessage, setPopupMessage] = useState(''); // Popup message
     const [popupAction, setPopupAction] = useState(null); // Popup action (callback)
     const [isFormModified, setIsFormModified] = useState(false); // Track if form is modified
+    const [passwordError, setPasswordError] = useState(false)
 
     // Check if form data is modified
     useEffect(() => {
@@ -81,15 +82,56 @@ export default function EditDoctor() {
 
     const handlePasswordChange = (e) => {
         const { value } = e.target;
-        setFormData({
-            ...formData,
-            password: value,
-        });
+        setFormData({ ...formData, password: value });
+
+        if (!validatePassword(value)) {
+            setPasswordError('Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.');
+        } else {
+            setPasswordError('');
+        }
     };
 
     const generatePassword = () => {
-        const randomPassword = Math.random().toString(36).slice(-16); // Generates a 16-character random password
-        setFormData({ ...formData, password: randomPassword });
+        const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+        const numbers = '0123456789';
+        const specialChars = '!@#$%^&*_+-=:\\\|,./';
+
+        const allChars = uppercase + lowercase + numbers + specialChars;
+        let password = '';
+
+        // Ensure at least one character from each category
+        password += uppercase[Math.floor(Math.random() * uppercase.length)];
+        password += lowercase[Math.floor(Math.random() * lowercase.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        password += specialChars[Math.floor(Math.random() * specialChars.length)];
+
+        // Fill the rest of the password
+        for (let i = 4; i < 12; i++) {
+            password += allChars[Math.floor(Math.random() * allChars.length)];
+        }
+
+        // Shuffle the password to randomize the order
+        password = password.split('').sort(() => Math.random() - 0.5).join('');
+
+        setFormData({ ...formData, password });
+        setPasswordError('');
+    };
+
+    const validatePassword = (password) => {
+        const minLength = 8;
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+        return (
+            password.length >= minLength &&
+            hasUpperCase &&
+            hasLowerCase &&
+            hasNumber &&
+            hasSpecialChar
+        );
     };
 
     const confirmAction = (message, action) => {
@@ -100,6 +142,11 @@ export default function EditDoctor() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!validatePassword(formData.password)) {
+            setPasswordError('Please enter a strong password.');
+            return;
+        }
 
         const id = doctor._id;
         try {
@@ -213,14 +260,25 @@ export default function EditDoctor() {
                         </button>
                         <button
                             type="button"
-                            onClick={() =>
-                                confirmAction(generatePassword)
-                            }
+                            onClick={generatePassword}
                             className="ml-2 px-3 py-2 bg-primary text-white text-sm font-medium rounded-md shadow hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         >
                             Auto-generate
                         </button>
                     </div>
+                    {passwordError && (
+                        <p className="mt-2 text-sm text-red-600">{passwordError}</p>
+                    )}
+                    {/* <div className="mt-2 text-sm text-gray-600">
+                        <p>Password must meet the following requirements:</p>
+                        <ul className="list-disc list-inside">
+                            <li>At least 8 characters</li>
+                            <li>At least one uppercase letter</li>
+                            <li>At least one lowercase letter</li>
+                            <li>At least one number</li>
+                            <li>At least one special character</li>
+                        </ul>
+                    </div> */}
                 </div>
 
                 <div className="mb-6">
