@@ -2,7 +2,6 @@ const { RefreshCwOff } = require('lucide-react');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    // Required fields
 
     eventId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -20,47 +19,56 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+
     lastName: {
         type: String,
         required: true,
         trim: true
     },
+
     dateOfBirth: {
         type: Date,
     },
+
     contactNumber: {
         type: String,
         required: true,
         trim: true
     },
+
     reffered: {
         type: String,
         default: "none"
     },
-    // Optional fields
+
     chiefComplaint: {
         type: String,
         trim: true,
         default: '' // Default to empty string if not provided
     },
+
     allergic: {
         type: mongoose.Schema.Types.Mixed, // Can be a string (allergy details) or boolean (false)
         default: false // Default to false if not provided
     },
+
     primaryDiagnosis: {
         type: String,
         trim: true,
         default: '' // Default to empty string if not provided
     },
+
     conditionCategory: {
         type: String,
         trim: true,
         default: '' // Default to empty string if not provided
     },
+
     charmChartFilledOut: {
         type: Boolean,
         default: false // Default to false if not provided
     },
+
     otcSuppliesDispensed: {
         type: [
             {
@@ -81,16 +89,22 @@ const userSchema = new mongoose.Schema({
         ],
         default: [], // Default to an empty array if not provided
     },
+
     note: {
         type: String,
         trim: true,
         default: '' // Default to empty string if not provided
     },
+
     hasAgreed: {
         type: Boolean,
         required: true
+    },
+},
+    {
+        timestamps: true,
     }
-});
+);
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 
