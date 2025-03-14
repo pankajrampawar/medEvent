@@ -94,7 +94,7 @@ export default function MasterItemListing({ masterList }) {
                                         </button>
                                         <button
                                             onClick={console.log("deleting item")}
-                                            className="text-sm text-primary hover:text-primary/80"
+                                            className="text-sm text-red-500 hover:text-red-500/80"
                                         >
                                             <Trash2 />
                                         </button>
