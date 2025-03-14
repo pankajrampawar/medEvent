@@ -54,9 +54,6 @@ export default function Master() {
     return (
         <div className="flex flex-col gap-6 mx-[5%] mb-[5%] mt-10">
             <h1 className="text-2xl flex items-center gap-2">
-                <button className="hover:bg-gray-200 p-2 rounded-full" onClick={() => router.back()}>
-                    <ChevronLeft />
-                </button>
                 Master Management
             </h1>
             <MasterItemListing masterList={masterList} />

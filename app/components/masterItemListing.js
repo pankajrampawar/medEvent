@@ -93,7 +93,7 @@ export default function MasterItemListing({ masterList }) {
                                             <Eye />
                                         </button>
                                         <button
-                                            onClick={() => router.push(`/dashboard/master/${master._id}`)}
+                                            onClick={console.log("deleting item")}
                                             className="text-sm text-primary hover:text-primary/80"
                                         >
                                             <Trash2 />
