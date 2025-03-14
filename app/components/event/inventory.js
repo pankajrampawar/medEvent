@@ -6,6 +6,7 @@ import KpiCard from '../kpiCard';
 export default function Inventory({ users, onClose, loading }) {
     const [inventory, setInventory] = useState({});
     const [totalQuantity, setTotalQuantity] = useState(0); // State for total quantity
+    const [selectedMedicalKit, setSelectedMedicalKit] = useState('all'); // State for selected medical kit
     const containerRef = useRef(null);
 
     // Aggregate OTC supplies from all users
@@ -37,6 +38,14 @@ export default function Inventory({ users, onClose, loading }) {
     // Sort inventory items by quantity in descending order
     const sortedInventory = Object.values(inventory).sort((a, b) => b.quantity - a.quantity);
 
+    // Filter inventory based on selected medical kit
+    const filteredInventory = selectedMedicalKit === 'all'
+        ? sortedInventory
+        : sortedInventory.filter(item => item.medicalKit === selectedMedicalKit);
+
+    // Get unique medical kits for the dropdown
+    const medicalKits = [...new Set(sortedInventory.map(item => item.medicalKit))];
+
     return (
         <div className="flex items-center justify-center z-50 mr-[5%] ml-[2%]">
             <div className="rounded-lg mb-32 pb-20 overflow-y-auto relative w-full">
@@ -53,6 +62,31 @@ export default function Inventory({ users, onClose, loading }) {
                 <div className='bg-white shadow-lg p-4 rounded-xl mt-6 pt-10 pb-16'>
                     {/* Header */}
                     <h2 className="text-2xl font-bold mb-6">Inventory Overview</h2>
+
+                    {/* Medical Kit Filter */}
+                    <div className="mb-6">
+                        <label htmlFor="medicalKit" className="block text-sm font-medium text-gray-700 mb-1">Select Medical Kit</label>
+                        <div className="relative">
+                            <select
+                                id="medicalKit"
+                                name="medicalKit"
+                                value={selectedMedicalKit}
+                                onChange={(e) => setSelectedMedicalKit(e.target.value)}
+                                className="appearance-none block w-full pl-4 pr-10 py-2.5 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all cursor-pointer"
+                            >
+                                <option value="all">All</option>
+                                {medicalKits.map((kit, index) => (
+                                    <option key={index} value={kit}>{kit}</option>
+                                ))}
+                            </select>
+                            {/* Dropdown arrow */}
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
 
                     {/* Loading Skeleton */}
                     {loading ? (
@@ -71,13 +105,13 @@ export default function Inventory({ users, onClose, loading }) {
                                 <table className="min-w-full bg-white">
                                     <thead>
                                         <tr className="bg-gray-50 border-b border-gray-300">
-                                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">medical kit</th>
+                                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">Medical Kit</th>
                                             <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">Item</th>
                                             <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">Quantity</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {sortedInventory.map((item, index) => (
+                                        {filteredInventory.map((item, index) => (
                                             <tr key={index} className="hover:bg-gray-50 border-b border-gray-200">
                                                 <td className="px-6 py-4 text-lg font-medium text-gray-900">{item.medicalKit}</td>
                                                 <td className="px-6 py-4 text-lg font-medium text-gray-900">{item.value}</td>
