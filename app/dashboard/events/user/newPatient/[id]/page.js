@@ -7,6 +7,9 @@ import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import { addDirectUser } from '@/lib/api';
 import { useAuth } from "@/context/authContext";
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css'; // Import the styles
+import { isValidPhoneNumber } from 'react-phone-number-input';
 
 function AddNewPatient({ params }) {
 
@@ -42,6 +45,7 @@ function AddNewPatient({ params }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryFocused, setCategoryFocused] = useState(false);
     const [categoryError, setCategoryError] = useState('');
+    const [isNumberValid, setIsNumberValid] = useState(true);
     const inputRef = useRef(null);
     const { user, loading: authLoading, logout } = useAuth();
     const isEditing = true;
@@ -82,9 +86,17 @@ function AddNewPatient({ params }) {
             [name]: value,
         }));
 
-        // Update searchTerm when conditionCategory changes
         if (name === 'conditionCategory') {
             setSearchTerm(value);
+        }
+
+        if (name === 'contactNumber') {
+            console.log(value)
+            if (value && !isValidPhoneNumber(value)) {
+                setIsNumberValid(false);
+            } else {
+                setIsNumberValid(true);
+            }
         }
     };
 
@@ -193,6 +205,8 @@ function AddNewPatient({ params }) {
         //     setCategoryError('Category is required');
         //     return;
         // }
+
+        if (!isNumberValid) return;
         if (!validateForm()) {
             return; // Stop if validation fails
         }
@@ -416,19 +430,17 @@ function AddNewPatient({ params }) {
                                             max={new Date().toISOString().split('T')[0]}
                                         />
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Contact No <span className='text-red-600 text-lg'>*</span></label>
-                                        <input
-                                            type="text"
-                                            name="contactNumber"
-                                            className="block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                                            value={formData.contactNumber || ''}
-                                            onChange={handleInputChange}
+                                    <div> {/* Contact Number */}
+                                        <label className="block text-sm font-medium text-gray-700">Contact No</label>
+                                        <PhoneInput
+                                            international
+                                            defaultCountry="US"
+                                            value={formData.contactNumber}
+                                            onChange={(e) => { handleInputChange({ target: { name: 'contactNumber', value: e } }) }}
                                             disabled={!isEditing || isAdmin}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         />
-                                        {errors.contactNumber && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.contactNumber}</p>
-                                        )}
+                                        {!isNumberValid && <p className="text-red-500 text-sm mt-1">Invalid phone number</p>}
                                     </div>
 
                                     <div>

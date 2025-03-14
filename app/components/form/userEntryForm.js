@@ -4,11 +4,15 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertCircle, CheckCircle, Calendar, Phone, Send, User } from 'lucide-react';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css'; // Import the styles
+import { isValidPhoneNumber } from 'react-phone-number-input';
 
 const RegistrationForm = ({ eventId }) => {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formErrors, setFormErrors] = useState({});
+    const [isNumberValid, setIsNumberValid] = useState(true);
 
     const [formData, setFormData] = useState({
         eventId: eventId,
@@ -21,7 +25,7 @@ const RegistrationForm = ({ eventId }) => {
         allergyInfo: '',
         hasAgreed: true,
     });
-
+    console.log(formData.contactNumber)
     const validateForm = () => {
         const errors = {};
         if (!formData.firstName.trim()) errors.firstName = "First name is required";
@@ -44,7 +48,7 @@ const RegistrationForm = ({ eventId }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        if (!isNumberValid) return;
         if (!validateForm()) return;
 
         setIsSubmitting(true);
@@ -69,6 +73,14 @@ const RegistrationForm = ({ eventId }) => {
         // Clear error when field is edited
         if (formErrors[name]) {
             setFormErrors(prev => ({ ...prev, [name]: undefined }));
+        }
+        if (name === 'contactNumber') {
+            console.log(value)
+            if (value && !isValidPhoneNumber(value)) {
+                setIsNumberValid(false);
+            } else {
+                setIsNumberValid(true);
+            }
         }
     };
 
@@ -173,35 +185,17 @@ const RegistrationForm = ({ eventId }) => {
                                 )}
                             </div>
 
-                            {/* Contact Number */}
-                            <div>
-                                <label htmlFor="contactNumber" className="block text-sm font-medium text-gray-700 mb-1">
-                                    Contact Number<span className="text-red-500">*</span>
-                                </label>
-                                <div className="relative">
-                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <Phone className="h-5 w-5 text-gray-400" />
-                                    </div>
-                                    <input
-                                        id="contactNumber"
-                                        type="tel"
-                                        name="contactNumber"
-                                        placeholder="Enter your mobile number"
-                                        value={formData.contactNumber}
-                                        onChange={handleInputChange}
-                                        required
-                                        aria-required="true"
-                                        aria-invalid={!!formErrors.contactNumber}
-                                        aria-describedby={formErrors.contactNumber ? "contactNumber-error" : undefined}
-                                        className={`w-full pl-10 pr-4 py-2 border ${formErrors.contactNumber ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-indigo-200'} rounded-lg focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-colors`}
-                                    />
-                                </div>
-                                {formErrors.contactNumber && (
-                                    <div id="contactNumber-error" className="text-red-500 text-xs mt-1 flex items-center">
-                                        <AlertCircle className="w-3 h-3 mr-1" />
-                                        {formErrors.contactNumber}
-                                    </div>
-                                )}
+                            <div> {/* Contact Number */}
+                                <label className="block text-sm font-medium text-gray-700">Contact No</label>
+                                <PhoneInput
+                                    international
+                                    defaultCountry="US"
+                                    value={formData.contactNumber}
+                                    onChange={(e) => { handleInputChange({ target: { name: 'contactNumber', value: e } }) }}
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                />
+                                {!isNumberValid && <p className="text-red-500 text-sm mt-1">Invalid phone number</p>}
+
                             </div>
 
                             {/* Chief Complaint */}

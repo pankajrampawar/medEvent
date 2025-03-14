@@ -8,6 +8,9 @@ import { options } from '@/app/utils/options';
 import SuccessPopup from '@/app/components/popupCard';
 import { useAuth } from '@/context/authContext';
 import { categories } from '@/app/utils/categories';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css'; // Import the styles
+import { isValidPhoneNumber } from 'react-phone-number-input';
 
 const PatientForm = ({ isEditable = true, params }) => {
     const searchParams = useSearchParams();
@@ -24,6 +27,7 @@ const PatientForm = ({ isEditable = true, params }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryFocused, setCategoryFocused] = useState(false);
     const [categoryError, setCategoryError] = useState(false);
+    const [isNumberValid, setIsNumberValid] = useState(true);
     const inputRef = useRef(null);
     const isAdmin = user?.role === 'admin';
 
@@ -64,7 +68,17 @@ const PatientForm = ({ isEditable = true, params }) => {
         if (name === 'conditionCategory') {
             setSearchTerm(value);
         }
+
+        if (name === 'contactNumber') {
+            console.log(value)
+            if (value && !isValidPhoneNumber(value)) {
+                setIsNumberValid(false);
+            } else {
+                setIsNumberValid(true); // Clear error if the phone number is valid
+            }
+        }
     };
+
 
     const handleFocus = () => {
         setCategoryFocused(true);
@@ -155,7 +169,7 @@ const PatientForm = ({ isEditable = true, params }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        if (!isNumberValid) return;
         if (categoryError) return;
         if (!formData.conditionCategory) {
             setCategoryError('Category is required');
@@ -257,7 +271,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                     <div className="bg-white shadow-sm rounded-lg p-6">
                         <h3 className="text-lg font-semibold mb-4">Patient Information</h3>
                         <div className="space-y-4">
-                            <div>
+                            <div> {/* first name */}
                                 <label className="block text-sm font-medium text-gray-700">First Name</label>
                                 <input
                                     type="text"
@@ -268,7 +282,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                     disabled={!isEditing || isAdmin}
                                 />
                             </div>
-                            <div>
+                            <div> {/* last name */}
                                 <label className="block text-sm font-medium text-gray-700">Last Name</label>
                                 <input
                                     type="text"
@@ -279,7 +293,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                     disabled={!isEditing || isAdmin}
                                 />
                             </div>
-                            <div>
+                            <div> {/* date of birth */}
                                 <label className="block text-sm font-medium text-gray-700">Date Of Birth</label>
                                 <input
                                     type="date"
@@ -290,18 +304,19 @@ const PatientForm = ({ isEditable = true, params }) => {
                                     disabled={!isEditing || isAdmin}
                                 />
                             </div>
-                            <div>
+                            <div> {/* Contact Number */}
                                 <label className="block text-sm font-medium text-gray-700">Contact No</label>
-                                <input
-                                    type="text"
-                                    name="contactNumber"
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                    value={formData.contactNumber || ''}
-                                    onChange={handleInputChange}
+                                <PhoneInput
+                                    international
+                                    defaultCountry="US"
+                                    value={formData.contactNumber}
+                                    onChange={(e) => { handleInputChange({ target: { name: 'contactNumber', value: e } }) }}
                                     disabled={!isEditing || isAdmin}
+                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                 />
+                                {!isNumberValid && <p className="text-red-500 text-sm mt-1">Invalid phone number</p>}
                             </div>
-                            <div>
+                            <div> {/* chief complaint */}
                                 <label className="block text-sm font-medium text-gray-700">Chief Complaint</label>
                                 <input
                                     type="text"
@@ -312,7 +327,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                     disabled={!isEditing || isAdmin}
                                 />
                             </div>
-                            <div>
+                            <div> {/* allergic */}
                                 <label className="block text-sm font-medium text-gray-700">Are You Allergic to a Medication?</label>
                                 <input
                                     type="text"
@@ -345,7 +360,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                     <p className="text-red-500 text-sm">{errors.primaryDiagnosis}</p>
                                 )}
                             </div>
-                            <div className="relative" ref={inputRef}>
+                            <div className="relative" ref={inputRef}> {/* condition Category */}
                                 <label className="block text-sm font-medium text-gray-700">Condition Category</label>
                                 <input
                                     type="text"
@@ -377,7 +392,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                     </ul>
                                 )}
                             </div>
-                            <div>
+                            <div> { /* referral */}
                                 <label className="block text-sm font-medium text-gray-700">Referral</label>
                                 <select
                                     name="reffered"
@@ -393,7 +408,7 @@ const PatientForm = ({ isEditable = true, params }) => {
                                     <option value="diagnostic">Diagnostic</option>
                                 </select>
                             </div>
-                            <div>
+                            <div> {/* charm chart filled */}
                                 <label className="block text-sm font-medium text-gray-700">Charm Chart Filled</label>
                                 <select
                                     name="charmChartFilledOut"

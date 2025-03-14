@@ -48,33 +48,26 @@ export async function PUT(req) {
     console.log("Updating user in the database");
 
     try {
-        const {
-            userId,
-            isPending,
-            primaryDiagnosis,
-            reffered,
-            conditionCategory,
-            charmChartFilledOut,
-            otcSuppliesDispensed,
-            note
-        } = await req.json();
-        console.log(otcSuppliesDispensed)
-        // Find the user by ID and update the fields
+        const requestBody = await req.json();
+        const { userId, ...updateData } = requestBody; // Extract userId and the rest of the fields
 
-        console.log("is pending: ", isPending)
+        // Dynamically build the $set object
+        const updateFields = {};
+        for (const [key, value] of Object.entries(updateData)) {
+            if (value !== undefined && value !== null) { // Only include fields that are not undefined or null
+                updateFields[key] = value;
+            }
+        }
+
+        // If no valid fields are provided to update, return an error
+        if (Object.keys(updateFields).length === 0) {
+            return Response.json({ error: "No valid fields provided for update" }, { status: 400 });
+        }
+
+        // Find the user by ID and update the fields
         const updatedUser = await User.findByIdAndUpdate(
             userId, // Assuming `userId` is the unique identifier for the user
-            {
-                $set: {
-                    primaryDiagnosis,
-                    isPending: isPending,
-                    conditionCategory,
-                    reffered,
-                    charmChartFilledOut,
-                    otcSuppliesDispensed,
-                    note
-                }
-            },
+            { $set: updateFields }, // Use the dynamically built updateFields object
             { new: true } // This returns the updated document
         );
 
@@ -82,7 +75,7 @@ export async function PUT(req) {
             return Response.json({ error: "User not found" }, { status: 404 });
         }
 
-        console.log(updatedUser)
+        console.log(updatedUser);
         return Response.json({ message: "User updated successfully", user: updatedUser }, { status: 200 });
     } catch (error) {
         console.error(error.message);
