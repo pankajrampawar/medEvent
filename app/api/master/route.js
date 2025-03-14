@@ -1,18 +1,30 @@
 import connectToDatabse from "@/lib/mongodb";
-import Master from "@/models/Master";
+import Master from "@/models/Master"; // Ensure correct import
 
-export async function GET() {
+export async function GET(req) {
     try {
         // Connect to the database
         await connectToDatabse();
         console.log("Connected to database");
 
-        // Fetch all masters from the database
-        const masters = await Master.find({});
-        console.log("Fetched masters successfully");
+        // Extract query parameters
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
 
-        // Return the masters as a JSON response
-        return Response.json({ masters });
+        if (id) {
+            // Fetch a single master by ID
+            const master = await Master.findById(id);
+            if (!master) {
+                return Response.json({ error: "Master not found" }, { status: 404 });
+            }
+            console.log("Fetched master by ID successfully");
+            return Response.json({ master });
+        } else {
+            // Fetch all masters
+            const masters = await Master.find({});
+            console.log("Fetched all masters successfully");
+            return Response.json({ masters });
+        }
     } catch (error) {
         console.error("Error fetching masters:", error);
         return Response.json({ error: error.message }, { status: 500 });
@@ -25,7 +37,7 @@ export async function POST(req) {
 
     try {
         // Connect to the database
-        await connectToDatabase();
+        await connectToDatabse();
         console.log("Connected to database");
 
         // Parse the request body
@@ -62,7 +74,7 @@ export async function DELETE(req, { params }) {
 
     try {
         // Connect to the database
-        await connectToDatabase();
+        await connectToDatabse();
         console.log("Connected to database");
 
         // Extract the master ID from the URL parameters
