@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Home, User, Calendar, HeartPulse, LogOut } from "lucide-react"; // Import LogOut icon
+import { Home, User, Calendar, HeartPulse, LogOut, Package } from "lucide-react"; // Import LogOut icon
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/authContext";
 
@@ -100,11 +100,20 @@ export default function Sidebar() {
                     </li>
                     {!authLoading &&
                         isAdmin ?
-                        <li className="mb-2">
-                            <Link href="/dashboard/user-management" className={`flex items-start gap-1 p-2 hover:bg-gray-200 rounded  ${pathname === "/dashboard/user-management" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}}`}>
-                                <User width={20} height={20} /> User Management
-                            </Link>
-                        </li> :
+                        <div>
+                            <li className="mb-2">
+                                <Link href="/dashboard/user-management" className={`flex items-start gap-1 p-2 hover:bg-gray-200 rounded  ${pathname === "/dashboard/user-management" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}}`}>
+                                    <User width={20} height={20} /> User Management
+                                </Link>
+                            </li>
+                            <li className="mb-2">
+                                <Link href="/dashboard/master" className={`flex items-start gap-1 p-2 hover:bg-gray-200 rounded  ${pathname === "/dashboard/master" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}}`}>
+                                    <Package width={20} height={20} /> Master
+                                </Link>
+                            </li>
+                        </div>
+
+                        :
                         isDoctor ? <li className="mb-2">
                             <Link href="/dashboard/profile/" className={`flex items-start gap-1 p-2 hover:bg-gray-200 rounded ${pathname === "/dashboard/profile" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}}`}>
                                 <User width={20} height={20} /> Your Profile

@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+generateCsv.js
+items.csv
 
 # next.js
 /.next/
