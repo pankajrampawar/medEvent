@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, Trash, Plus, Save } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { getEventDetails, updateUser } from '@/lib/api';
+import { getEventDetails, getMasterList, updateUser } from '@/lib/api';
 import Select from 'react-select';
 import { options } from '@/app/utils/options';
 import SuccessPopup from '@/app/components/popupCard';
@@ -28,17 +28,29 @@ const PatientForm = ({ isEditable = true, params }) => {
     const [categoryFocused, setCategoryFocused] = useState(false);
     const [categoryError, setCategoryError] = useState(false);
     const [isNumberValid, setIsNumberValid] = useState(true);
+    const [medicalKitOptions, setMedicalKitOptions] = useState([]);
     const inputRef = useRef(null);
     const isAdmin = user?.role === 'admin';
-
-    const medicalKitOptions = userData.medicalKit.map((kit) => ({
-        label: kit,
-        value: kit,
-    }));
+    console.log(medicalKitOptions);
 
     const filteredCategories = categories.filter((category) =>
         category.toLowerCase().includes(searchTerm.toLowerCase())
     ).slice(0, 6);
+
+    useEffect(() => {
+        const getMedicalKitOptions = async () => {
+            const masterList = await getMasterList();
+            console.log(masterList);
+            if (masterList) {
+                setMedicalKitOptions(masterList.masters.map((kit) => ({
+                    label: kit.name,
+                    value: kit.name,
+                })));
+            }
+        }
+
+        getMedicalKitOptions();
+    }, [])
 
     useEffect(() => {
         const handleClickOutside = (e) => {
