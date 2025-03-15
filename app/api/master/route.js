@@ -68,6 +68,46 @@ export async function POST(req) {
     }
 }
 
+export async function PUT(req) {
+    console.log("Running PUT request");
+
+    try {
+        // Connect to the database
+        await connectToDatabse();
+        console.log("Connected to database");
+
+        // Parse the request body
+        const { id, name, extraItems, excludedItems } = await req.json();
+        console.log("Received data:", { id, name, extraItems, excludedItems });
+
+        // Validate required fields
+        if (!id) {
+            return Response.json({ error: "ID is required" }, { status: 400 });
+        }
+
+        // Find the existing master by ID
+        const existingMaster = await Master.findById(id);
+        if (!existingMaster) {
+            return Response.json({ error: "Master not found" }, { status: 404 });
+        }
+
+        // Update the master's fields
+        if (name) existingMaster.name = name;
+        if (extraItems) existingMaster.extraItems = extraItems;
+        if (excludedItems) existingMaster.excludedItems = excludedItems;
+
+        // Save the updated master
+        await existingMaster.save();
+        console.log("Master updated successfully:", existingMaster);
+
+        // Return success response
+        return Response.json({ message: "Master updated successfully", master: existingMaster }, { status: 200 });
+    } catch (error) {
+        console.error("Error updating master:", error);
+        return Response.json({ error: error.message }, { status: 500 });
+    }
+}
+
 
 export async function DELETE(req, { params }) {
     console.log("Running DELETE request");

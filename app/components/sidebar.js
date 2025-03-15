@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Home, User, Calendar, HeartPulse, LogOut, Package } from "lucide-react"; // Import LogOut icon
+import { Home, User, Calendar, HeartPulse, LogOut, BriefcaseMedical, Syringe } from "lucide-react"; // Import LogOut icon
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/authContext";
 
@@ -108,7 +108,12 @@ export default function Sidebar() {
                             </li>
                             <li className="mb-2">
                                 <Link href="/dashboard/master" className={`flex items-start gap-1 p-2 hover:bg-gray-200 rounded  ${pathname === "/dashboard/master" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}}`}>
-                                    <Package width={20} height={20} /> Master
+                                    <BriefcaseMedical width={20} height={20} /> Master Management
+                                </Link>
+                            </li>
+                            <li className="mb-2">
+                                <Link href="/dashboard/items" className={`flex items-start gap-1 p-2 hover:bg-gray-200 rounded  ${pathname === "/dashboard/items" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}}`}>
+                                    <Syringe width={20} height={20} /> Items
                                 </Link>
                             </li>
                         </div>

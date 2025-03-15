@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authContext";
 import { Eye, Trash2 } from "lucide-react";
+import { convertISOToLocalTime } from "../utils/time";
 
 export default function MasterItemListing({ masterList }) {
     const router = useRouter();
@@ -73,6 +74,9 @@ export default function MasterItemListing({ masterList }) {
                                     KIT NAME
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    CREATED AT
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     ACTIONS
                                 </th>
                             </tr>
@@ -84,6 +88,9 @@ export default function MasterItemListing({ masterList }) {
                                         <div className="text-sm font-medium text-gray-900">
                                             {master.name}
                                         </div>
+                                    </td>
+                                    <td>
+                                        {master.createdAt ? convertISOToLocalTime(master.createdAt) : "N/A"}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap flex space-x-2">
                                         <button

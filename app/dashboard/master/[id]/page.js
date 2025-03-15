@@ -4,14 +4,16 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { fetchMasterById, getAllItems } from '@/lib/api';
+import { fetchMasterById, getAllItems, updateKit } from '@/lib/api';
 import { addNewItem, addNewMaster } from '@/lib/api';
+import { set } from 'mongoose';
 
 export default function AddMasterForm({ params }) {
     const router = useRouter();
     const { id } = React.use(params);
     const [masterName, setMasterName] = useState('');
     const [defaultItems, setDefaultItems] = useState([]);
+    const [allItems, setAllItems] = useState([]);
     const [kitItems, setKitItems] = useState([]);
     const [extraItems, setExtraItems] = useState([]);
     const [excludedItems, setExcludedItems] = useState([]);
@@ -20,9 +22,6 @@ export default function AddMasterForm({ params }) {
     const [isAddingItem, setIsAddingItem] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-
-    console.log(extraItems);
-    console.log(excludedItems);
     useEffect(() => {
         const getMaster = async () => {
             const result = await fetchMasterById(id);
@@ -34,25 +33,27 @@ export default function AddMasterForm({ params }) {
             setMasterName(master.name);
             setExtraItems(master.extraItems);
             setExcludedItems(master.excludedItems);
-        }
 
-        const fetchItems = async () => {
-            const result = await getAllItems();
-            if (result.error) {
+            const result2 = await getAllItems();
+            if (result2.error) {
                 alert('Failed to fetch items.');
                 return;
             }
-            const items = result.items
+            const items = result2.items
             const itemsToset = items.filter(item => !item.extra === true)
+            setAllItems(items);
             setDefaultItems(itemsToset);
-            setKitItems(itemsToset.filter(item =>
-                !excludedItems.some(excludedItem => excludedItem._id === item._id)
-            ));
+            console.log("before final 1: ", excludedItems);
+            const final1 = itemsToset.filter((item) => !master.excludedItems.includes(item._id));
+            const final2 = items.filter((item) => master.extraItems.includes(item._id));
+            const combined = [...final1, ...final2];
+            setKitItems(combined);
             setLoadingItems(false);
         }
         getMaster();
-        fetchItems();
     }, []);
+
+    useEffect(() => { }, [])
 
     // Handle adding a new item
     const handleAddItem = async (e) => {
@@ -71,6 +72,13 @@ export default function AddMasterForm({ params }) {
         if (defaultItems.some(item => item.name === itemName)) {
             const item = defaultItems.find(item => item.name === itemName);
             setKitItems([...kitItems, item]);
+            setIsAddingItem(false);
+        } else if (allItems.some(item => item.name === itemName)) {
+            const item = allItems.find(item => item.name === itemName);
+            setKitItems([...kitItems, item]);
+            setExtraItems([...extraItems, item]);
+            setIsAddingItem(false);
+
         } else {
             const result = await addNewItem(itemName);
             console.log(result);
@@ -91,14 +99,19 @@ export default function AddMasterForm({ params }) {
         if (isDefaultItem) {
             // If the item is in defaultItems:
             // 1. Add it to excludedItems
-            setExcludedItems(prevExcluded => [...prevExcluded, item]);
+            setExcludedItems((prevExcluded) => [...prevExcluded, item._id]);
 
             // 2. Remove it from kitItems
-            setKitItems(prevKitItems => prevKitItems.filter(kitItem => kitItem._id !== item._id));
+            setKitItems((prevKitItems) => prevKitItems.filter((kitItem) => kitItem._id !== item._id));
         } else {
-            // If the item is not in defaultItems:
-            // 1. Remove it from kitItems
-            setKitItems(prevKitItems => prevKitItems.filter(kitItem => kitItem._id !== item._id));
+            // If the item is in extraItems:
+            // 1. Remove it from extraItems
+            setExtraItems((prevExtraItems) =>
+                prevExtraItems.filter((extraItem) => extraItem._id !== item._id)
+            );
+
+            // 2. Remove it from kitItems
+            setKitItems((prevKitItems) => prevKitItems.filter((kitItem) => kitItem._id !== item._id));
         }
     };
 
@@ -114,7 +127,7 @@ export default function AddMasterForm({ params }) {
         };
 
         try {
-            const result = await addNewMaster(newMaster);
+            const result = await updateKit(id, newMaster);
             if (result.error) {
                 alert('Failed to add the master.');
                 return;

@@ -18,6 +18,8 @@ const masterSchema = new mongoose.Schema({
         ref: "Item", // Name of the referenced collection
         required: false
     }]
+}, {
+    timestamps: true // Adds createdAt and updatedAt fields
 });
 
 const Master = mongoose.models.Master || mongoose.model("Master", masterSchema);
