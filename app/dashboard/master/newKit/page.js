@@ -11,6 +11,7 @@ export default function AddMasterForm() {
     const router = useRouter();
     const [masterName, setMasterName] = useState('');
     const [defaultItems, setDefaultItems] = useState([]);
+    const [allItems, setAllItems] = useState([]);
     const [kitItems, setKitItems] = useState([]);
     const [extraItems, setExtraItems] = useState([]);
     const [excludedItems, setExcludedItems] = useState([]);
@@ -31,6 +32,7 @@ export default function AddMasterForm() {
             }
             const items = result.items
             const itemsToset = items.filter(item => !item.extra === true)
+            setAllItems(items);
             setDefaultItems(itemsToset);
             setKitItems(itemsToset);
             setLoadingItems(false);
@@ -56,6 +58,12 @@ export default function AddMasterForm() {
         if (defaultItems.some(item => item.name === itemName)) {
             const item = defaultItems.find(item => item.name === itemName);
             setKitItems([...kitItems, item]);
+        } else if (allItems.some(item => item.name === itemName)) {
+            const item = allItems.find(item => item.name === itemName);
+            setKitItems([...kitItems, item]);
+            setExtraItems([...extraItems, item]);
+            setIsAddingItem(false);
+
         } else {
             const result = await addNewItem(itemName);
             console.log(result);
