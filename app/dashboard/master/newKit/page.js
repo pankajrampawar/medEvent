@@ -120,7 +120,9 @@ export default function AddMasterForm() {
                 return;
             } else {
                 showSuccessMessage('Master added successfully.');
-                router.back();
+                setTimeout(() => {
+                    router.back(); // Navigate back after 1 second
+                }, 1000);
             }
         } catch (error) {
             console.error('Error:', error);
