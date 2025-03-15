@@ -1,5 +1,6 @@
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
-
+import { renderToStream } from '@react-pdf/renderer';
+import { imgString } from '../utils/options';
 const styles = StyleSheet.create({
     page: {
         padding: 40,
@@ -7,13 +8,19 @@ const styles = StyleSheet.create({
         fontFamily: 'Helvetica',
     },
     header: {
-        fontSize: 28,
+        fontSize: 24,
         fontWeight: 'bold',
         color: '#2d3748',
         marginBottom: 20,
         textAlign: 'center',
         borderBottom: '2px solid #4a5568',
         paddingBottom: 10,
+    },
+    logo: {
+        width: 100, // Adjust the size of the logo
+        height: 'auto', // Maintain aspect ratio
+        marginBottom: 20, // Space below the logo
+        alignSelf: 'center', // Center the logo horizontally
     },
     section: {
         marginBottom: 30,
@@ -72,23 +79,35 @@ const styles = StyleSheet.create({
     },
 });
 
-const ModernReportPDF = ({ event, users, pieChartImage, barChartImage }) => {
-    // Calculate total medical visits and referrals
+const ModernReportPDF = ({ startDate, endDate, event, users, pieChartImage }) => {
+
+    //const usersOfConcern = // filter based on createdAt parameter of users array user should be create between =startDate and =endDate
     const totalVisits = users.length;
     const referralsToday = users.filter((user) => user.reffered === 'urgentCare' || user.reffered === 'ER').length;
 
-    // Group medical visits by condition
-    const conditions = users.reduce((acc, user) => {
-        const condition = user.conditionCategory || 'Other';
-        acc[condition] = (acc[condition] || 0) + 1;
-        return acc;
-    }, {});
+    // Format the date for the title
+    const reportDate = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
 
     return (
         <Document>
             <Page size="A4" style={styles.page}>
-                {/* Header */}
-                <Text style={styles.header}>M & E DAILY CLIENT REPORT</Text>
+                {/* Logo */}
+                <Image
+                    src={imgString} // Use the base64 logo
+                    style={styles.logo}
+                />
+
+                {/* Header with Date */}
+                <Text style={styles.header}>
+                    {`Nightly Summary Report for ${event.clientName} - ${event.title}`}
+                </Text>
+                <Text style={{ textAlign: 'center', fontSize: 14, color: '#4a5568', marginBottom: 20 }}>
+                    {`Date: ${reportDate}`}
+                </Text>
 
                 {/* Summary Section */}
                 <View style={styles.section}>
@@ -141,12 +160,23 @@ const ModernReportPDF = ({ event, users, pieChartImage, barChartImage }) => {
                     </View>
                 </View>
 
-
                 {/* Footer */}
                 <Text style={styles.footer}>Generated on {new Date().toLocaleDateString()}</Text>
             </Page>
         </Document>
     );
+};
+
+export const generatePDFStream = async ({ event, users, pieChartImage, barChartImage }) => {
+    const pdfStream = await renderToStream(
+        <ModernReportPDF
+            event={event}
+            users={users}
+            pieChartImage={pieChartImage}
+            barChartImage={barChartImage}
+        />
+    );
+    return pdfStream;
 };
 
 export default ModernReportPDF;

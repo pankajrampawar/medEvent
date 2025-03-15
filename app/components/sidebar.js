@@ -108,7 +108,7 @@ export default function Sidebar() {
                             </li>
                             <li className="mb-2">
                                 <Link href="/dashboard/master" className={`flex items-start gap-1 p-2 hover:bg-gray-200 rounded  ${pathname === "/dashboard/master" ? "bg-gradient-to-r from-[#b191f7] to-[#8C57FF] text-white font-medium" : "hover:bg-gray-200"}}`}>
-                                    <BriefcaseMedical width={20} height={20} /> Master Management
+                                    <BriefcaseMedical width={20} height={20} /> Medical Kit Management
                                 </Link>
                             </li>
                             <li className="mb-2">

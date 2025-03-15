@@ -46,6 +46,10 @@ export default function Inventory({ users, onClose, loading }) {
     // Get unique medical kits for the dropdown
     const medicalKits = [...new Set(sortedInventory.map(item => item.medicalKit))];
 
+    // Calculate KPIs based on filtered inventory
+    const totalItems = filteredInventory.length;
+    const totalFilteredQuantity = filteredInventory.reduce((sum, item) => sum + item.quantity, 0);
+
     return (
         <div className="flex items-center justify-center z-50 mr-[5%] ml-[2%]">
             <div className="rounded-lg mb-32 pb-20 overflow-y-auto relative w-full">
@@ -54,8 +58,8 @@ export default function Inventory({ users, onClose, loading }) {
                     <h3 className="text-2xl font-bold mb-6">Metrics</h3>
                     <div className="flex w-full gap-4">
                         <KpiCard title="Total Users" number={users.length} Icon={User} />
-                        <KpiCard title="Total Items" number={Object.keys(inventory).length} Icon={Package} />
-                        <KpiCard title="Item Quantity" number={totalQuantity} Icon={ClipboardCheck} />
+                        <KpiCard title="Total Items" number={totalItems} Icon={Package} />
+                        <KpiCard title="Item Quantity" number={totalFilteredQuantity} Icon={ClipboardCheck} />
                     </div>
                 </div>
 

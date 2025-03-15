@@ -54,7 +54,7 @@ export default function Master() {
     return (
         <div className="flex flex-col gap-6 mx-[5%] mb-[5%] mt-10">
             <h1 className="text-2xl flex items-center gap-2">
-                Master Management
+                Medical Kit Management
             </h1>
             <MasterItemListing masterList={masterList} />
         </div>

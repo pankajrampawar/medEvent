@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Info, Eye, FileText, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
+import ReportPopup from "../reportPopup";
 
 // Helper function to format the date
 const formatDate = (dateStrings) => {
@@ -14,6 +15,8 @@ const formatDate = (dateStrings) => {
     });
 };
 
+
+
 const isUpcoming = (isoDate) => {
     const givenDate = new Date(isoDate);
     const currentDate = new Date();
@@ -24,7 +27,8 @@ const isUpcoming = (isoDate) => {
 
 export default function EventsListing({ events, isAdmin, refreshEvents }) {
     const router = useRouter();
-
+    const [showReportPopup, setShowReportPopup] = useState(false);
+    const [showingEvent, setShowingEvent] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState(""); // State for search query
     const eventsPerPage = 7;
@@ -142,7 +146,7 @@ export default function EventsListing({ events, isAdmin, refreshEvents }) {
                                         <button className="text-gray-400 mr-2 hover:text-purple-700" onClick={() => router.push(`/dashboard/events/${event._id}`)}>
                                             <Eye />
                                         </button>
-                                        <button className={`text-gray-400 hover:text-purple-700 ${isUpcoming(event.startDate) ? "hidden" : ""}`} onClick={() => router.push(`/report/${event._id}`)}>
+                                        <button className={`text-gray-400 hover:text-purple-700 ${isUpcoming(event.startDate) ? "hidden" : ""}`} onClick={() => { setShowReportPopup(true); setShowingEvent(event) }}>
                                             <FileText />
                                         </button>
                                     </td>
@@ -179,6 +183,15 @@ export default function EventsListing({ events, isAdmin, refreshEvents }) {
                     </motion.button>
                 </div>
             </div>
-        </div>
+
+
+            {/* Report Popup */}
+            {
+                showReportPopup && showingEvent &&
+                < div >
+                    <ReportPopup event={showingEvent} />
+                </div>
+            }
+        </div >
     );
 }

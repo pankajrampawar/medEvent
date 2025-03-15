@@ -3,8 +3,9 @@ import { useAuth } from "@/context/authContext";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getAllItems, addNewItem, updateItem } from "@/lib/api"; // Import addNewItem
+import { getAllItems, addNewItem, updateItem, deleteItem } from "@/lib/api"; // Import addNewItem
 import { X } from "lucide-react";
+import SuccessPopup from "@/app/components/popupCard";
 
 export default function Items() {
     const router = useRouter();
@@ -14,6 +15,13 @@ export default function Items() {
     const [newItemName, setNewItemName] = useState(""); // State for new item input
     const [isAddingItem, setIsAddingItem] = useState(false); // Loading state for adding item
     const isAdmin = user?.role === 'admin';
+    const [successMessage, setSuccessMessage] = useState('');
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+    const showSuccessMessage = (message) => {
+        setSuccessMessage(message);
+        setIsPopupOpen(true);
+    };
 
     useEffect(() => {
         const getCompleteList = async () => {
@@ -59,6 +67,7 @@ export default function Items() {
                     alert("Failed to update the item.");
                     return;
                 }
+                showSuccessMessage("Item added successfully!");
                 setItemsList((prevItems) => [...prevItems, item]);
                 return;
             } catch (error) {
@@ -81,6 +90,7 @@ export default function Items() {
             }
 
             // Update the items list with the new item
+            showSuccessMessage("Item added successfully!");
             setItemsList((prevItems) => [...prevItems, result.item]);
             setAllItems((prevAllItems) => [...prevAllItems, result.item]);
 
@@ -95,10 +105,15 @@ export default function Items() {
     };
 
     // Function to handle removing an item
-    const handleRemoveItem = async (item) => {
-        // Implement your remove item logic here
-        // For example, make an API call to delete the item and update the state
-        console.log("Remove item:", item);
+    const handleRemoveItem = (item) => {
+        const result = deleteItem(item._id);
+        if (!result) {
+            alert("Failed to delete the item.");
+            return;
+        }
+        showSuccessMessage("Item removed successfully!");
+        setItemsList((prevItems) => prevItems.filter((i) => i._id !== item._id));
+        return;
     };
 
     if (authLoading) {
@@ -127,7 +142,7 @@ export default function Items() {
     return (
         <div className="flex flex-col gap-6 mx-[5%] mb-[5%] mt-10">
             <h1 className="text-2xl flex items-center gap-2">
-                Master Management
+                Items Management
             </h1>
 
             {/* Add New Item Form */}
@@ -178,6 +193,13 @@ export default function Items() {
                     </ul>
                 </div>
             )}
+
+            <SuccessPopup
+                isOpen={isPopupOpen}
+                onClose={() => setIsPopupOpen(false)}
+                message={successMessage}
+                autoCloseTime={1200} // Will auto close after 3 seconds
+            />
         </div>
     );
 }

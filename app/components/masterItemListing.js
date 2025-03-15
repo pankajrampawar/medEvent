@@ -89,7 +89,7 @@ export default function MasterItemListing({ masterList }) {
                                             {master.name}
                                         </div>
                                     </td>
-                                    <td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
                                         {master.createdAt ? convertISOToLocalTime(master.createdAt) : "N/A"}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap flex space-x-2">

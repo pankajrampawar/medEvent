@@ -45,15 +45,6 @@ export default function AddDoctor() {
         setFormData({ ...formData, password: randomPassword });
     };
 
-    function generateStrongPassword() {
-        const length = 12;
-        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
-        let password = "";
-        for (let i = 0; i < length; i++) {
-            password += charset.charAt(Math.floor(Math.random() * charset.length));
-        }
-        return password;
-    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
