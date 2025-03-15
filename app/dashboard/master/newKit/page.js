@@ -63,7 +63,6 @@ export default function AddMasterForm() {
             setKitItems([...kitItems, item]);
             setExtraItems([...extraItems, item]);
             setIsAddingItem(false);
-
         } else {
             const result = await addNewItem(itemName);
             console.log(result);
