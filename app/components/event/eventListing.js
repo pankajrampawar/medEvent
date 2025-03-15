@@ -189,7 +189,7 @@ export default function EventsListing({ events, isAdmin, refreshEvents }) {
             {
                 showReportPopup && showingEvent &&
                 < div >
-                    <ReportPopup event={showingEvent} />
+                    <ReportPopup event={showingEvent} onClose={() => setShowReportPopup(false)} />
                 </div>
             }
         </div >
