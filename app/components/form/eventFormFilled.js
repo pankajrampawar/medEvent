@@ -11,7 +11,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { medicalKitOptions } from '@/app/utils/options';
 import { useAuth } from "@/context/authContext";
 
-const EventFormFilled = ({ isEditable = true, eventDetails }) => {
+const EventFormFilled = ({ isEditable = true, eventDetails, allowPastDates }) => {
 
     const router = useRouter();
     const [successMessage, setSuccessMessage] = useState('');
@@ -309,7 +309,7 @@ const EventFormFilled = ({ isEditable = true, eventDetails }) => {
                                             name="startDate"
                                             value={formData.startDate}
                                             onChange={handleChange}
-                                            min={new Date().toISOString().split('T')[0]}
+                                            min={allowPastDates ? null : new Date().toISOString().split('T')[0]}
                                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                                             disabled={!isEditable}
                                             required={true}

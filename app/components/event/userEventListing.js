@@ -1,11 +1,11 @@
 'use client'
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Trash, Eye, Package, } from "lucide-react";
+import { Trash, Eye, RefreshCw, } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authContext";
 
-export default function UserListing({ eventId, usersList, medicalKit }) {
+export default function UserListing({ eventId, usersList, medicalKit, refreshUsers }) {
 
     const router = useRouter();
     const [currentPage, setCurrentPage] = useState(1);
@@ -86,6 +86,16 @@ export default function UserListing({ eventId, usersList, medicalKit }) {
                         >
                             Add New Patient
                         </motion.button>}
+
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition-colors flex items-center"
+                            onClick={refreshUsers}
+                        >
+                            <RefreshCw size={18} className="mr-2" />
+                            Refresh Patients
+                        </motion.button>
                     </div>
                 </div>
 

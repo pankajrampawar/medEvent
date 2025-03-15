@@ -47,6 +47,18 @@ export default function Event({ params }) {
     const completedUsers = users.filter(user => !user.isPending);
     const pendingUsers = users.filter(user => user.isPending);
 
+    const refreshUsers = async () => {
+        setLoading(true);
+        try {
+            const result = await getUserFromEvent(id);
+            console.log(result);
+            setUsers(result.users);
+            setLoading(false);
+        } catch (error) {
+            throw new Error("Unable to load user data, please try again later.");
+        }
+    }
+
     if (loading) return (
         <div className="flex w-full h-full justify-center items-center">
             loading user data..
@@ -67,7 +79,7 @@ export default function Event({ params }) {
                 <UserKpi total={users.length} completed={completedUsers.length} pending={pendingUsers.length} setShowPending={setShowPending} setShowCompleted={setShowCompleted} />
             </section>
             <section className="">
-                <UserListing eventId={id} usersList={showPending ? pendingUsers : showCompleted ? completedUsers : users} Package={Package} setShowInventory={setShowInventory} medicalKit={currentEvent?.medicalKit} />
+                <UserListing refreshUsers={refreshUsers} eventId={id} usersList={showPending ? pendingUsers : showCompleted ? completedUsers : users} Package={Package} setShowInventory={setShowInventory} medicalKit={currentEvent?.medicalKit} />
             </section>
             {showInventory && <section>
                 <Inventory users={users} onClose={() => setShowInventory(false)} />

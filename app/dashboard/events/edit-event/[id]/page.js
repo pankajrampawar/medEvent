@@ -60,7 +60,7 @@ export default function eventInfo({ params }) {
             </div>
             <section className="flex flex-col w-full gap-8 pt-6">
                 <div className="flex-1">
-                    <EventFormFilled eventDetails={eventData} isEditable={isAdmin} />
+                    <EventFormFilled eventDetails={eventData} isEditable={isAdmin} allowPastDates={true} />
                 </div>
                 <div>
                     <Inventory
