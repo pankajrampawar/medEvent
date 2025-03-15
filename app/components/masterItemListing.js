@@ -5,12 +5,21 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authContext";
 import { Eye, Trash2 } from "lucide-react";
 import { convertISOToLocalTime } from "../utils/time";
+import SuccessPopup from "./popupCard";
+import { deleteMaster } from "@/lib/api";
 
-export default function MasterItemListing({ masterList }) {
+export default function MasterItemListing({ masterList, removeMaster }) {
     const router = useRouter();
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState(""); // State for search query
     const mastersPerPage = 20;
+    const [successMessage, setSuccessMessage] = useState('');
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+    const showSuccessMessage = (message) => {
+        setSuccessMessage(message);
+        setIsPopupOpen(true);
+    };
 
     // Filter masters based on search query
     const filteredMasters = masterList.filter(master =>
@@ -39,6 +48,16 @@ export default function MasterItemListing({ masterList }) {
         setSearchQuery(e.target.value);
         setCurrentPage(1); // Reset to the first page when searching
     };
+
+    const deleteMasterById = async (id) => {
+        const result = await deleteMaster(id);
+        if (result.error) {
+            alert('Failed to delete master');
+            return;
+        }
+        showSuccessMessage('Master deleted successfully');
+        removeMaster(id);
+    }
 
     return (
         <div className="p-6 bg-white min-h-[70vh] flex flex-col justify-between">
@@ -100,7 +119,7 @@ export default function MasterItemListing({ masterList }) {
                                             <Eye />
                                         </button>
                                         <button
-                                            onClick={console.log("deleting item")}
+                                            onClick={() => deleteMasterById(master._id)}
                                             className="text-sm text-red-500 hover:text-red-500/80"
                                         >
                                             <Trash2 />
@@ -139,6 +158,13 @@ export default function MasterItemListing({ masterList }) {
                     </motion.button>
                 </div>
             </div>
+
+            <SuccessPopup
+                isOpen={isPopupOpen}
+                onClose={() => setIsPopupOpen(false)}
+                message={successMessage}
+                autoCloseTime={1200} // Will auto close after 3 seconds
+            />
         </div>
     );
 }

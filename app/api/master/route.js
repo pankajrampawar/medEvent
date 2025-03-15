@@ -109,16 +109,15 @@ export async function PUT(req) {
 }
 
 
-export async function DELETE(req, { params }) {
+export async function DELETE(req) {
     console.log("Running DELETE request");
-
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
     try {
         // Connect to the database
         await connectToDatabse();
         console.log("Connected to database");
 
-        // Extract the master ID from the URL parameters
-        const { id } = params;
         console.log("Deleting master with ID:", id);
 
         // Validate the ID

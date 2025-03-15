@@ -26,6 +26,11 @@ export default function Master() {
         getMasterData();
     }, [])
 
+    const removeMaster = (id) => {
+        const updatedMasterList = masterList.filter(master => master._id !== id);
+        setMasterList(updatedMasterList);
+    }
+
     console.log(masterList)
 
     if (authLoading) {
@@ -56,7 +61,7 @@ export default function Master() {
             <h1 className="text-2xl flex items-center gap-2">
                 Medical Kit Management
             </h1>
-            <MasterItemListing masterList={masterList} />
+            <MasterItemListing masterList={masterList} removeMaster={removeMaster} />
         </div>
     )
 }

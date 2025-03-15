@@ -6,6 +6,7 @@ import { ChevronLeft, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getAllItems } from '@/lib/api';
 import { addNewItem, addNewMaster } from '@/lib/api';
+import SuccessPopup from "@/app/components/popupCard";
 
 export default function AddMasterForm() {
     const router = useRouter();
@@ -19,6 +20,13 @@ export default function AddMasterForm() {
     const [loadingItems, setLoadingItems] = useState(true);
     const [isAddingItem, setIsAddingItem] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+    const showSuccessMessage = (message) => {
+        setSuccessMessage(message);
+        setIsPopupOpen(true);
+    };
 
 
     console.log(extraItems);
@@ -58,18 +66,20 @@ export default function AddMasterForm() {
         if (defaultItems.some(item => item.name === itemName)) {
             const item = defaultItems.find(item => item.name === itemName);
             setKitItems([...kitItems, item]);
+            showSuccessMessage("Item added successfully.");
         } else if (allItems.some(item => item.name === itemName)) {
             const item = allItems.find(item => item.name === itemName);
             setKitItems([...kitItems, item]);
             setExtraItems([...extraItems, item]);
+            showSuccessMessage("Item added successfully.");
             setIsAddingItem(false);
         } else {
             const result = await addNewItem(itemName);
             console.log(result);
             setKitItems([...kitItems, result.item]);
             setExtraItems([...extraItems, result.item]);
+            showSuccessMessage("Item added successfully.");
             setIsAddingItem(false);
-            // get the the update item from backend and add it to kit itms and add it extra items
         }
 
         setItemName('');
@@ -84,13 +94,11 @@ export default function AddMasterForm() {
             // If the item is in defaultItems:
             // 1. Add it to excludedItems
             setExcludedItems(prevExcluded => [...prevExcluded, item]);
-
-            // 2. Remove it from kitItems
             setKitItems(prevKitItems => prevKitItems.filter(kitItem => kitItem._id !== item._id));
+            showSuccessMessage("Item removed successfully.");
         } else {
-            // If the item is not in defaultItems:
-            // 1. Remove it from kitItems
             setKitItems(prevKitItems => prevKitItems.filter(kitItem => kitItem._id !== item._id));
+            showSuccessMessage("Item removed successfully.");
         }
     };
 
@@ -111,7 +119,7 @@ export default function AddMasterForm() {
                 alert('Failed to add the master.');
                 return;
             } else {
-                alert("Master added successfully.");
+                showSuccessMessage('Master added successfully.');
                 router.back();
             }
         } catch (error) {
@@ -156,7 +164,7 @@ export default function AddMasterForm() {
                         disabled={isSubmitting}
                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-primary/80 disabled:bg-indigo-300"
                     >
-                        {isSubmitting ? 'Submitting...' : 'Submit'}
+                        {isSubmitting ? 'Saving....' : 'Save Medical Kit'}
                     </button>
                 </div>
             </div>
@@ -222,6 +230,13 @@ export default function AddMasterForm() {
                     </div>
                 )}
             </form>
+
+            <SuccessPopup
+                isOpen={isPopupOpen}
+                onClose={() => setIsPopupOpen(false)}
+                message={successMessage}
+                autoCloseTime={1200} // Will auto close after 3 seconds
+            />
         </motion.div>
     );
 }
