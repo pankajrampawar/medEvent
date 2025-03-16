@@ -577,7 +577,7 @@ function AddNewPatient({ params }) {
                             <h3 className="text-lg font-medium mb-4 text-blue-800 border-b pb-2">OTC Supplies Dispensed</h3>
                             <div className="space-y-4">
                                 {items.map((item, index) => (
-                                    <div key={index} className="flex flex-col md:flex-row md:items-center gap-4 p-2 pb-6 bg-gray-50 rounded-lg">
+                                    <div key={index} className="flex flex-col md:flex-row md:items-center gap-4 p-2 pb-6 rounded-lg">
                                         <div className="flex-1 relative">
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Medical Kit<span className='text-red-600 text-lg'>*</span></label>
                                             <Select

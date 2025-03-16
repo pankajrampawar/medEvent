@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Trash } from 'lucide-react';
-import { getDoctorsList } from '@/lib/api';
+import { getDoctorsList, getMasterList } from '@/lib/api';
 import { medicalKitOptions } from '@/app/utils/options';
 
 const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
@@ -28,6 +28,8 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
     const [kitField, setKitField] = useState(null)
     const [isKitFocused, setIsKitFocused] = useState(false)
     const [medicalKitError, setMedicalKitError] = useState("")
+    const [kitList, setKitList] = useState([])
+
     useEffect(() => {
         const fetchDoctorsList = async () => {
             const result = await getDoctorsList();
@@ -36,7 +38,17 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
             }
         }
 
+        const getKitOptions = async () => {
+            const result = await getMasterList();
+            if (result) {
+                console.log(result.masters)
+                const list = result.masters.map(master => master.name);
+                setKitList(list);
+            }
+        }
+
         fetchDoctorsList();
+        getKitOptions();
     }, [])
 
 
@@ -163,7 +175,7 @@ const EventForm = ({ isEditable = true, submitFunction, resetForm }) => {
 
     const handleKitInputFocus = (index) => {
         setIsKitFocused(true);
-        setKitSuggestions(medicalKitOptions);
+        setKitSuggestions(kitList);
         setKitField(index);
     }
 
