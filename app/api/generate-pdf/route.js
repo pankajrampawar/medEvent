@@ -6,7 +6,7 @@ import path from 'path';
 
 export async function POST(request) {
     try {
-        const { startDate, endDate, reportType, pieChartImage, barChartImage, users, event } = await request.json();
+        const { startDate, endDate, reportType, pieChartImage, users, event } = await request.json();
 
 
         // Fetch the logo from the public folder and convert it to base64
@@ -21,6 +21,7 @@ export async function POST(request) {
             event,
             users,
             pieChartImage,
+            reportType,
             logoBase64: `data:image/png;base64,${logoBase64}`,
         });
 

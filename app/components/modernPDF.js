@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const ModernReportPDF = ({ startDate, endDate, event, users, pieChartImage }) => {
+const ModernReportPDF = ({ startDate, endDate, event, users, pieChartImage, reportType }) => {
 
     //const usersOfConcern = // filter based on createdAt parameter of users array user should be create between =startDate and =endDate
     const totalVisits = users.length;
@@ -150,6 +150,25 @@ const ModernReportPDF = ({ startDate, endDate, event, users, pieChartImage }) =>
                 {/* Medical Visits by Condition (Pie Chart) */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Medical Visits by Condition</Text>
+                    {
+                        reportType === 'detailed' &&
+                        <View style={styles.table}>
+                            <View style={[styles.tableRow, styles.tableHeader]}>
+                                <Text style={styles.tableCell}>Complaint</Text>
+                                <Text style={styles.tableCell}>Diagnosis</Text>
+                                <Text style={styles.tableCell}>Referral To</Text>
+                            </View>
+                            {users
+                                .filter((user) => user.reffered === 'urgentCare' || user.reffered === 'ER')
+                                .map((user, index) => (
+                                    <View key={index} style={styles.tableRow}>
+                                        <Text style={styles.tableCell}>{new Date().toLocaleTimeString()}</Text>
+                                        <Text style={styles.tableCell}>{user.primaryDiagnosis}</Text>
+                                        <Text style={styles.tableCell}>{user.reffered}</Text>
+                                    </View>
+                                ))}
+                        </View>
+                    }
                     <View style={styles.chartContainer}>
                         {pieChartImage && (
                             <Image
@@ -167,13 +186,14 @@ const ModernReportPDF = ({ startDate, endDate, event, users, pieChartImage }) =>
     );
 };
 
-export const generatePDFStream = async ({ event, users, pieChartImage, barChartImage }) => {
+export const generatePDFStream = async ({ event, users, pieChartImage, barChartImage, reportType }) => {
     const pdfStream = await renderToStream(
         <ModernReportPDF
             event={event}
             users={users}
             pieChartImage={pieChartImage}
             barChartImage={barChartImage}
+            reportType={reportType}
         />
     );
     return pdfStream;
