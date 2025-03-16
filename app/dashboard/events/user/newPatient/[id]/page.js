@@ -80,10 +80,10 @@ function AddNewPatient({ params }) {
 
     // Handle input changes
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: type === 'checkbox' ? checked : value
         }));
 
         if (name === 'conditionCategory') {
@@ -468,6 +468,19 @@ function AddNewPatient({ params }) {
                                             onChange={handleInputChange}
                                             disabled={!isEditing || isAdmin}
                                         />
+                                    </div>
+
+                                    <div className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            name='hasAgreed'
+                                            checked={formData.hasAgreed} // Boolean indicating whether terms are agreed
+                                            onChange={handleInputChange}
+                                            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                        />
+                                        <label htmlFor="terms" className="ml-2 text-sm text-gray-700">
+                                            I consent to IHP contacting me if necessary for further information or updates.
+                                        </label>
                                     </div>
                                 </div>
                             </div>
