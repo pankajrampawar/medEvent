@@ -182,7 +182,7 @@ const ModernReportPDF = ({ startDate, endDate, event, users, pieChartImage, repo
                         </View>
                         {referralChunks[0]?.map((user, index) => (
                             <View key={index} style={styles.tableRow} wrap={false}>
-                                <Text style={styles.tableCell}>{convertISOToTime(user.timestamp)}</Text>
+                                <Text style={styles.tableCell}>{convertISOToTime(user.updatedAt)}</Text>
                                 <Text style={styles.tableCell}>{user.primaryDiagnosis}</Text>
                                 <Text style={styles.tableCell}>{user.reffered}</Text>
                             </View>
