@@ -1,6 +1,8 @@
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { renderToStream } from '@react-pdf/renderer';
 import { imgString } from '../utils/options';
+import { convertISOToTime } from '../utils/time';
+
 const styles = StyleSheet.create({
     page: {
         padding: 40,
@@ -17,10 +19,10 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     },
     logo: {
-        width: 100, // Adjust the size of the logo
-        height: 'auto', // Maintain aspect ratio
-        marginBottom: 20, // Space below the logo
-        alignSelf: 'center', // Center the logo horizontally
+        width: 100,
+        height: 'auto',
+        marginBottom: 20,
+        alignSelf: 'center',
     },
     section: {
         marginBottom: 30,
@@ -46,6 +48,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderBottom: '1px solid #e2e8f0',
         backgroundColor: '#ffffff',
+        wrap: false, // Prevent row from splitting across pages
     },
     tableHeader: {
         backgroundColor: '#edf2f7',
@@ -64,9 +67,9 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },
     chartImage: {
-        width: '48%', // Use full width of the container
-        height: 'auto', // Maintain aspect ratio
-        maxWidth: '100%', // Ensure it doesn't overflow
+        width: '48%',
+        height: 'auto',
+        maxWidth: '100%',
     },
     footer: {
         position: 'absolute',
@@ -80,28 +83,70 @@ const styles = StyleSheet.create({
 });
 
 const ModernReportPDF = ({ startDate, endDate, event, users, pieChartImage, reportType }) => {
-
-    //const usersOfConcern = // filter based on createdAt parameter of users array user should be create between =startDate and =endDate
     const totalVisits = users.length;
-    const referralsToday = users.filter((user) => user.reffered === 'urgentCare' || user.reffered === 'ER').length;
+    const referralsToday = users.filter((user) => user.reffered === 'urgentCare' || user.reffered === 'ER' || user.reffered === 'Specialist' || user.reffered === 'Diagnostic').length;
 
-    // Format the date for the title
     const reportDate = new Date().toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
     });
 
+    // Function to chunk users into groups that fit on a page
+    const chunkUsers = (usersArray, itemsPerPage = 10) => {
+        const chunks = [];
+        for (let i = 0; i < usersArray.length; i += itemsPerPage) {
+            chunks.push(usersArray.slice(i, i + itemsPerPage));
+        }
+        return chunks;
+    };
+
+    const referralUsers = users.filter((user) => user.reffered === 'urgentCare' || user.reffered === 'ER');
+    const referralChunks = chunkUsers(referralUsers, 10); // Adjust itemsPerPage based on your needs
+    const sortedUsers = [...users].sort((a, b) => {
+        // Define the custom order for conditionCategory
+        const categoryOrder = {
+            'Allergy': 1,
+            'Cardiovascular': 2,
+            'Covid Testing': 3,
+            'Dermatology': 4,
+            'ENT (Ear, Nose, Throat)': 5,
+            'First Aid': 6,
+            'Gastrointestinal': 7,
+            'Genitourinary': 8,
+            'Medication': 9,
+            'Mental Health': 10,
+            'Metabolic': 11,
+            'Neurology': 12,
+            'OB/GYN': 13,
+            'Ophthalmology': 14,
+            'Oral/Dental': 15,
+            'Orthopedics': 16,
+            'Positive Result': 17,
+            'Respiratory Infections': 18,
+            'Vitals Check': 19,
+            'Advise/Consultation': 20
+        };
+
+        // Get the order values for comparison
+        const orderA = categoryOrder[a.conditionCategory] || 999; // Default to high number if category not found
+        const orderB = categoryOrder[b.conditionCategory] || 999;
+
+        // Primary sort: by conditionCategory
+        if (orderA !== orderB) {
+            return orderA - orderB; // Sort based on predefined order
+        }
+
+        // Secondary sort: by updatedAt (earlier dates come first)
+        const dateA = a.updatedAt ? new Date(a.updatedAt) : new Date(0); // Default to epoch if missing
+        const dateB = b.updatedAt ? new Date(b.updatedAt) : new Date(0);
+        return dateA - dateB; // Ascending order for dates
+    });
+
     return (
         <Document>
             <Page size="A4" style={styles.page}>
-                {/* Logo */}
-                <Image
-                    src={imgString} // Use the base64 logo
-                    style={styles.logo}
-                />
-
-                {/* Header with Date */}
+                <Image src={imgString} style={styles.logo} />
                 <Text style={styles.header}>
                     {`Nightly Summary Report for ${event.clientName} - ${event.title}`}
                 </Text>
@@ -126,7 +171,7 @@ const ModernReportPDF = ({ startDate, endDate, event, users, pieChartImage, repo
                     </View>
                 </View>
 
-                {/* Referral Details */}
+                {/* Referral Details - First Page */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Referral Details</Text>
                     <View style={styles.table}>
@@ -135,53 +180,66 @@ const ModernReportPDF = ({ startDate, endDate, event, users, pieChartImage, repo
                             <Text style={styles.tableCell}>Diagnosis</Text>
                             <Text style={styles.tableCell}>Referral To</Text>
                         </View>
-                        {users
-                            .filter((user) => user.reffered === 'urgentCare' || user.reffered === 'ER')
-                            .map((user, index) => (
-                                <View key={index} style={styles.tableRow}>
-                                    <Text style={styles.tableCell}>{new Date().toLocaleTimeString()}</Text>
+                        {referralChunks[0]?.map((user, index) => (
+                            <View key={index} style={styles.tableRow} wrap={false}>
+                                <Text style={styles.tableCell}>{convertISOToTime(user.timestamp)}</Text>
+                                <Text style={styles.tableCell}>{user.primaryDiagnosis}</Text>
+                                <Text style={styles.tableCell}>{user.reffered}</Text>
+                            </View>
+                        ))}
+                    </View>
+                </View>
+
+                {/* Medical Visits by Condition */}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Medical Visits by Condition</Text>
+                    {reportType === 'detailed' && (
+                        <View style={styles.table}>
+                            <View style={[styles.tableRow, styles.tableHeader]}>
+                                <Text style={styles.tableCell}>Updated At</Text>
+                                <Text style={styles.tableCell}>Complaint Category</Text>
+                                <Text style={styles.tableCell}>Primary Diagnosis</Text>
+                            </View>
+                            {sortedUsers.map((user, index) => (
+                                <View key={index} style={styles.tableRow} wrap={false}>
+                                    <Text style={styles.tableCell}>{convertISOToTime(user.updatedAt)}</Text>
+                                    <Text style={styles.tableCell}>{user.conditionCategory}</Text>
+                                    <Text style={styles.tableCell}>{user.primaryDiagnosis}</Text>
+                                </View>
+                            ))}
+                        </View>
+                    )}
+                    <View style={styles.chartContainer}>
+                        {pieChartImage && <Image src={pieChartImage} style={styles.chartImage} />}
+                    </View>
+                </View>
+
+                <Text style={styles.footer}>Generated on {new Date().toLocaleDateString()}</Text>
+            </Page>
+
+            {/* Additional Pages for Referral Details */}
+            {referralChunks.slice(1).map((chunk, pageIndex) => (
+                <Page key={pageIndex} size="A4" style={styles.page}>
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Referral Details (Continued)</Text>
+                        <View style={styles.table}>
+                            <View style={[styles.tableRow, styles.tableHeader]}>
+                                <Text style={styles.tableCell}>Time of Day</Text>
+                                <Text style={styles.tableCell}>Diagnosis</Text>
+                                <Text style={styles.tableCell}>Referral To</Text>
+                            </View>
+                            {chunk.map((user, index) => (
+                                <View key={index} style={styles.tableRow} wrap={false}>
+                                    <Text style={styles.tableCell}>{convertISOToTime(user.timestamp)}</Text>
                                     <Text style={styles.tableCell}>{user.primaryDiagnosis}</Text>
                                     <Text style={styles.tableCell}>{user.reffered}</Text>
                                 </View>
                             ))}
-                    </View>
-                </View>
-
-                {/* Medical Visits by Condition (Pie Chart) */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Medical Visits by Condition</Text>
-                    {
-                        reportType === 'detailed' &&
-                        <View style={styles.table}>
-                            <View style={[styles.tableRow, styles.tableHeader]}>
-                                <Text style={styles.tableCell}>Complaint</Text>
-                                <Text style={styles.tableCell}>Diagnosis</Text>
-                                <Text style={styles.tableCell}>Referral To</Text>
-                            </View>
-                            {users
-                                .filter((user) => user.reffered === 'urgentCare' || user.reffered === 'ER')
-                                .map((user, index) => (
-                                    <View key={index} style={styles.tableRow}>
-                                        <Text style={styles.tableCell}>{new Date().toLocaleTimeString()}</Text>
-                                        <Text style={styles.tableCell}>{user.primaryDiagnosis}</Text>
-                                        <Text style={styles.tableCell}>{user.reffered}</Text>
-                                    </View>
-                                ))}
                         </View>
-                    }
-                    <View style={styles.chartContainer}>
-                        {pieChartImage && (
-                            <Image
-                                src={pieChartImage}
-                                style={styles.chartImage} // Use the new style
-                            />
-                        )}
                     </View>
-                </View>
-
-                {/* Footer */}
-                <Text style={styles.footer}>Generated on {new Date().toLocaleDateString()}</Text>
-            </Page>
+                    <Text style={styles.footer}>Generated on {new Date().toLocaleDateString()}</Text>
+                </Page>
+            ))}
         </Document>
     );
 };

@@ -291,7 +291,7 @@ export default function ReportPopup({ event, onClose }) {
                 </button>
             </div>
 
-            {pieChartData && <div className='relative bg-white'>
+            {pieChartData && <div className='absolute bg-white -z-10'>
                 <div id="pie-chart" style={{ width: '300px', height: '300px' }} className=''>
                     <Pie data={pieChartData} options={pieChartOptions} />
                 </div>
