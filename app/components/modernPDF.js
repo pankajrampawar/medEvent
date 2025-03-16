@@ -196,15 +196,15 @@ const ModernReportPDF = ({ startDate, endDate, event, users, pieChartImage, repo
                     {reportType === 'detailed' && (
                         <View style={styles.table}>
                             <View style={[styles.tableRow, styles.tableHeader]}>
-                                <Text style={styles.tableCell}>Updated At</Text>
                                 <Text style={styles.tableCell}>Complaint Category</Text>
                                 <Text style={styles.tableCell}>Primary Diagnosis</Text>
+                                <Text style={styles.tableCell}>Created At</Text>
                             </View>
                             {sortedUsers.map((user, index) => (
                                 <View key={index} style={styles.tableRow} wrap={false}>
-                                    <Text style={styles.tableCell}>{convertISOToTime(user.updatedAt)}</Text>
                                     <Text style={styles.tableCell}>{user.conditionCategory}</Text>
                                     <Text style={styles.tableCell}>{user.primaryDiagnosis}</Text>
+                                    <Text style={styles.tableCell}>{convertISOToTime(user.updatedAt)}</Text>
                                 </View>
                             ))}
                         </View>
