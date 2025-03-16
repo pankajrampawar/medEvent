@@ -16,6 +16,7 @@ const PatientForm = ({ isEditable = true, params }) => {
     const searchParams = useSearchParams();
     const { id } = React.use(params);
     const userData = JSON.parse(searchParams.get('data'));
+    console.log(userData)
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState(userData);
@@ -31,25 +32,16 @@ const PatientForm = ({ isEditable = true, params }) => {
     const [medicalKitOptions, setMedicalKitOptions] = useState([]);
     const inputRef = useRef(null);
     const isAdmin = user?.role === 'admin';
-    console.log(medicalKitOptions);
 
     const filteredCategories = categories.filter((category) =>
         category.toLowerCase().includes(searchTerm.toLowerCase())
     ).slice(0, 6);
 
     useEffect(() => {
-        const getMedicalKitOptions = async () => {
-            const masterList = await getMasterList();
-            console.log(masterList);
-            if (masterList) {
-                setMedicalKitOptions(masterList.masters.map((kit) => ({
-                    label: kit.name,
-                    value: kit.name,
-                })));
-            }
-        }
-
-        getMedicalKitOptions();
+        setMedicalKitOptions(userData.medicalKit.map(kit => ({
+            label: kit,
+            value: kit,
+        })))
     }, [])
 
     useEffect(() => {
