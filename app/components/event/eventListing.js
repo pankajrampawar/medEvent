@@ -136,7 +136,7 @@ export default function EventsListing({ events, isAdmin, refreshEvents }) {
                                 >
                                     <td className="px-6 py-4">{event.title}</td>
                                     <td className="px-6 py-4">{event.clientName}</td>
-                                    <td className="px-6 py-4">{event.location}</td>
+                                    <td className="px-6 py-4">{event.location.hotel}</td>
                                     <td className="px-6 py-4">{formatDate(event.startDate)}</td>
                                     <td className="px-6 py-4">{formatDate(event.endDate)}</td>
                                     <td className="px-6 py-4 flex items-center">

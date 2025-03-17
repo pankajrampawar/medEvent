@@ -114,24 +114,38 @@ const EventFormFilled = ({ isEditable = true, eventDetails, allowPastDates }) =>
     // Handle changes for all fields except doctors
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+        // Check if the name includes a dot (e.g., "location.state")
+        if (name.includes('location.')) {
+            const locationField = name.split('.')[1]; // Extract "state", "city", or "hotel"
+            setFormData({
+                ...formData,
+                location: {
+                    ...formData.location,
+                    [locationField]: value,
+                },
+            });
+        } else {
+            // Handle non-nested fields as before
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
 
-        // Clear error when user updates the dates
-        if (name === 'startDate' || name === 'endDate') {
-            setError('');
-        }
+            // Clear error when user updates the dates
+            if (name === 'startDate' || name === 'endDate') {
+                setError('');
+            }
 
-        if (name === "startDate" || name === "endDate") {
-            const startDate = name === "startDate" ? new Date(value) : new Date(formData.startDate);
-            const endDate = name === "endDate" ? new Date(value) : new Date(formData.endDate);
+            // Date validation logic
+            if (name === "startDate" || name === "endDate") {
+                const startDate = name === "startDate" ? new Date(value) : new Date(formData.startDate);
+                const endDate = name === "endDate" ? new Date(value) : new Date(formData.endDate);
 
-            if (startDate > endDate) {
-                setError("End date cannot be earlier than start date.");
-            } else {
-                setError("");
+                if (startDate > endDate) {
+                    setError("End date cannot be earlier than start date.");
+                } else {
+                    setError("");
+                }
             }
         }
     };
@@ -336,18 +350,53 @@ const EventFormFilled = ({ isEditable = true, eventDetails, allowPastDates }) =>
 
 
                             <div className="mb-6">
-                                <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-                                    location <span className='text-red-700 text-xl'>*</span>
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Location <span className="text-red-700 text-xl">*</span>
                                 </label>
-                                <textarea
-                                    id="location"
-                                    name="location"
-                                    value={formData.location}
-                                    onChange={handleChange}
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                                    disabled={!isEditable}
-                                    required={true}
-                                ></textarea>
+                                <div className="mt-1 space-y-2">
+                                    {/* State */}
+                                    <div>
+                                        <label htmlFor="location.state" className="text-sm text-gray-600">State</label>
+                                        <input
+                                            id="location.state"
+                                            name="location.state"
+                                            value={formData.location.state}
+                                            onChange={handleChange}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                            disabled={!isEditable}
+                                            required={true}
+                                            placeholder="Enter state"
+                                        />
+                                    </div>
+                                    {/* City */}
+                                    <div>
+                                        <label htmlFor="location.city" className="text-sm text-gray-600">City</label>
+                                        <input
+                                            id="location.city"
+                                            name="location.city"
+                                            value={formData.location.city}
+                                            onChange={handleChange}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                            disabled={!isEditable}
+                                            required={true}
+                                            placeholder="Enter city"
+                                        />
+                                    </div>
+                                    {/* Hotel */}
+                                    <div>
+                                        <label htmlFor="location.hotel" className="text-sm text-gray-600">Hotel</label>
+                                        <input
+                                            id="location.hotel"
+                                            name="location.hotel"
+                                            value={formData.location.hotel}
+                                            onChange={handleChange}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                                            disabled={!isEditable}
+                                            required={true}
+                                            placeholder="Enter hotel"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

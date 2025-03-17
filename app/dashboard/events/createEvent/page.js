@@ -38,7 +38,7 @@ export default function CreateEvent() {
         title: "New Event",
         startDate: '',
         endDate: '',
-        location: '',
+        location: { state: "", city: "", hotel: "" },
         note: '',
         description: '',
         doctors: [{ name: '', email: '' }], // Array to store multiple doctors
@@ -50,6 +50,7 @@ export default function CreateEvent() {
             title: "New Event",
             startDate: '',
             endDate: '',
+            location: { state: "", city: "", hotel: "" },
             note: '',
             description: '',
             doctors: [{ name: '', email: '' }], // Array to store multiple doctors

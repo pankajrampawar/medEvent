@@ -266,7 +266,7 @@ const CalendarComponent = () => {
                                             <span className="font-medium">Location</span>
                                         </div>
                                         <p className="text-gray-900 font-semibold">
-                                            {selectedEvent?.extendedProps?.location || "No location specified"}
+                                            {selectedEvent?.extendedProps?.location?.hotel + ", " + selectedEvent?.extendedProps?.location?.city + ", " + selectedEvent?.extendedProps?.location?.state || "No location specified"}
                                         </p>
                                     </div>
 
