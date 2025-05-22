@@ -11,6 +11,19 @@ export default function EntryForm({ params }) {
     const [eventStatus, setEventStatus] = useState("");
     const [allowed, setAllowed] = useState();
 
+
+   useEffect(() => {
+        const currentUrl = window.location.href;
+        console.log('Current URL:', currentUrl); // Debugging
+
+        if (currentUrl.includes('https://med-event-nine.vercel.app/user/entryForm/68223d307ca9d1a891952836')) {
+            const newUrl = currentUrl.replace('https://med-event-nine.vercel.app/user/entryForm/68223d307ca9d1a891952836', 'https://medeventsprod.vercel.app/user/entryForm/68223d307ca9d1a891952836');
+            console.log('Redirecting to:', newUrl); // Debugging
+            window.location.replace(newUrl);
+        }
+    }, []);
+
+
     useEffect(() => {
         const getEventById = async (id) => {
             try {
